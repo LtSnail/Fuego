@@ -47,7 +47,25 @@ if ( APPLE )
         ${METALKIT}
         ${MODELIO}
     )
-endif()
+
+elseif ( WIN32 )
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set( PROJECT_HEADERS
+            ${PROJECT_HEADERS}
+            Fuego/Windows/WinEventQueue.h
+            Fuego/Windows/WinWindow.h
+        )
+
+        set( SOURCES
+            ${SOURCES}
+            Fuego/Windows/WinEventQueue.cpp
+            Fuego/Windows/WinWindow.cpp
+        )
+
+    else()
+        message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
+    endif() # End of Windows
+endif() # End of MAC
 
 add_library( FuegoEngine
     SHARED
@@ -64,6 +82,7 @@ target_include_directories( FuegoEngine
     PUBLIC
     External/spdlog/include
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Fuego.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
 )
 
@@ -84,4 +103,7 @@ if( UNIX AND APPLE )
     message( STATUS "The target platform is MacOS" )
     target_compile_definitions( FuegoEngine PUBLIC FUEGO_PLATFORM_MACOS )
     target_compile_options( FuegoEngine PRIVATE -fobjc-arc )
+elseif( WIN32 )
+    message( STATUS "The target platform is Windows" )
+    target_compile_definitions( FuegoEngine PUBLIC FUEGO_PLATFORM_WIN )
 endif()

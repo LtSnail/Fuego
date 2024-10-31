@@ -60,4 +60,6 @@ int main(int argc, const char * argv[])
 	
 	return 0;
 }
+#elif(FUEGO_PLATFORM_WIN)
+// Windows-specific part
 #endif

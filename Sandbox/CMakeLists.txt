@@ -13,7 +13,7 @@ set( DEPENDENCIES
     FuegoEngine
 )
 
-if (APPLE)
+if ( APPLE )
     set( SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/MacOS/SandboxApp.mm
     )
@@ -58,6 +58,10 @@ if ( APPLE )
         PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST
         ${CMAKE_CURRENT_SOURCE_DIR}/Resources/MacOS/Sandbox-Info.plist.in
+    )
+elseif ( WIN32 )
+    add_executable( Sandbox WIN32
+        ${SOURCES}
     )
 endif()
 

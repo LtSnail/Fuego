@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(FUEGO_PLATFORM_WINDOWS)
+#if defined(FUEGO_PLATFORM_WIN)
     #define EXPORT __declspec(dllexport)
     #define IMPORT __declspec(dllimport)
 #elif defined(FUEGO_PLATFORM_MACOS)
@@ -11,7 +11,7 @@
 #endif
 
 #if defined(FUEGO_ENABLE_ASSERTS)
-    #if defined(FUEGO_PLATFORM_WINDOWS)
+    #if defined(FUEGO_PLATFORM_WIN)
         #define FU_ASSERT(x, ...) { if(!(x)) { FU_ERROR("Assertion Failed {0}", __VA_ARGS__); __debugbreak(); } }
         #define FU_CORE_ASSERT(x, ...) { if(!(x)) { FU_CORE_ERROR("Assertion Failed {0}", __VA_ARGS__); __debugbreak(); } }
     #elif defined(FUEGO_PLATFORM_MACOS)
