@@ -12,7 +12,8 @@ namespace Fuego
         EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard)
     protected:
         KeyEvent(int keycode)
-            : m_KeyCode(keycode) {}
+            : Event()
+    		, m_KeyCode(keycode) {}
 
         int m_KeyCode;
     };
@@ -21,11 +22,12 @@ namespace Fuego
     {
     public:
         KeyPressedEvent(int keycode, int repeatCount)
-            : KeyEvent(keycode), m_RepeatCount(repeatCount) {}
+            : KeyEvent(keycode)
+    		, m_RepeatCount(repeatCount) {}
 
         inline int GetRepeatCount() const { return m_RepeatCount; }
 
-        std::string ToString() const
+        std::string ToString() const override
         {
             std::stringstream ss;
             ss << "KeyPressedEvent: " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
@@ -43,7 +45,7 @@ namespace Fuego
         KeyReleasedEvent(int keycode)
             : KeyEvent(keycode) {}
 
-        std::string ToString() const
+        std::string ToString() const override
         {
             std::stringstream ss;
             ss << "KeyReleasedEvent: " << m_KeyCode;

@@ -13,7 +13,7 @@ namespace Fuego
         inline unsigned int GetWidth() const { return m_Width; }
         inline unsigned int GetHeight() const { return m_Height; }
         
-        std::string ToString() const
+        std::string ToString() const override
         {
             std::stringstream ss;
             ss << "WindowResizeEvent: w: " << m_Width << ", h: " << m_Height;
