@@ -18,5 +18,7 @@
         #import <MetalKit/MetalKit.h>
         #import <ModelIO/ModelIO.h>
     #endif
+#elif FUEGO_PLATFORM_WIN
+	#include <windows.h>
 #endif
 
