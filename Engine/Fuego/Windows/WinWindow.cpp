@@ -2,39 +2,34 @@
 
 namespace Fuego
 {
-	WindowsWindow::WindowsWindow(const WindowProps& props, EventQueue& eventQueue)
+	WinWindow::WinWindow(const WindowProps& props, EventQueue& eventQueue)
 	{
 		UNUSED(props);
 		UNUSED(eventQueue);
 	}
 
-	WindowsWindow::~WindowsWindow()
+	void WinWindow::Update()
 	{
 
 	}
 
-	void WindowsWindow::Update()
-	{
-
-	}
-
-	void WindowsWindow::SetVSync(bool enabled)
+	void WinWindow::SetVSync(bool enabled)
 	{
 		UNUSED(enabled);
 	}
 
-	bool WindowsWindow::IsVSync() const
+	bool WinWindow::IsVSync() const
 	{
 		return true;
 	}
 
-	void WindowsWindow::Init(const WindowProps& props, EventQueue& eventQueue)
+	void WinWindow::Init(const WindowProps& props, EventQueue& eventQueue)
 	{
 		UNUSED(props);
 		UNUSED(eventQueue);
 	}
 
-	void WindowsWindow::Shutdown()
+	void WinWindow::Shutdown()
 	{
 
 	}
@@ -42,6 +37,6 @@ namespace Fuego
 	std::unique_ptr<Window> Window::CreateAppWindow(const WindowProps& props,
 													EventQueue& eventQueue)
 	{
-		return std::make_unique<WindowsWindow>(props, eventQueue);
+		return std::make_unique<WinWindow>(props, eventQueue);
 	}
 }

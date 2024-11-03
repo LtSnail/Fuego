@@ -4,11 +4,10 @@
 
 namespace Fuego
 {
-	class WindowsWindow : public Window
+	class WinWindow : public Window
 	{
 	public:
-        WindowsWindow(const WindowProps& props, EventQueue& eventQueue);
-        ~WindowsWindow();
+        WinWindow(const WindowProps& props, EventQueue& eventQueue);
 
         virtual void Update() override;
 

@@ -2,28 +2,28 @@
 
 namespace Fuego
 {
-    void WindowsEventQueue::Update()
+    void WinEventQueue::Update()
     {
 
     }
 
-    std::shared_ptr<const Event> WindowsEventQueue::Front()
+    std::shared_ptr<const Event> WinEventQueue::Front()
     {
         return nullptr;
     }
 
-    void WindowsEventQueue::Pop()
+    void WinEventQueue::Pop()
     {
         m_Queue.pop();
     }
 
-    bool WindowsEventQueue::Empty()
+    bool WinEventQueue::Empty()
     {
         return m_Queue.empty();
     }
 
     std::unique_ptr<EventQueue> EventQueue::CreateEventQueue()
     {
-        return std::make_unique<WindowsEventQueue>();
+        return std::make_unique<WinEventQueue>();
     }
 }
