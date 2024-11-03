@@ -1,12 +1,7 @@
 #pragma once
 
-extern Fuego::Application* Fuego::CreateApplication();
-
+// Compiled in a client application
 #if defined(FUEGO_PLATFORM_MACOS)
-/* MacOS-specific part of Entrypoint.h
- * Compiled in a client application
- */
-
 #include "chpch.h"
 
 #include "Log.h"
