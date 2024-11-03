@@ -10,6 +10,7 @@ set( PROJECT_HEADERS
     Fuego/Events/KeyEvent.h
     Fuego/Events/MouseEvent.h
     Fuego/Events/ApplicationEvent.h
+    Fuego.h
     chpch.h
 )
 
@@ -64,8 +65,8 @@ elseif ( WIN32 )
 
     else()
         message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
-    endif() # End of Windows
-endif() # End of MAC
+    endif()
+endif()
 
 add_library( FuegoEngine
     SHARED
@@ -82,7 +83,6 @@ target_include_directories( FuegoEngine
     PUBLIC
     External/spdlog/include
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/Fuego.h
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
 )
 
@@ -92,7 +92,7 @@ target_compile_features( FuegoEngine PUBLIC cxx_std_20 )
 
 target_compile_definitions( FuegoEngine PUBLIC FUEGO_ENABLE_ASSERTS )
 
-if (MSVC)
+if ( MSVC )
     target_compile_options( FuegoEngine PRIVATE /W4 /WX /permissive- )
 else()
     # -pedantic
