@@ -48,7 +48,7 @@ namespace Fuego
                                 EventType GetEventType() const { return GetStaticType(); }\
                                 const char* GetName() const { return #type; }
 
-#define EVENT_CLASS_CATEGORY(category) int GetCategoryFlags() const { return category; }
+#define EVENT_CLASS_CATEGORY(category) int GetCategoryFlags() const { return EventCategory##category; }
 
     class FUEGO_API Event
     {
