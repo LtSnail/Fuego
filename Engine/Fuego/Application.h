@@ -8,13 +8,13 @@
 
 namespace Fuego
 {
-    class FUEGO_API Application
+    class Application
     {
     public:
-        Application();
-        virtual ~Application();
+       FUEGO_API Application();
+       FUEGO_API virtual ~Application();
 
-        void Run();
+       FUEGO_API void Run();
 
     private:
         std::unique_ptr<Window> m_Window;
