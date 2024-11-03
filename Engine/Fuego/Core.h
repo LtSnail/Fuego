@@ -29,6 +29,13 @@
     #define FUEGO_API IMPORT
 #endif
 
+#define FUEGO_NON_COPYABLE_NON_MOVABLE(ClassName)		\
+    ClassName(const ClassName&) = delete; 				\
+	ClassName& operator=(const ClassName&) = delete;	\
+    ClassName(ClassName&&) = delete;                	\
+    ClassName& operator=(ClassName&&) = delete;
+
+
 #define BIT(x) (1 << x)
 
 #define UNUSED(x) (void)(x)
