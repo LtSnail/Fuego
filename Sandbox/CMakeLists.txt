@@ -63,6 +63,12 @@ elseif ( WIN32 )
     add_executable( Sandbox WIN32
         ${SOURCES}
     )
+    #Post build operations: Copy .dll to .exe folder:
+    add_custom_command(TARGET Sandbox POST_BUILD
+                       COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                       $<TARGET_FILE:FuegoEngine>
+                       $<TARGET_FILE_DIR:Sandbox>
+                       )
 endif()
 
 target_link_libraries( Sandbox
