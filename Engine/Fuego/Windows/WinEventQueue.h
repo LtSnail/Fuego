@@ -1,3 +1,5 @@
+#pragma once
+
 #include "EventQueue.h"
 
 namespace Fuego
