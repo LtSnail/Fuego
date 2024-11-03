@@ -7,7 +7,7 @@
 
 namespace Fuego
 {
-    class  Log
+    class Log
     {
     public:
         FUEGO_API static void Init();
