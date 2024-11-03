@@ -10,11 +10,6 @@ namespace Fuego
         m_Window = Window::CreateAppWindow(WindowProps(), *m_EventQueue);
     }
 
-    Application::~Application()
-    {
-
-    }
-
     void Application::Run()
     {
         bool isRunning = true;
@@ -28,14 +23,13 @@ namespace Fuego
             {
                 auto ev = m_EventQueue->Front();
                 
-                EventType eventType = (*ev).GetEventType();
-                
-                switch (eventType) {
+                switch (ev->GetEventType()) {
                     case EventType::EventTypeWindowClose:
                         isRunning = false;
                         break;
                     case EventType::EventTypeWindowResize:
                         FU_CORE_TRACE("{0}", ev->ToString());
+                        break;
                     case EventType::EventTypeWindowFocus:
                         //
                         break;
@@ -73,7 +67,6 @@ namespace Fuego
                         //
                         break;
                     case EventType::None:
-                    default:
                         break;
                 }
 

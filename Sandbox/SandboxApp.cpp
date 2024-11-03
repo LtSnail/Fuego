@@ -3,15 +3,7 @@
 class SandboxApp : public Fuego::Application
 {
 public:
-    SandboxApp()
-    {
-
-    }
-
-    ~SandboxApp()
-    {
-
-    }
+    SandboxApp() = default;
 };
 
 Fuego::Application* Fuego::CreateApplication()

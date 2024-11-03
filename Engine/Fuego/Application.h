@@ -11,10 +11,11 @@ namespace Fuego
     class Application
     {
     public:
-       FUEGO_API Application();
-       FUEGO_API virtual ~Application();
+		FUEGO_API Application();
+        FUEGO_API virtual ~Application() = default;
+        FUEGO_NON_COPYABLE_NON_MOVABLE(Application)
 
-       FUEGO_API void Run();
+		FUEGO_API void Run();
 
     private:
         std::unique_ptr<Window> m_Window;
