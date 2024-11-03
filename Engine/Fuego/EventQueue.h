@@ -9,6 +9,9 @@ namespace Fuego
     class FUEGO_API EventQueue
     {
     public:
+        EventQueue() = default;
+        FUEGO_NON_COPYABLE_NON_MOVABLE(EventQueue)
+
         virtual void Update() = 0;
         virtual std::shared_ptr<const Event> Front() = 0;
         virtual void Pop() = 0;
