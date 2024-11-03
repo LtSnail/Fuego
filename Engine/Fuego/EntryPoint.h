@@ -61,5 +61,21 @@ int main(int argc, const char * argv[])
 	return 0;
 }
 #elif(FUEGO_PLATFORM_WIN)
-// Windows-specific part
+#include "chpch.h"
+
+int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+{
+	UNUSED(hInst);
+	UNUSED(hInstPrev);
+	UNUSED(cmdline);
+	UNUSED(cmdshow);
+
+	Fuego::Log::Init();
+
+	Fuego::Application* app = Fuego::CreateApplication();
+	app->Run();
+
+	delete app;
+}
+
 #endif
