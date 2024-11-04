@@ -17,7 +17,7 @@ namespace Fuego
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseMovedEvent: " << m_MouseX << ", " << m_MouseY;
+            ss << GetName() << ": " << m_MouseX << ", " << m_MouseY;
             return ss.str();
         }
 
@@ -40,7 +40,7 @@ namespace Fuego
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseScrolledEvent: " << m_xOffset << ", " << m_yOffset;
+            ss << GetName() << ": " << m_xOffset << ", " << m_yOffset;
             return ss.str();
         }
 
@@ -74,7 +74,7 @@ namespace Fuego
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonPressedEvent: " << Mouse::GetMouseButtonName(m_Button);
+            ss << GetName() << ": " << Mouse::GetMouseButtonName(m_Button);
             return ss.str();
         }
 
@@ -90,7 +90,7 @@ namespace Fuego
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonReleasedEvent: " << Mouse::GetMouseButtonName(m_Button);
+            ss << GetName() << ": " << Mouse::GetMouseButtonName(m_Button);
             return ss.str();
         }
 

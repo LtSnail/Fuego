@@ -16,7 +16,7 @@ namespace Fuego
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "WindowResizeEvent: w: " << m_Width << ", h: " << m_Height;
+            ss << GetName() << " w: " << m_Width << ", h: " << m_Height;
             return ss.str();
         }
 
