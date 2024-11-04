@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "MouseCodes.h"
 
 namespace Fuego
 {
@@ -50,7 +51,6 @@ namespace Fuego
         float m_xOffset, m_yOffset;
     };
 
-    template <typename D>
     class FUEGO_API MouseButtonEvent : public Event
     {
     public:
@@ -59,40 +59,38 @@ namespace Fuego
         EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
     protected:
-        MouseButtonEvent(int button)
+        MouseButtonEvent(MouseCode button)
             : m_Button(button) {}
 
         int m_Button;
     };
 
-    template <typename D>
-    class FUEGO_API MouseButtonPressedEvent : public MouseButtonEvent<D>
+    class FUEGO_API MouseButtonPressedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonPressedEvent(int button)
-            : MouseButtonEvent<D>(button) {}
+        MouseButtonPressedEvent(MouseCode button)
+            : MouseButtonEvent(button) {}
 
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonPressedEvent: " << m_Button;
+            ss << "MouseButtonPressedEvent: " << Mouse::GetMouseButtonName(m_Button);
             return ss.str();
         }
 
         EVENT_CLASS_TYPE(MouseButtonPressed)
     };
 
-    template <typename D>
-    class FUEGO_API MouseButtonReleasedEvent : public MouseButtonEvent<D>
+    class FUEGO_API MouseButtonReleasedEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonReleasedEvent(int button)
-            : MouseButtonEvent<D>(button) {}
+        MouseButtonReleasedEvent(MouseCode button)
+            : MouseButtonEvent(button) {}
 
         std::string ToString() const override
         {
             std::stringstream ss;
-            ss << "MouseButtonReleasedEvent: " << m_Button;
+            ss << "MouseButtonReleasedEvent: " << Mouse::GetMouseButtonName(m_Button);
             return ss.str();
         }
 

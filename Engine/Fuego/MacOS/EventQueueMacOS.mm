@@ -1,6 +1,8 @@
 #include "EventQueueMacOS.h"
 
 #include "Events/ApplicationEvent.h"
+#include "Events/MouseEvent.h"
+#include "MouseCodes.h"
 #include "Log.h"
 
 void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<const Event> ev)
@@ -80,16 +82,22 @@ namespace Fuego
                     case NSEventTypeKeyUp:
                         break;
                     case NSEventTypeLeftMouseDown:
+                        PushEvent(this, std::make_shared<const MouseButtonPressedEvent>(Mouse::ButtonLeft));
                         break;
                     case NSEventTypeLeftMouseUp:
+                        PushEvent(this, std::make_shared<const MouseButtonReleasedEvent>(Mouse::ButtonLeft));
                         break;
                     case NSEventTypeRightMouseDown:
+                        PushEvent(this, std::make_shared<const MouseButtonPressedEvent>(Mouse::ButtonRight));
                         break;
                     case NSEventTypeRightMouseUp:
+                        PushEvent(this, std::make_shared<const MouseButtonPressedEvent>(Mouse::ButtonRight));
                         break;
                     case NSEventTypeMouseMoved:
+                        PushEvent(this, std::make_shared<const MouseMovedEvent>(nsEvent.locationInWindow.x, nsEvent.locationInWindow.y));
                         break;
                     case NSEventTypeScrollWheel:
+                        PushEvent(this, std::make_shared<const MouseScrolledEvent>(nsEvent.scrollingDeltaX, nsEvent.scrollingDeltaY));
                         break;
                     default:
                         break;

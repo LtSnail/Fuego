@@ -10,6 +10,7 @@ set( PROJECT_HEADERS
     Fuego/Events/KeyEvent.h
     Fuego/Events/MouseEvent.h
     Fuego/Events/ApplicationEvent.h
+    Fuego/MouseCodes.h
     Fuego.h
     chpch.h
 )

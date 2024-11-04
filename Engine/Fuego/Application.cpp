@@ -55,16 +55,16 @@ namespace Fuego
                         //
                         break;
                     case EventType::EventTypeMouseButtonPressed:
-                        //
+                        FU_CORE_TRACE("{0}", ev->ToString());
                         break;
                     case EventType::EventTypeMouseButtonReleased:
-                        //
+                        FU_CORE_TRACE("{0}", ev->ToString());
                         break;
                     case EventType::EventTypeMouseMoved:
-                        //
+                        FU_CORE_TRACE("{0}", ev->ToString());
                         break;
                     case EventType::EventTypeMouseScrolled:
-                        //
+                        FU_CORE_TRACE("{0}", ev->ToString());
                         break;
                     case EventType::None:
                         break;
