@@ -2,7 +2,7 @@
 
 // Compiled in a client application
 #if defined(FUEGO_PLATFORM_MACOS)
-#include "chpch.h"
+#include "fupch.h"
 
 #include "Log.h"
 
@@ -56,7 +56,7 @@ int main(int argc, const char * argv[])
 	return 0;
 }
 #elif(FUEGO_PLATFORM_WIN)
-#include "chpch.h"
+#include "fupch.h"
 
 int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {

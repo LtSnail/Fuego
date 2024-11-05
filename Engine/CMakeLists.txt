@@ -11,7 +11,7 @@ set( PROJECT_HEADERS
     Fuego/Events/MouseEvent.h
     Fuego/Events/ApplicationEvent.h
     Fuego.h
-    chpch.h
+    fupch.h
 )
 
 set( SOURCES
@@ -86,7 +86,7 @@ target_include_directories( FuegoEngine
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
 )
 
-target_precompile_headers( FuegoEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/chpch.h )
+target_precompile_headers( FuegoEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h )
 target_compile_definitions( FuegoEngine PRIVATE FUEGO_BUILD_LIB )
 target_compile_features( FuegoEngine PUBLIC cxx_std_20 )
 
