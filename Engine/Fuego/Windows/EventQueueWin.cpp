@@ -1,29 +1,29 @@
-#include "WinEventQueue.h"
+#include "EventQueueWin.h"
 
 namespace Fuego
 {
-    void WinEventQueue::Update()
+    void EventQueueWin::Update()
     {
 
     }
 
-    std::shared_ptr<const Event> WinEventQueue::Front()
+    std::shared_ptr<const Event> EventQueueWin::Front()
     {
         return nullptr;
     }
 
-    void WinEventQueue::Pop()
+    void EventQueueWin::Pop()
     {
         m_Queue.pop();
     }
 
-    bool WinEventQueue::Empty()
+    bool EventQueueWin::Empty()
     {
         return m_Queue.empty();
     }
 
     std::unique_ptr<EventQueue> EventQueue::CreateEventQueue()
     {
-        return std::make_unique<WinEventQueue>();
+        return std::make_unique<EventQueueWin>();
     }
 }

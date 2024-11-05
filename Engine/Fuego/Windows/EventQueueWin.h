@@ -4,7 +4,7 @@
 
 namespace Fuego
 {
-    class WinEventQueue : public EventQueue
+    class EventQueueWin : public EventQueue
     {
     public:
         virtual void Update() override;

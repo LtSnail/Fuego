@@ -53,14 +53,14 @@ elseif ( WIN32 )
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set( PROJECT_HEADERS
             ${PROJECT_HEADERS}
-            Fuego/Windows/WinEventQueue.h
-            Fuego/Windows/WinWindow.h
+            Fuego/Windows/EventQueueWin.h
+            Fuego/Windows/WindowWin.h
         )
 
         set( SOURCES
             ${SOURCES}
-            Fuego/Windows/WinEventQueue.cpp
-            Fuego/Windows/WinWindow.cpp
+            Fuego/Windows/EventQueueWin.cpp
+            Fuego/Windows/WindowWin.cpp
         )
 
     else()
