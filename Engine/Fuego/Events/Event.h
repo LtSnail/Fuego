@@ -3,7 +3,7 @@
 #include "chpch.h"
 
 #include "Core.h"
-
+#include <type_traits>
 
 namespace Fuego
 {
@@ -72,6 +72,9 @@ namespace Fuego
         bool m_handled = false;
     };
 
+    template<typename T>
+    concept DerivedFromEvent = std::is_base_of_v<Event, T>;
+
     class EventDispatcher
     {
         template<typename T>
@@ -80,7 +83,7 @@ namespace Fuego
         EventDispatcher(Event& ev)
             : m_Event(ev) {}
 
-        template<typename T>
+        template<DerivedFromEvent T>
         bool Dispatch(EventFn<T> func)
         {
             if (m_Event.GetEventType() == T::GetStaticType())
