@@ -4,7 +4,7 @@ project(
     FuegoSandboxProject
     VERSION 0.1
     DESCRIPTION "Sandbox project"
-    LANGUAGES CXX OBJCXX
+    LANGUAGES CXX
 )
 
 if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
