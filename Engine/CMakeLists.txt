@@ -5,6 +5,7 @@ set( PROJECT_HEADERS
     Fuego/Core.h
     Fuego/EntryPoint.h
     Fuego/Log.h
+    Fuego/Window.h
     Fuego/EventQueue.h
     Fuego/Events/Event.h
     Fuego/Events/KeyEvent.h
