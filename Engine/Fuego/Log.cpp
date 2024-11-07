@@ -16,5 +16,7 @@ namespace Fuego
 
         s_ClientLogger = spdlog::stdout_color_mt("APP");
         s_ClientLogger->set_level(spdlog::level::trace);
+
+        FU_CORE_TRACE("[LOG] has been initialized");
     }
 }
