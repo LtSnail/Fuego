@@ -11,8 +11,8 @@ namespace Fuego
     struct WindowProps
     {
         std::string Title = "Fuego Engine";
-        long x = 0;
-        long y = 0;
+        long x = 100;
+        long y = 100;
         unsigned int Width = 1280;
         unsigned int Height = 720;
 
