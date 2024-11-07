@@ -4,6 +4,7 @@
 
 #include "Events/Event.h"
 #include "EventQueue.h"
+#include "Log.h"
 
 namespace Fuego
 {
