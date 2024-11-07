@@ -106,6 +106,4 @@ namespace Fuego
 	{
 		return std::make_unique<WindowWin>(props, eventQueue);
 	}
-
-	
 }
