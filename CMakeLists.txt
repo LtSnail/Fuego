@@ -13,7 +13,7 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
 endif()
 
 if ( WIN32 )
-add_definitions(-DUNICODE -D_UNICODE)
+    add_definitions(-DUNICODE -D_UNICODE)
 endif()
 
 set( ORGANIZATION FUEGO )
