@@ -65,11 +65,17 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
 	UNUSED(cmdline);
 	UNUSED(cmdshow);
 
+	AllocConsole();
+	FILE* stream;
+	freopen_s(&stream, "CONOUT$", "w", stdout);
+	freopen_s(&stream, "CONOUT$", "w", stderr);
+
 	Fuego::Log::Init();
 
 	Fuego::Application* app = Fuego::CreateApplication();
 	app->Run();
 
+	FreeConsole();
 	delete app;
 }
 
