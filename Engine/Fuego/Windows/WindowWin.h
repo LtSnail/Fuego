@@ -28,7 +28,5 @@ namespace Fuego
         HINSTANCE m_HInstance;  // Relates to the Application
         HWND m_Hwnd;            // Relates to Actual Window instance
         WindowProps m_Props;
-
-        static const TCHAR* APP_WINDOW_CLASS_NAME;
 	};
 }

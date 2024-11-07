@@ -14,15 +14,14 @@ namespace Fuego
 			return 0;
 		}
 
-		return DefWindowProc( hWnd,  uMsg,  wParam,  lParam);
+		return DefWindowProc(hWnd,  uMsg,  wParam,  lParam);
 	}
 	
-	const TCHAR*  WindowWin::APP_WINDOW_CLASS_NAME = TEXT("MainAppWindow");
-
 	WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
 		: m_HInstance(GetModuleHandle(nullptr)), m_Window(nullptr), m_Hwnd(nullptr)
 	{
 		UNUSED(eventQueue);
+		m_Props = props;
 
 		static TCHAR buffer[32] = TEXT("");
 #ifdef UNICODE
@@ -32,7 +31,7 @@ namespace Fuego
 #endif
 		WNDCLASSEX wndClass		= {};
 		wndClass.cbSize			= sizeof(WNDCLASSEX);
-		wndClass.lpszClassName	= APP_WINDOW_CLASS_NAME;
+		wndClass.lpszClassName	= props.APP_WINDOW_CLASS_NAME;
 		wndClass.hInstance		= m_HInstance;
 		wndClass.hIcon			= LoadIcon(nullptr, IDI_WINLOGO);
 		wndClass.hCursor		= LoadCursor(nullptr, IDC_ARROW);
@@ -51,7 +50,7 @@ namespace Fuego
 
 		m_Hwnd = CreateWindowEx(
 			0,
-			APP_WINDOW_CLASS_NAME,
+			props.APP_WINDOW_CLASS_NAME,
 			buffer,
 			style,
 			rect.left,
@@ -63,7 +62,7 @@ namespace Fuego
 			m_HInstance,
 			nullptr
 		);
-		FU_CORE_ASSERT(m_Hwnd, "[AppWindow] hasn't initialized!");
+		FU_CORE_ASSERT(m_Hwnd, "[AppWindow] hasn't been initialized!");
 		ShowWindow(m_Hwnd, SW_SHOW);
 	}
 
@@ -98,7 +97,7 @@ namespace Fuego
 	{
 		if (m_Window != nullptr)
 		{
-			UnregisterClass(APP_WINDOW_CLASS_NAME, m_HInstance);
+			UnregisterClass(m_Props.APP_WINDOW_CLASS_NAME, m_HInstance);
 		}
 	}
 

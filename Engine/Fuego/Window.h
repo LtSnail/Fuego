@@ -28,6 +28,10 @@ namespace Fuego
         bool Transparent = false;
         bool Frame = true;
         bool HasShadow = true;
+
+#ifdef FUEGO_PLATFORM_WIN
+        constexpr static const TCHAR* APP_WINDOW_CLASS_NAME = TEXT("MainAppWindow Engine");
+#endif 
     };
 
     class Window
