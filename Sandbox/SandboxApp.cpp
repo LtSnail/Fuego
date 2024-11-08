@@ -2,11 +2,8 @@
 
 class SandboxApp : public Fuego::Application
 {
-public:
+   public:
     SandboxApp() = default;
 };
 
-Fuego::Application* Fuego::CreateApplication()
-{
-    return new SandboxApp();
-}
+Fuego::Application* Fuego::CreateApplication() { return new SandboxApp(); }

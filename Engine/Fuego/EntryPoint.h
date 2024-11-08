@@ -2,9 +2,8 @@
 
 // Compiled in a client application
 #if defined(FUEGO_PLATFORM_MACOS)
-#include "fupch.h"
-
 #include "Log.h"
+#include "fupch.h"
 
 @interface FuegoApplication : NSApplication
 
@@ -14,69 +13,69 @@
 
 @end
 
-@implementation FuegoApplication;
-
+@implementation FuegoApplication
+;
 
 - (void)run
-{    
-	[[NSNotificationCenter defaultCenter]
-		postNotificationName:NSApplicationWillFinishLaunchingNotification
-		object:NSApp];
-	[[NSNotificationCenter defaultCenter]
-		postNotificationName:NSApplicationDidFinishLaunchingNotification
-		object:NSApp];
-	
+{
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:NSApplicationWillFinishLaunchingNotification
+                      object:NSApp];
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:NSApplicationDidFinishLaunchingNotification
+                      object:NSApp];
+
     _application->Run();
 }
 
 @end
 
-int main(int argc, const char * argv[]) 
+int main(int argc, const char* argv[])
 {
-	@autoreleasepool 
-	{
+    @autoreleasepool
+    {
         Fuego::Log::Init();
-         
-		FuegoApplication* applicationObject = [FuegoApplication alloc];
 
-		Fuego::Application* app = Fuego::CreateApplication();
-		applicationObject.application = app;
+        FuegoApplication* applicationObject = [FuegoApplication alloc];
 
-		if ([applicationObject respondsToSelector:@selector(run)])
-		{
-			[applicationObject
-				performSelectorOnMainThread:@selector(run)
-				withObject:nil
-				waitUntilDone:YES];
-		}
+        Fuego::Application* app = Fuego::CreateApplication();
+        applicationObject.application = app;
 
-		delete app;
-	}
-	
-	return 0;
+        if ([applicationObject respondsToSelector:@selector(run)])
+        {
+            [applicationObject performSelectorOnMainThread:@selector(run)
+                                                withObject:nil
+                                             waitUntilDone:YES];
+        }
+
+        delete app;
+    }
+
+    return 0;
 }
-#elif(FUEGO_PLATFORM_WIN)
+#elif (FUEGO_PLATFORM_WIN)
 #include "fupch.h"
 
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
+int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline,
+                     int cmdshow)
 {
-	UNUSED(hInst);
-	UNUSED(hInstPrev);
-	UNUSED(cmdline);
-	UNUSED(cmdshow);
+    UNUSED(hInst);
+    UNUSED(hInstPrev);
+    UNUSED(cmdline);
+    UNUSED(cmdshow);
 
-	AllocConsole();
-	FILE* stream;
-	freopen_s(&stream, "CONOUT$", "w", stdout);
-	freopen_s(&stream, "CONOUT$", "w", stderr);
+    AllocConsole();
+    FILE* stream;
+    freopen_s(&stream, "CONOUT$", "w", stdout);
+    freopen_s(&stream, "CONOUT$", "w", stderr);
 
-	Fuego::Log::Init();
+    Fuego::Log::Init();
 
-	Fuego::Application* app = Fuego::CreateApplication();
-	app->Run();
+    Fuego::Application* app = Fuego::CreateApplication();
+    app->Run();
 
-	FreeConsole();
-	delete app;
+    FreeConsole();
+    delete app;
 }
 
 #endif
