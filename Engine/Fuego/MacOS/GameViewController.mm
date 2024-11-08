@@ -16,7 +16,7 @@
 
     _view.device = MTLCreateSystemDefaultDevice();
 
-    if(!_view.device)
+    if (!_view.device)
     {
         NSLog(@"Metal is not supported on this device");
         self.view = [[NSView alloc] initWithFrame:self.view.frame];
