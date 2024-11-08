@@ -3,6 +3,5 @@
 #pragma once
 
 #include "Fuego/Application.h"
-#include "Fuego/Log.h"
-
 #include "Fuego/EntryPoint.h"
+#include "Fuego/Log.h"

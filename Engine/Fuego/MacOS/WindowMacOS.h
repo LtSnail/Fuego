@@ -1,35 +1,40 @@
 #pragma once
 
 #include "Core.h"
-
 #include "Window.h"
 
 namespace Fuego
 {
-    class WindowMacOS : public Window
+class WindowMacOS : public Window
+{
+   public:
+    WindowMacOS(const WindowProps& props, EventQueue& eventQueue);
+    ~WindowMacOS();
+
+    virtual void Update() override;
+
+    inline virtual unsigned int GetWidth() const override
     {
-    public:
-        WindowMacOS(const WindowProps& props, EventQueue& eventQueue);
-        ~WindowMacOS();
+        return m_Props.Width;
+    }
+    inline virtual unsigned int GetHeight() const override
+    {
+        return m_Props.Height;
+    }
 
-        virtual void Update() override;
+    inline virtual void SetVSync(bool enabled) override { UNUSED(enabled); }
+    inline virtual bool IsVSync() const override { return true; }
 
-        inline virtual unsigned int GetWidth() const override { return m_Props.Width; }
-        inline virtual unsigned int GetHeight() const override { return m_Props.Height; }
+   private:
+    void Init(const WindowProps& props, EventQueue& eventQueue);
+    void Shutdown();
 
-        inline virtual void SetVSync(bool enabled) override { UNUSED(enabled); }
-        inline virtual bool IsVSync() const override { return true; }
+    // FuegoWindow*
+    void* m_Window;
 
-    private:
-        void Init(const WindowProps& props, EventQueue& eventQueue);
-        void Shutdown();
+    // FuegoView*
+    void* m_View;
 
-        // FuegoWindow*
-        void* m_Window;
-
-        // FuegoView*
-        void* m_View;
-
-        WindowProps m_Props;
-    };
-}
+    WindowProps m_Props;
+};
+}  // namespace Fuego
