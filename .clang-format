@@ -1,9 +1,7 @@
-Language: Cpp
+# C++, Objective C++, Objective C
 BasedOnStyle: Google
 IndentWidth: 4
 BinPackArguments: false
 AllowAllParametersOfDeclarationOnNextLine: false
 UseTab: Never
 BreakBeforeBraces: Allman
----
-Language: CSharp
