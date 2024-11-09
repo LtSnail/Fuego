@@ -18,7 +18,7 @@ def extract_relative_path(full_path):
 def apply_clang_format_to_dir(directory):
     print(f"Applying clang-format to directory: {directory}")
 
-    cpp_files = []
+    code_files = []
     for root, _, files in os.walk(directory):
         if any(exclusion in root for exclusion in exclusions):
             continue
@@ -27,11 +27,11 @@ def apply_clang_format_to_dir(directory):
             if file.endswith(('.cpp', '.h', '.mm', '.m')):
                 full_path = os.path.join(root, file)
                 if not any(exclusion in full_path for exclusion in exclusions):
-                    cpp_files.append(full_path)
+                    code_files.append(full_path)
 
-    print(f"\nFound C++ files: {len(cpp_files)}")
+    print(f"\nFound Code files: {len(code_files)}")
 
-    for file_path in cpp_files:
+    for file_path in code_files:
         print(f"Applying clang-format to: {extract_relative_path(file_path)}")
         subprocess.run([clang_format_cmd, "-i", "--style=file", file_path], check=True)
 
