@@ -12,9 +12,10 @@ class FUEGO_API EventQueue
     FUEGO_NON_COPYABLE_NON_MOVABLE(EventQueue)
 
     virtual void Update() = 0;
-    virtual std::shared_ptr<const Event> Front() = 0;
+    virtual const Event* Front() = 0;
     virtual void Pop() = 0;
     virtual bool Empty() = 0;
+    virtual void PushEvent(std::unique_ptr<Event> e) = 0;
 
     virtual ~EventQueue() = default;
 

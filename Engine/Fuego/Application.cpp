@@ -26,6 +26,7 @@ void Application::Run()
             switch (ev->GetEventType())
             {
                 case EventType::EventTypeWindowClose:
+                    FU_CORE_TRACE("{0}", ev->ToString());
                     isRunning = false;
                     break;
                 case EventType::EventTypeWindowResize:
@@ -50,7 +51,7 @@ void Application::Run()
                     //
                     break;
                 case EventType::EventTypeKeyPressed:
-                    //
+                    FU_CORE_TRACE("{0}", ev->ToString());
                     break;
                 case EventType::EventTypeKeyReleased:
                     //

@@ -1,10 +1,12 @@
 #pragma once
 
+#include "EventQueueWin.h"
 #include "Window.h"
 
 namespace Fuego
 {
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam,
+                                  LPARAM lParam);
 
 class WindowWin : public Window
 {
@@ -25,9 +27,16 @@ class WindowWin : public Window
     virtual void SetVSync(bool enabled) override;
     virtual bool IsVSync() const override;
 
+    LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+    static std::unordered_map<HWND, WindowWin*> hwndMap;
+
    private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();
+    static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg,
+                                             WPARAM wParam, LPARAM lParam);
+
+    EventQueue& m_EventQueue;
 
     // Window handle
     HANDLE m_Window;

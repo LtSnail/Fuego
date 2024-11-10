@@ -1,26 +1,54 @@
-#include "WindowWin.h"
+﻿#include "WindowWin.h"
 
 namespace Fuego
 {
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-    switch (uMsg)
-    {
-        case WM_CLOSE:
-            DestroyWindow(hWnd);
-            break;
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            return 0;
-    }
+std::unordered_map<HWND, WindowWin*> WindowWin::hwndMap;
 
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
+LRESULT CALLBACK WindowWin::WindowProcStatic(HWND hWnd, UINT uMsg,
+                                             WPARAM wParam, LPARAM lParam)
+{
+    auto _this = WindowWin::hwndMap.find(hWnd);
+
+    if (_this != WindowWin::hwndMap.end() && _this->second)
+    {
+        return _this->second->WindowProc(hWnd, uMsg, wParam, lParam);
+    }
+    else
+    {
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    }
+}
+
+LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    switch (msg)
+    {
+        case WM_KEYDOWN:
+        {
+            int repeatCount = (lparam >> 16) & 0xFF;
+            m_EventQueue.PushEvent(std::make_unique<KeyPressedEvent>(
+                static_cast<int>(wparam), repeatCount));
+            break;
+        }
+        case WM_KEYUP:
+            m_EventQueue.PushEvent(
+                std::make_unique<KeyReleasedEvent>(static_cast<int>(wparam)));
+            break;
+
+        case WM_CLOSE:
+            m_EventQueue.PushEvent(std::make_unique<WindowCloseEvent>());
+            break;
+    }
+    return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
-    : m_HInstance(GetModuleHandle(nullptr)), m_Window(nullptr), m_Hwnd(nullptr)
+    : m_HInstance(GetModuleHandle(nullptr)),
+      m_Window(nullptr),
+      m_Hwnd(nullptr),
+      m_EventQueue(eventQueue)
+
 {
-    UNUSED(eventQueue);
     m_Props = props;
 
     static TCHAR buffer[32] = TEXT("");
@@ -36,7 +64,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     wndClass.hInstance = m_HInstance;
     wndClass.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
     wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wndClass.lpfnWndProc = WindowProc;
+    wndClass.lpfnWndProc = WindowProcStatic;
 
     RegisterClassEx(&wndClass);
 
@@ -62,13 +90,13 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
                             m_HInstance,
                             nullptr);
     FU_CORE_ASSERT(m_Hwnd, "[AppWindow] hasn't been initialized!");
+    hwndMap.emplace(m_Hwnd, this);
     ShowWindow(m_Hwnd, SW_SHOW);
 }
 
 void WindowWin::Update()
 {
     MSG msg{};
-
     while (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE))
     {
         TranslateMessage(&msg);
@@ -88,9 +116,10 @@ void WindowWin::Init(const WindowProps& props, EventQueue& eventQueue)
 
 void WindowWin::Shutdown()
 {
-    if (m_Window != nullptr)
+    if (m_Hwnd != nullptr)
     {
-        UnregisterClass(m_Props.APP_WINDOW_CLASS_NAME, m_HInstance);
+        DestroyWindow(m_Hwnd);
+        m_Hwnd = nullptr;
     }
 }
 
