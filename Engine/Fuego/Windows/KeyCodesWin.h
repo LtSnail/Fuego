@@ -6,236 +6,214 @@
 
 static inline uint16_t GetKeyCode(int winKey)
 {
+#define KEY(x) Fuego::Key::x
+
     switch (winKey)
     {
         case VK_SPACE:
-            return 0;
+            return KEY(Space);
         case VK_OEM_7:
-            return 1;
+            return KEY(Apostrophe);
         case VK_OEM_COMMA:
-            return 2;
+            return KEY(Comma);
         case VK_OEM_MINUS:
-            return 3;
+            return KEY(Minus);
         case VK_OEM_PERIOD:
-            return 4;
+            return KEY(Period);
         case VK_OEM_2:
-            return 5;
+            return KEY(Slash);
         case 0x30:
-            return 10;
+            return KEY(D0);
         case 0x31:
-            return 11;
+            return KEY(D1);
         case 0x32:
-            return 12;
+            return KEY(D2);
         case 0x33:
-            return 13;
+            return KEY(D3);
         case 0x34:
-            return 14;
+            return KEY(D4);
         case 0x35:
-            return 15;
+            return KEY(D5);
         case 0x36:
-            return 16;
+            return KEY(D6);
         case 0x37:
-            return 17;
+            return KEY(D7);
         case 0x38:
-            return 18;
+            return KEY(D8);
         case 0x39:
-            return 19;
+            return KEY(D9);
         case VK_OEM_1:
-            return 20;
+            return KEY(Semicolon);
         case VK_OEM_PLUS:
-            return 21;
+            return KEY(Equal);
         case 0x41:
-            return 30;
+            return KEY(A);
         case 0x42:
-            return 31;
+            return KEY(B);
         case 0x43:
-            return 32;
+            return KEY(C);
         case 0x44:
-            return 33;
+            return KEY(D);
         case 0x45:
-            return 34;
+            return KEY(E);
         case 0x46:
-            return 35;
+            return KEY(F);
         case 0x47:
-            return 36;
+            return KEY(G);
         case 0x48:
-            return 37;
+            return KEY(H);
         case 0x49:
-            return 38;
+            return KEY(I);
         case 0x4A:
-            return 39;
+            return KEY(J);
         case 0x4B:
-            return 40;
+            return KEY(K);
         case 0x4C:
-            return 41;
+            return KEY(L);
         case 0x4D:
-            return 42;
+            return KEY(M);
         case 0x4E:
-            return 43;
+            return KEY(N);
         case 0x4F:
-            return 44;
+            return KEY(O);
         case 0x50:
-            return 45;
+            return KEY(P);
         case 0x51:
-            return 46;
+            return KEY(Q);
         case 0x52:
-            return 47;
+            return KEY(R);
         case 0x53:
-            return 48;
+            return KEY(S);
         case 0x54:
-            return 49;
+            return KEY(T);
         case 0x55:
-            return 50;
+            return KEY(U);
         case 0x56:
-            return 51;
+            return KEY(V);
         case 0x57:
-            return 52;
+            return KEY(W);
         case 0x58:
-            return 53;
+            return KEY(X);
         case 0x59:
-            return 54;
+            return KEY(Y);
         case 0x5A:
-            return 55;
+            return KEY(Z);
         case VK_OEM_4:
-            return 60;
+            return KEY(LeftBracket);
         case VK_OEM_5:
-            return 61;
+            return KEY(Backslash);
         case VK_OEM_6:
-            return 62;
+            return KEY(RightBracket);
         case VK_OEM_3:
-            return 63;
+            return KEY(GraveAccent);
         case VK_ESCAPE:
-            return 80;
+            return KEY(Escape);
         case VK_RETURN:
-            return 81;
+            return KEY(Enter);
         case VK_TAB:
-            return 82;
+            return KEY(Tab);
         case VK_BACK:
-            return 83;
+            return KEY(Backspace);
         case VK_INSERT:
-            return 84;
+            return KEY(Insert);
         case VK_DELETE:
-            return 85;
+            return KEY(Delete);
         case VK_RIGHT:
-            return 86;
+            return KEY(Right);
         case VK_LEFT:
-            return 87;
+            return KEY(Left);
         case VK_DOWN:
-            return 88;
+            return KEY(Down);
         case VK_UP:
-            return 89;
+            return KEY(Up);
         case VK_PRIOR:
-            return 90;
+            return KEY(PageUp);
         case VK_NEXT:
-            return 91;
+            return KEY(PageDown);
         case VK_HOME:
-            return 92;
+            return KEY(Home);
         case VK_END:
-            return 93;
+            return KEY(End);
         case VK_CAPITAL:
-            return 94;
+            return KEY(CapsLock);
         case VK_SCROLL:
-            return 95;
+            return KEY(ScrollLock);
         case VK_NUMLOCK:
-            return 96;
+            return KEY(NumLock);
         case VK_SNAPSHOT:
-            return 97;
+            return KEY(PrintScreen);
         case VK_PAUSE:
-            return 98;
+            return KEY(Pause);
         case VK_F1:
-            return 100;
+            return KEY(F1);
         case VK_F2:
-            return 101;
+            return KEY(F2);
         case VK_F3:
-            return 102;
+            return KEY(F3);
         case VK_F4:
-            return 103;
+            return KEY(F4);
         case VK_F5:
-            return 103;
+            return KEY(F5);
         case VK_F6:
-            return 105;
+            return KEY(F6);
         case VK_F7:
-            return 106;
+            return KEY(F7);
         case VK_F8:
-            return 107;
+            return KEY(F8);
         case VK_F9:
-            return 108;
+            return KEY(F9);
         case VK_F10:
-            return 109;
+            return KEY(F10);
         case VK_F11:
-            return 110;
+            return KEY(F11);
         case VK_F12:
-            return 111;
-        case VK_F13:
-            return 112;
-        case VK_F14:
-            return 113;
-        case VK_F15:
-            return 114;
-        case VK_F16:
-            return 115;
-        case VK_F17:
-            return 116;
-        case VK_F18:
-            return 117;
-        case VK_F19:
-            return 118;
-        case VK_F20:
-            return 119;
-        case VK_F21:
-            return 120;
-        case VK_F22:
-            return 121;
-        case VK_F23:
-            return 122;
-        case VK_F24:
-            return 123;
+            return KEY(F12);
         case VK_NUMPAD0:
-            return 140;
+            return KEY(KP0);
         case VK_NUMPAD1:
-            return 141;
+            return KEY(KP1);
         case VK_NUMPAD2:
-            return 142;
+            return KEY(KP2);
         case VK_NUMPAD3:
-            return 143;
+            return KEY(KP3);
         case VK_NUMPAD4:
-            return 144;
+            return KEY(KP4);
         case VK_NUMPAD5:
-            return 145;
+            return KEY(KP5);
         case VK_NUMPAD6:
-            return 146;
+            return KEY(KP6);
         case VK_NUMPAD7:
-            return 147;
+            return KEY(KP7);
         case VK_NUMPAD8:
-            return 148;
+            return KEY(KP8);
         case VK_NUMPAD9:
-            return 149;
+            return KEY(KP9);
         case VK_DECIMAL:
-            return 160;
+            return KEY(KPDecimal);
         case VK_DIVIDE:
-            return 161;
+            return KEY(KPDivide);
         case VK_MULTIPLY:
-            return 162;
+            return KEY(KPMultiply);
         case VK_SUBTRACT:
-            return 163;
+            return KEY(KPSubtract);
         case VK_ADD:
-            return 164;
+            return KEY(KPAdd);
         case VK_LSHIFT:
-            return 180;
+            return KEY(LeftShift);
         case VK_LCONTROL:
-            return 181;
+            return KEY(LeftControl);
         case VK_LMENU:
-            return 182;
+            return KEY(LeftAlt);
         case VK_LWIN:
-            return 183;
+            return KEY(LeftSuper);
         case VK_RSHIFT:
-            return 184;
+            return KEY(RightShift);
         case VK_RCONTROL:
-            return 185;
+            return KEY(RightControl);
         case VK_RMENU:
-            return 186;
+            return KEY(RightAlt);
         case VK_RWIN:
-            return 187;
+            return KEY(RightSuper);
         case VK_MENU:
-            return 188;
+            return KEY(Menu);
     }
