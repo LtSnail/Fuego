@@ -58,7 +58,6 @@ class FUEGO_API Event
 
    public:
     Event() = default;
-    FUEGO_NON_COPYABLE_NON_MOVABLE(Event)
     virtual EventType GetEventType() const = 0;
     virtual const char* GetName() const = 0;
     virtual int GetCategoryFlags() const = 0;

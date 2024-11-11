@@ -11,12 +11,12 @@ class EventQueueWin : public EventQueue
 {
    public:
     virtual void Update() override;
-    virtual const Event* Front() override;
+    virtual std::shared_ptr<const Event> Front() override;
     virtual void Pop() override;
     virtual bool Empty() override;
-    void PushEvent(std::unique_ptr<Event> e);
+    void PushEvent(std::shared_ptr<Event>&& e);
 
    private:
-    std::queue<std::unique_ptr<Event>> m_Queue;
+    std::queue<std::shared_ptr<Event>> m_Queue;
 };
 }  // namespace Fuego
