@@ -58,6 +58,7 @@ elseif ( WIN32 )
             ${PROJECT_HEADERS}
             Fuego/Windows/EventQueueWin.h
             Fuego/Windows/WindowWin.h
+            Fuego/Windows/KeyCodesWin.h
         )
 
         set( SOURCES
