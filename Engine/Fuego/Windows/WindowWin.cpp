@@ -38,19 +38,20 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         case WM_CLOSE:
             m_EventQueue->PushEvent(std::make_shared<WindowCloseEvent>());
             break;
+
+        default:
+            break;
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
-    : m_HInstance(GetModuleHandle(nullptr)),
+    : m_EventQueue(dynamic_cast<EventQueueWin*>(&eventQueue)), // do not transfer ownership
       m_Window(nullptr),
+      m_HInstance(GetModuleHandle(nullptr)),
       m_Hwnd(nullptr),
-      m_EventQueue(static_cast<EventQueueWin*>(&eventQueue))
-
+      m_Props(props)
 {
-    m_Props = props;
-
     static TCHAR buffer[32] = TEXT("");
 #ifdef UNICODE
     MultiByteToWideChar(
@@ -60,7 +61,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
 #endif
     WNDCLASSEX wndClass = {};
     wndClass.cbSize = sizeof(WNDCLASSEX);
-    wndClass.lpszClassName = props.APP_WINDOW_CLASS_NAME;
+    wndClass.lpszClassName = m_Props.APP_WINDOW_CLASS_NAME;
     wndClass.hInstance = m_HInstance;
     wndClass.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
     wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
@@ -107,12 +108,6 @@ void WindowWin::Update()
 void WindowWin::SetVSync(bool enabled) { UNUSED(enabled); }
 
 bool WindowWin::IsVSync() const { return true; }
-
-void WindowWin::Init(const WindowProps& props, EventQueue& eventQueue)
-{
-    UNUSED(props);
-    UNUSED(eventQueue);
-}
 
 void WindowWin::Shutdown()
 {

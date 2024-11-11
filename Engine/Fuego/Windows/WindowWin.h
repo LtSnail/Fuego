@@ -31,7 +31,6 @@ class WindowWin : public Window
     static std::unordered_map<HWND, WindowWin*> hwndMap;
 
    private:
-    void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();
     static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg,
                                              WPARAM wParam, LPARAM lParam);

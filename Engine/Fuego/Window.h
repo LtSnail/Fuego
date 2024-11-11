@@ -29,7 +29,7 @@ struct WindowProps
     bool HasShadow = true;
 
 #ifdef FUEGO_PLATFORM_WIN
-    constexpr static const TCHAR* APP_WINDOW_CLASS_NAME =
+    const TCHAR* APP_WINDOW_CLASS_NAME =
         TEXT("MainAppWindow Engine");
 #endif
 };
