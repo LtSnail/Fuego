@@ -36,7 +36,7 @@ class WindowWin : public Window
     static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg,
                                              WPARAM wParam, LPARAM lParam);
 
-    EventQueue& m_EventQueue;
+    EventQueueWin* m_EventQueue;
 
     // Window handle
     HANDLE m_Window;

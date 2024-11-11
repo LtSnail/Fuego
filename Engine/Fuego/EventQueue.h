@@ -15,7 +15,6 @@ class FUEGO_API EventQueue
     virtual std::shared_ptr<const Event> Front() = 0;
     virtual void Pop() = 0;
     virtual bool Empty() = 0;
-    virtual void PushEvent(std::shared_ptr<Event>&& e) = 0;
 
     virtual ~EventQueue() = default;
 

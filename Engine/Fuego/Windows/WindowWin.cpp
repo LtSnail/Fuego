@@ -26,17 +26,17 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         case WM_KEYDOWN:
         {
             int repeatCount = (lparam >> 16) & 0xFF;
-            m_EventQueue.PushEvent(std::make_shared<KeyPressedEvent>(
+            m_EventQueue->PushEvent(std::make_shared<KeyPressedEvent>(
                 static_cast<int>(wparam), repeatCount));
             break;
         }
         case WM_KEYUP:
-            m_EventQueue.PushEvent(
+            m_EventQueue->PushEvent(
                 std::make_shared<KeyReleasedEvent>(static_cast<int>(wparam)));
             break;
 
         case WM_CLOSE:
-            m_EventQueue.PushEvent(std::make_shared<WindowCloseEvent>());
+            m_EventQueue->PushEvent(std::make_shared<WindowCloseEvent>());
             break;
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -46,7 +46,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     : m_HInstance(GetModuleHandle(nullptr)),
       m_Window(nullptr),
       m_Hwnd(nullptr),
-      m_EventQueue(eventQueue)
+      m_EventQueue(static_cast<EventQueueWin*>(&eventQueue))
 
 {
     m_Props = props;
