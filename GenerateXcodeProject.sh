@@ -3,6 +3,9 @@
 rootFolder="$(pwd)"
 buildDir="$rootFolder/build/macos"
 
+git -C $rootFolder submodule init
+git -C $rootFolder submodule update
+
 if [ ! -d "$buildDir" ]; then
     mkdir -p "$buildDir"
 fi
@@ -10,6 +13,3 @@ fi
 cd "$buildDir" || exit
 
 cmake -S "$rootFolder" -B . -G "Xcode"
-cmake --build .
-
-read -rp "Press Enter to close the window"
