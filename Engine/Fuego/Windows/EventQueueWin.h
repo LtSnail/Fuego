@@ -13,7 +13,7 @@ class EventQueueWin : public EventQueue
 
    public:
     virtual void Update() override;
-    virtual std::shared_ptr<const Event> Front() override;
+    virtual std::shared_ptr<Event> Front() override;
     virtual void Pop() override;
     virtual bool Empty() override;
 

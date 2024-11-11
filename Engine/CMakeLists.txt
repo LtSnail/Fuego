@@ -13,6 +13,8 @@ set( PROJECT_HEADERS
     Fuego/Events/ApplicationEvent.h
     Fuego/MouseCodes.h
     Fuego/KeyCodes.h
+    Fuego/Layer.h
+    Fuego/LayerStack.h
     Fuego.h
     fupch.h
 )
@@ -20,6 +22,8 @@ set( PROJECT_HEADERS
 set( SOURCES
     Fuego/Application.cpp
     Fuego/Log.cpp
+    Fuego/Layer.cpp
+    Fuego/LayerStack.cpp
 )
 
 if ( APPLE )

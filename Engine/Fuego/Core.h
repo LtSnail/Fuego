@@ -63,6 +63,12 @@
     ClassName(ClassName&&) = delete;                 \
     ClassName& operator=(ClassName&&) = delete;
 
+// TODO: Rewrite to use a custom unique pointer
+#define FUEGO_INTERFACE(ClassName)  \
+    private:                        \
+        class ClassName##Impl;      \
+        ClassName##Impl *d;
+
 #define BIT(x) (1 << x)
 
 #define UNUSED(x) (void)(x)

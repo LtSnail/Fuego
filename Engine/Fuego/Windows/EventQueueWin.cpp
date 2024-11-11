@@ -4,7 +4,7 @@ namespace Fuego
 {
 void EventQueueWin::Update() {}
 
-std::shared_ptr<const Event> EventQueueWin::Front() { return m_Queue.front(); }
+std::shared_ptr<Event> EventQueueWin::Front() { return m_Queue.front(); }
 
 void EventQueueWin::Pop() { m_Queue.pop(); }
 
