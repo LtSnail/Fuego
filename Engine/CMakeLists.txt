@@ -98,6 +98,7 @@ target_compile_definitions( FuegoEngine PUBLIC FUEGO_ENABLE_ASSERTS )
 
 if ( MSVC )
     target_compile_options( FuegoEngine PRIVATE /W4 /WX /permissive- )
+    target_compile_options( FuegoEngine PUBLIC /utf-8 )
 else()
     # -pedantic
     target_compile_options( FuegoEngine PRIVATE -Wall -Wextra -Werror )

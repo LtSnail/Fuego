@@ -12,10 +12,6 @@ if( CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME )
     set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 endif()
 
-if ( WIN32 )
-    add_definitions(-DUNICODE -D_UNICODE)
-endif()
-
 set( ORGANIZATION FUEGO )
 
 add_subdirectory( Engine )
