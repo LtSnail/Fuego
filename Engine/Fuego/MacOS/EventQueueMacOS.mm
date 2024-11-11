@@ -5,7 +5,7 @@
 #include "Log.h"
 #include "MouseCodes.h"
 
-void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<const Event> ev)
+void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<Event> ev)
 {
     eq->m_Queue.push(ev);
 }
@@ -22,7 +22,7 @@ void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<const Event> ev)
 
 - (void)_windowWillClose:(NSNotification*)notification
 {
-    Fuego::PushEvent(_eq, std::make_shared<const Fuego::WindowCloseEvent>());
+    Fuego::PushEvent(_eq, std::make_shared<Fuego::WindowCloseEvent>());
 }
 
 - (void)_windowDidResize:(NSNotification*)notification
@@ -30,7 +30,7 @@ void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<const Event> ev)
     NSWindow* window = (NSWindow*)[notification object];
     NSRect rect = [window contentRectForFrameRect:[window frame]];
     Fuego::PushEvent(
-        _eq, std::make_shared<const Fuego::WindowResizeEvent>(rect.size.width, rect.size.height));
+        _eq, std::make_shared<Fuego::WindowResizeEvent>(rect.size.width, rect.size.height));
 }
 
 - (instancetype)initWithEventQueue:(Fuego::EventQueueMacOS*)eq
@@ -91,28 +91,28 @@ void EventQueueMacOS::Update()
                     break;
                 case NSEventTypeLeftMouseDown:
                     PushEvent(this,
-                              std::make_shared<const MouseButtonPressedEvent>(Mouse::ButtonLeft));
+                              std::make_shared<MouseButtonPressedEvent>(Mouse::ButtonLeft));
                     break;
                 case NSEventTypeLeftMouseUp:
                     PushEvent(this,
-                              std::make_shared<const MouseButtonReleasedEvent>(Mouse::ButtonLeft));
+                              std::make_shared<MouseButtonReleasedEvent>(Mouse::ButtonLeft));
                     break;
                 case NSEventTypeRightMouseDown:
                     PushEvent(this,
-                              std::make_shared<const MouseButtonPressedEvent>(Mouse::ButtonRight));
+                              std::make_shared<MouseButtonPressedEvent>(Mouse::ButtonRight));
                     break;
                 case NSEventTypeRightMouseUp:
                     PushEvent(this,
-                              std::make_shared<const MouseButtonPressedEvent>(Mouse::ButtonRight));
+                              std::make_shared<MouseButtonPressedEvent>(Mouse::ButtonRight));
                     break;
                 case NSEventTypeMouseMoved:
                     PushEvent(this,
-                              std::make_shared<const MouseMovedEvent>(nsEvent.locationInWindow.x,
+                              std::make_shared<MouseMovedEvent>(nsEvent.locationInWindow.x,
                                                                       nsEvent.locationInWindow.y));
                     break;
                 case NSEventTypeScrollWheel:
                     PushEvent(this,
-                              std::make_shared<const MouseScrolledEvent>(nsEvent.scrollingDeltaX,
+                              std::make_shared<MouseScrolledEvent>(nsEvent.scrollingDeltaX,
                                                                          nsEvent.scrollingDeltaY));
                     break;
                 default:
@@ -124,7 +124,7 @@ void EventQueueMacOS::Update()
     }
 }
 
-std::shared_ptr<const Event> EventQueueMacOS::Front() { return m_Queue.front(); }
+std::shared_ptr<Event> EventQueueMacOS::Front() { return m_Queue.front(); }
 
 void EventQueueMacOS::Pop() { m_Queue.pop(); }
 
