@@ -65,78 +65,86 @@ namespace Fuego
 {
 WindowMacOS::WindowMacOS(const WindowProps& props, EventQueue& eventQueue)
 {
-    Init(props, eventQueue);
-}
-
-WindowMacOS::~WindowMacOS() { Shutdown(); }
-
-void WindowMacOS::Update() { [NSApp updateWindows]; }
-
-void WindowMacOS::Init(const WindowProps& props, EventQueue& eventQueue)
-{
-    NSRect rect = NSMakeRect(props.x, props.y, props.Width, props.Height);
-    NSWindowStyleMask styleMask = NSWindowStyleMaskTitled;
-    if (props.Closable)
+    UNUSED(eventQueue);
+    
+    @autoreleasepool
     {
-        styleMask |= NSWindowStyleMaskClosable;
-    }
-    if (props.Resizable)
-    {
-        styleMask |= NSWindowStyleMaskResizable;
-    }
-    if (props.Minimizable)
-    {
-        styleMask |= NSWindowStyleMaskMiniaturizable;
-    }
-    if (!props.Frame)
-    {
-        styleMask |= NSWindowStyleMaskFullSizeContentView;
-    }
-
-    // Setup NSWindow
-    m_Window =
+        NSRect rect = NSMakeRect(props.x, props.y, props.Width, props.Height);
+        NSWindowStyleMask styleMask = NSWindowStyleMaskTitled;
+        if (props.Closable)
+        {
+            styleMask |= NSWindowStyleMaskClosable;
+        }
+        if (props.Resizable)
+        {
+            styleMask |= NSWindowStyleMaskResizable;
+        }
+        if (props.Minimizable)
+        {
+            styleMask |= NSWindowStyleMaskMiniaturizable;
+        }
+        if (!props.Frame)
+        {
+            styleMask |= NSWindowStyleMaskFullSizeContentView;
+        }
+        
+        // Setup NSWindow
+        m_Window =
         (__bridge_retained void*)[[FuegoWindow alloc] initWithContentRect:rect
                                                                 styleMask:styleMask
                                                                   backing:NSBackingStoreBuffered
                                                                     defer:NO];
-    FuegoWindow* w = (__bridge FuegoWindow*)m_Window;
-
-    NSString* title = [NSString stringWithCString:props.Title.c_str()
-                                         encoding:[NSString defaultCStringEncoding]];
-
-    if (!props.Title.empty())
-    {
-        [w setTitle:(NSString*)title];
+        FuegoWindow* w = (__bridge FuegoWindow*)m_Window;
+        
+        NSString* title = [NSString stringWithCString:props.Title.c_str()
+                                             encoding:[NSString defaultCStringEncoding]];
+        
+        if (!props.Title.empty())
+        {
+            [w setTitle:(NSString*)title];
+        }
+        
+        if (props.Centered)
+        {
+            [w center];
+        }
+        else
+        {
+            NSPoint point = NSMakePoint(props.x, props.y);
+            point = [w convertPointToScreen:point];
+            [w setFrameOrigin:point];
+        }
+        
+        [w setHasShadow:props.HasShadow];
+        [w setTitlebarAppearsTransparent:!props.Frame];
+        
+        // Setup NSView
+        rect = [w backingAlignedRect:rect options:NSAlignAllEdgesOutward];
+        m_View = (__bridge_retained void*)[[FuegoView alloc] initWithFrame:rect];
+        FuegoView* v = (__bridge FuegoView*)m_View;
+        
+        [v setHidden:NO];
+        [v setNeedsDisplay:YES];
+        [v setWantsLayer:YES];
+        
+        [w setContentView:v];
+        [w makeKeyAndOrderFront:NSApp];
+        
+        m_Props = props;
     }
+}
 
-    if (props.Centered)
+WindowMacOS::~WindowMacOS()
+{
+    Shutdown();
+}
+
+void WindowMacOS::Update()
+{
+    @autoreleasepool
     {
-        [w center];
+        [NSApp updateWindows];
     }
-    else
-    {
-        NSPoint point = NSMakePoint(props.x, props.y);
-        point = [w convertPointToScreen:point];
-        [w setFrameOrigin:point];
-    }
-
-    [w setHasShadow:props.HasShadow];
-    [w setTitlebarAppearsTransparent:!props.Frame];
-
-    // Setup NSView
-    rect = [w backingAlignedRect:rect options:NSAlignAllEdgesOutward];
-    m_View = (__bridge_retained void*)[[FuegoView alloc] initWithFrame:rect];
-    FuegoView* v = (__bridge FuegoView*)m_View;
-
-    [v setHidden:NO];
-    [v setNeedsDisplay:YES];
-    [v setWantsLayer:YES];
-
-    [w setContentView:v];
-    [w makeKeyAndOrderFront:NSApp];
-
-    eventQueue.Update();
-    m_Props = props;
 }
 
 void WindowMacOS::Shutdown()
