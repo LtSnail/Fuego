@@ -5,23 +5,15 @@
 
 namespace Fuego
 {
-class Log
+class FUEGO_API Log
 {
-   public:
-    FUEGO_API static void Init();
-
-    FUEGO_API inline static std::shared_ptr<spdlog::logger>& GetCoreLogger()
-    {
-        return s_CoreLogger;
-    }
-    FUEGO_API inline static std::shared_ptr<spdlog::logger>& GetClientLogger()
-    {
-        return s_ClientLogger;
-    }
-
    private:
-    static std::shared_ptr<spdlog::logger> s_CoreLogger;
-    static std::shared_ptr<spdlog::logger> s_ClientLogger;
+    class LogImpl;
+
+   public:
+    static void Init();
+    static std::shared_ptr<spdlog::logger>& GetCoreLogger();
+    static std::shared_ptr<spdlog::logger>& GetClientLogger();
 };
 }  // namespace Fuego
 

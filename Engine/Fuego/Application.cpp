@@ -4,21 +4,30 @@
 
 namespace Fuego
 {
-Application::Application()
+class Application::ApplicationImpl
 {
-    m_EventQueue = EventQueue::CreateEventQueue();
-    m_Window = Window::CreateAppWindow(WindowProps(), *m_EventQueue);
-    m_Running = true;
+    friend class Application;
+
+    std::unique_ptr<Window> m_Window;
+    std::unique_ptr<EventQueue> m_EventQueue;
+    bool m_Running;
+    LayerStack m_LayerStack;
+};
+
+Application::Application() : d(new ApplicationImpl())
+{
+    d->m_EventQueue = EventQueue::CreateEventQueue();
+    d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+    d->m_Running = true;
 }
 
-void Application::PushLayer(Layer* layer)
-{
-    m_LayerStack.PushLayer(layer);
-}
+Application::~Application() { delete d; }
+
+void Application::PushLayer(Layer* layer) { d->m_LayerStack.PushLayer(layer); }
 
 void Application::PushOverlay(Layer* overlay)
 {
-    m_LayerStack.PushOverlay(overlay);
+    d->m_LayerStack.PushOverlay(overlay);
 }
 
 void Application::OnEvent(Event& event)
@@ -31,7 +40,7 @@ void Application::OnEvent(Event& event)
 
     FU_CORE_TRACE("{0}", event.ToString());
 
-    for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
+    for (auto it = d->m_LayerStack.end(); it != d->m_LayerStack.begin();)
     {
         (*--it)->OnEvent(event);
         if (event.Handled())
@@ -45,7 +54,7 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 {
     UNUSED(event);
 
-    m_Running = false;
+    d->m_Running = false;
     return true;
 }
 
@@ -57,22 +66,22 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 
 void Application::Run()
 {
-    while (m_Running)
+    while (d->m_Running)
     {
-        m_EventQueue->Update();
-        m_Window->Update();
+        d->m_EventQueue->Update();
+        d->m_Window->Update();
 
-        for (auto layer : m_LayerStack)
+        for (auto layer : d->m_LayerStack)
         {
             layer->OnUpdate();
         }
 
-        while (!m_EventQueue->Empty())
+        while (!d->m_EventQueue->Empty())
         {
-            auto ev = m_EventQueue->Front();
+            auto ev = d->m_EventQueue->Front();
             OnEvent(*ev);
 
-            m_EventQueue->Pop();
+            d->m_EventQueue->Pop();
         }
     }
 }
