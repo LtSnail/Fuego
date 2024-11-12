@@ -4,7 +4,7 @@
 
 #include "KeyCodes.h"
 
-static inline uint16_t GetKeyCode(int winKey)
+static inline Fuego::KeyCode GetKeyCode(int winKey)
 {
 #define KEY(x) Fuego::Key::x
 
