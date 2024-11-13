@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Event.h"
 #include "MouseCodes.h"
 
@@ -62,7 +64,7 @@ class FUEGO_API MouseButtonEvent : public Event
    protected:
     MouseButtonEvent(MouseCode button) : m_Button(button) {}
 
-    int m_Button;
+    uint16_t m_Button;
 };
 
 class FUEGO_API MouseButtonPressedEvent : public MouseButtonEvent
