@@ -3,6 +3,7 @@
 #include "EventQueue.h"
 #include "Events/ApplicationEvent.h"
 #include "Events/KeyEvent.h"
+#include "Events/MouseEvent.h"
 #include "Window.h"
 
 namespace Fuego

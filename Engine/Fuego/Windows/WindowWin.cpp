@@ -23,6 +23,63 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {
+        case WM_ACTIVATE:
+            break;
+
+        case WM_MOUSEMOVE:
+        {
+            float x = static_cast<float>(GET_X_LPARAM(lparam));
+            float y = static_cast<float>(GET_Y_LPARAM(lparam));
+            m_EventQueue->PushEvent(std::make_shared<MouseMovedEvent>(x, y));
+            break;
+        }
+
+        case WM_LBUTTONDOWN:
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseButtonPressedEvent>(Mouse::Button0));
+            break;
+
+        case WM_LBUTTONUP:
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseButtonReleasedEvent>(Mouse::Button0));
+            break;
+
+        case WM_RBUTTONDOWN:
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseButtonPressedEvent>(Mouse::Button1));
+            break;
+
+        case WM_RBUTTONUP:
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseButtonReleasedEvent>(Mouse::Button1));
+            break;
+
+        case WM_MBUTTONDOWN:
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseButtonPressedEvent>(Mouse::Button2));
+            break;
+
+        case WM_MBUTTONUP:
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseButtonReleasedEvent>(Mouse::Button2));
+            break;
+
+        case WM_MOUSEWHEEL:
+        {
+            float yOffset = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseScrolledEvent>(yOffset, 0.f));
+            break;
+        }
+
+        case WM_MOUSEHWHEEL:
+        {
+            float xOffset = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
+            m_EventQueue->PushEvent(
+                std::make_shared<MouseScrolledEvent>(0.f, xOffset));
+            break;
+        }
+
         case WM_KEYDOWN:
         {
             int repeatCount = (lparam >> 16) & 0xFF;
@@ -39,6 +96,15 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
             m_EventQueue->PushEvent(std::make_shared<WindowCloseEvent>());
             break;
 
+        case WM_SIZE:
+        {
+            UINT width = LOWORD(lparam);
+            UINT height = HIWORD(lparam);
+
+            m_EventQueue->PushEvent(
+                std::make_shared<WindowResizeEvent>(width, height));
+        }
+
         default:
             break;
     }
@@ -46,7 +112,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 }
 
 WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
-    : m_EventQueue(dynamic_cast<EventQueueWin*>(&eventQueue)), // do not transfer ownership
+    : m_EventQueue(dynamic_cast<EventQueueWin*>(
+          &eventQueue)),  // do not transfer ownership
       m_Window(nullptr),
       m_HInstance(GetModuleHandle(nullptr)),
       m_Hwnd(nullptr),

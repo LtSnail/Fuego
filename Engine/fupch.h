@@ -20,5 +20,5 @@
 #import <simd/simd.h>
 #endif
 #elif FUEGO_PLATFORM_WIN
-#include <windows.h>
+#include <windowsx.h>
 #endif
