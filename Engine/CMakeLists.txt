@@ -90,6 +90,7 @@ target_link_libraries( FuegoEngine
 target_include_directories( FuegoEngine 
     PUBLIC
     External/spdlog/include
+    External/glm
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
 )
