@@ -1,5 +1,7 @@
 # Engine
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
+
 set( PROJECT_HEADERS 
     Fuego/Application.h
     Fuego/Core.h
@@ -15,6 +17,7 @@ set( PROJECT_HEADERS
     Fuego/KeyCodes.h
     Fuego/Layer.h
     Fuego/LayerStack.h
+    Fuego/ImGui/ImGuiLayer.h
     Fuego.h
     fupch.h
 )
@@ -24,6 +27,11 @@ set( SOURCES
     Fuego/Log.cpp
     Fuego/Layer.cpp
     Fuego/LayerStack.cpp
+    Fuego/ImGui/ImGuiLayer.cpp
+)
+
+set( DEPENDENCIES
+    ImGui
 )
 
 if ( APPLE )
@@ -50,10 +58,12 @@ if ( APPLE )
     find_library( MODELIO ModelIO )
 
     set( DEPENDENCIES
+        ${DEPENDENCIES}
         ${APPKIT}
         ${METAL}
         ${METALKIT}
         ${MODELIO}
+        ${GAMECONTROLLER}
     )
 
 elseif ( WIN32 )
@@ -80,10 +90,9 @@ add_library( FuegoEngine
     SHARED
     ${SOURCES}
     ${PROJECT_HEADERS}
-    ${DEPENDENCIES}
 )
 
-target_link_libraries( FuegoEngine
+target_link_libraries( FuegoEngine PUBLIC
     ${DEPENDENCIES}
 )
 
@@ -91,6 +100,7 @@ target_include_directories( FuegoEngine
     PUBLIC
     External/spdlog/include
     External/glm
+    External/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
 )
