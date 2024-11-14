@@ -62,9 +62,9 @@ namespace Fuego
 	template<class T, class Deleter>
 	inline UniquePtr<T, Deleter>::~UniquePtr()
 	{
-		if (OldPtr)
+		if (Ptr_)
 		{
-			Deleter_(OldPtr);
+			Deleter_(Ptr_);
 		}
 	}
 
