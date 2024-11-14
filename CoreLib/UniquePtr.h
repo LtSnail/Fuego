@@ -21,6 +21,8 @@ namespace Fuego
 		UniquePtr() = default;
 		explicit UniquePtr(T* Ptr) noexcept;
 
+		~UniquePtr();
+
 		UniquePtr(const UniquePtr&) = delete;
 		UniquePtr& operator=(const UniquePtr&) = delete;
 
@@ -55,6 +57,15 @@ namespace Fuego
 	inline UniquePtr<T, Deleter>::UniquePtr(T* Ptr) noexcept
 		: Ptr_(Ptr)
 	{
+	}
+
+	template<class T, class Deleter>
+	inline UniquePtr<T, Deleter>::~UniquePtr()
+	{
+		if (OldPtr)
+		{
+			Deleter_(OldPtr);
+		}
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
