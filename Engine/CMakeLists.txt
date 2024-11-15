@@ -96,10 +96,20 @@ target_include_directories( FuegoEngine
 )
 
 if ( WIN32 )
+    #GLAD
+    set( GLAD_SOURCE_DIR 
+        External/glad
+    )
+
+    list( APPEND 
+        SOURCES ${GLAD_SOURCE_DIR}/src/glad.c
+    )
+
     target_include_directories( FuegoEngine 
-        PUBLIC
-        External/glad/include
-)
+        PRIVATE 
+        ${GLAD_SOURCE_DIR}/include
+    )
+
 endif()
 
 target_precompile_headers( FuegoEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h )

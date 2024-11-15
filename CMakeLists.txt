@@ -16,7 +16,3 @@ set( ORGANIZATION FUEGO )
 
 add_subdirectory( Engine )
 add_subdirectory( Sandbox )
-
-if ( WIN32 )
-    add_subdirectory( Engine/External/glad )
-endif()
