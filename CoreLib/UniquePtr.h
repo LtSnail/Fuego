@@ -9,10 +9,12 @@
 namespace Fuego
 {
 	template<class DeleterType, class PointerType>
-	concept DeleterOf =
-		requires (DeleterType deleter, PointerType * ptr) {
+	concept DeleterOf = requires (DeleterType deleter, PointerType * ptr)
+	{
 			{ deleter(ptr) } -> std::convertible_to<void>;
-	} || requires (DeleterType deleter, std::remove_extent_t<PointerType> ptr []) {
+	} 
+	                 || requires (DeleterType deleter, std::remove_extent_t<PointerType> ptr [])
+	{
 		{ deleter(ptr) } -> std::convertible_to<void>;
 	};
 
@@ -20,13 +22,12 @@ namespace Fuego
 	class UniquePtr
 	{
 	public:
+		FUEGO_NON_COPYABLE(UniquePtr)
+
 		UniquePtr() = default;
 		explicit UniquePtr(std::remove_extent_t<T>* Ptr) noexcept;
 
 		~UniquePtr();
-
-		UniquePtr(const UniquePtr&) = delete;
-		UniquePtr& operator=(const UniquePtr&) = delete;
 
 		UniquePtr(UniquePtr&& Other) noexcept;
 		UniquePtr& operator=(UniquePtr&& Other) noexcept;
@@ -49,6 +50,14 @@ namespace Fuego
 
 		Deleter const & GetDeleter() const noexcept;
 		Deleter& GetDeleter() noexcept;
+
+		template<class U = T>
+		std::remove_extent_t<U> const & operator[](size_t Index) const noexcept
+		requires std::is_array_v<U>;
+
+		template<class U = T>
+		std::remove_extent_t<U>& operator[](size_t Index) noexcept
+		requires std::is_array_v<U>;
 
 	private:
 		std::remove_extent_t<T>* Ptr_ = nullptr;
@@ -169,6 +178,22 @@ namespace Fuego
 	inline Deleter& UniquePtr<T, Deleter>::GetDeleter() noexcept
 	{
 		return Deleter_;
+	}
+
+	template<class T, class Deleter>  requires DeleterOf<Deleter, T>
+	template<class U>
+	inline std::remove_extent_t<U> const& UniquePtr<T, Deleter>::operator[](size_t Index) const noexcept
+	requires std::is_array_v<U>
+	{
+		return Ptr_[Index];
+	}
+
+	template<class T, class Deleter> requires DeleterOf<Deleter, T>
+	template<class U>
+	inline std::remove_extent_t<U>& UniquePtr<T, Deleter>::operator[](size_t Index) noexcept
+		requires std::is_array_v<U>
+	{
+		return Ptr_[Index];
 	}
 
 }
