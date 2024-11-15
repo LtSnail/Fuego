@@ -9,8 +9,10 @@
 namespace Fuego
 {
 	template<class DeleterType, class PointerType>
-	concept DeleterOf = requires (DeleterType deleter, PointerType* ptr)
-	{
+	concept DeleterOf =
+		requires (DeleterType deleter, PointerType * ptr) {
+			{ deleter(ptr) } -> std::convertible_to<void>;
+	} || requires (DeleterType deleter, std::remove_extent_t<PointerType> ptr []) {
 		{ deleter(ptr) } -> std::convertible_to<void>;
 	};
 
