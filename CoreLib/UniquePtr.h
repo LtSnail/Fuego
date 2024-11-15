@@ -21,7 +21,7 @@ namespace Fuego
 	{
 	public:
 		UniquePtr() = default;
-		explicit UniquePtr(T* Ptr) noexcept;
+		explicit UniquePtr(std::remove_extent_t<T>* Ptr) noexcept;
 
 		~UniquePtr();
 
@@ -51,12 +51,12 @@ namespace Fuego
 		Deleter& GetDeleter() noexcept;
 
 	private:
-		T* Ptr_ = nullptr;
+		std::remove_extent_t<T>* Ptr_ = nullptr;
 		Deleter Deleter_ {};
 	};
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
-	inline UniquePtr<T, Deleter>::UniquePtr(T* Ptr) noexcept
+	inline UniquePtr<T, Deleter>::UniquePtr(std::remove_extent_t<T>* Ptr) noexcept
 		: Ptr_(Ptr)
 	{
 	}
