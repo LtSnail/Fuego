@@ -63,6 +63,10 @@
     ClassName(ClassName&&) = delete;                 \
     ClassName& operator=(ClassName&&) = delete;
 
+#define FUEGO_NON_COPYABLE(ClassName)                \
+    ClassName(const ClassName&) = delete;            \
+    ClassName& operator=(const ClassName&) = delete; 
+
 // TODO: Rewrite to use a custom unique pointer
 #define FUEGO_INTERFACE(ClassName) \
    private:                        \
