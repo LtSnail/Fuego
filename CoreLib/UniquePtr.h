@@ -61,7 +61,7 @@ namespace Fuego
 	{
 	}
 
-	template<class T, class Deleter>
+	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline UniquePtr<T, Deleter>::~UniquePtr()
 	{
 		if (Ptr_)
