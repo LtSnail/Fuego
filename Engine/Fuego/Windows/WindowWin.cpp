@@ -1,5 +1,7 @@
 ﻿#include "WindowWin.h"
 
+#include "InputWin.h"
+
 namespace Fuego
 {
 std::unordered_map<HWND, WindowWin*> WindowWin::hwndMap;
@@ -30,6 +32,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
             float x = static_cast<float>(GET_X_LPARAM(lparam));
             float y = static_cast<float>(GET_Y_LPARAM(lparam));
+            _cursorPos = {x, y};
             m_EventQueue->PushEvent(std::make_shared<MouseMovedEvent>(x, y));
             break;
         }
@@ -83,8 +86,10 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         case WM_KEYDOWN:
         {
             int repeatCount = (lparam >> 16) & 0xFF;
-            m_EventQueue->PushEvent(std::make_shared<KeyPressedEvent>(
-                static_cast<int>(wparam), repeatCount));
+            int keyCode = static_cast<int>(wparam);
+            m_EventQueue->PushEvent(
+                std::make_shared<KeyPressedEvent>(keyCode, repeatCount));
+            _lastKey = {Input::KEY_PRESSED, (uint16_t)keyCode};
             break;
         }
         case WM_KEYUP:
@@ -103,10 +108,15 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
             m_EventQueue->PushEvent(
                 std::make_shared<WindowResizeEvent>(width, height));
+            break;
         }
 
         default:
+        {
+            _lastKey = {Input::KEY_NONE, LAST_CODE};
+            _lastMouse = {Input::MOUSE_NONE, LAST_CODE};
             break;
+        }
     }
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
@@ -117,7 +127,10 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
       m_Window(nullptr),
       m_HInstance(GetModuleHandle(nullptr)),
       m_Hwnd(nullptr),
-      m_Props(props)
+      m_Props(props),
+      _lastKey{Input::KEY_NONE, LAST_CODE},
+      _lastMouse{Input::MOUSE_NONE, LAST_CODE},
+      _cursorPos{0.f, 0.f}
 {
     static TCHAR buffer[32] = TEXT("");
 #ifdef UNICODE
@@ -160,6 +173,8 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     FU_CORE_ASSERT(m_Hwnd, "[AppWindow] hasn't been initialized!");
     hwndMap.emplace(m_Hwnd, this);
     ShowWindow(m_Hwnd, SW_SHOW);
+    bool input = Input::Init(new InputWin());
+    FU_CORE_ASSERT(input, "[Input] hasn't been initialized!");
 }
 
 void WindowWin::Update()
@@ -174,7 +189,25 @@ void WindowWin::Update()
 
 void WindowWin::SetVSync(bool enabled) { UNUSED(enabled); }
 
-bool WindowWin::IsVSync() const { return true; }
+bool WindowWin::IsVSync() const { return true; };
+
+Input::KeyState WindowWin::GetKeyState(KeyCode keyCode) const
+{
+    return _lastKey.keyCode == keyCode ? _lastKey.state
+                                       : Input::KeyState::KEY_NONE;
+}
+
+Input::MouseState WindowWin::GetMouseState(MouseCode mouseCode) const
+{
+    return _lastMouse.mouseCode == mouseCode ? _lastMouse.state
+                                             : Input::MouseState::MOUSE_NONE;
+}
+
+void WindowWin::GetCursorPos(OUT float& xPos, OUT float& yPos) const
+{
+    xPos = _cursorPos.x;
+    yPos = _cursorPos.y;
+}
 
 void WindowWin::Shutdown()
 {

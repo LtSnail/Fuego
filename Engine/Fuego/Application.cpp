@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include "Input.h"
 #include "Log.h"
 
 namespace Fuego
@@ -12,13 +13,16 @@ class Application::ApplicationImpl
     std::unique_ptr<EventQueue> m_EventQueue;
     bool m_Running;
     LayerStack m_LayerStack;
+    static Application* m_Instance;
 };
+Application* Application::ApplicationImpl::m_Instance = nullptr;
 
 Application::Application() : d(new ApplicationImpl())
 {
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->m_Running = true;
+    ApplicationImpl::m_Instance = this;
 }
 
 Application::~Application() { delete d; }
@@ -64,6 +68,13 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
     return true;
 }
 
+Application& Application::Get()
+{
+    return *Application::ApplicationImpl::m_Instance;
+}
+
+Window& Application::GetWindow() { return *d->m_Window; }
+
 void Application::Run()
 {
     while (d->m_Running)
@@ -75,6 +86,9 @@ void Application::Run()
         {
             layer->OnUpdate();
         }
+
+        auto [x, y] = Input::GetMousePosition();
+        FU_CORE_TRACE("{0}, {1}", x, y);
 
         while (!d->m_EventQueue->Empty())
         {

@@ -5,6 +5,8 @@
 
 namespace Fuego
 {
+#define LAST_CODE UINT16_MAX
+
 LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam,
                                   LPARAM lParam);
 
@@ -27,8 +29,14 @@ class WindowWin : public Window
     virtual void SetVSync(bool enabled) override;
     virtual bool IsVSync() const override;
 
+    inline virtual void* GetNativeWindow() const { return m_Hwnd; }
+
     LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
     static std::unordered_map<HWND, WindowWin*> hwndMap;
+
+    Input::KeyState GetKeyState(KeyCode keyCode) const;
+    Input::MouseState GetMouseState(MouseCode mouseCode) const;
+    void GetCursorPos(OUT float& xPos, OUT float& yPos) const;
 
    private:
     void Shutdown();
@@ -36,6 +44,9 @@ class WindowWin : public Window
                                              WPARAM wParam, LPARAM lParam);
 
     EventQueueWin* m_EventQueue;
+    Input::KeyInfo _lastKey;
+    Input::MouseInfo _lastMouse;
+    Input::CursorPos _cursorPos;
 
     // Window handle
     HANDLE m_Window;

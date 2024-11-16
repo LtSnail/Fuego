@@ -25,6 +25,9 @@ class FUEGO_API Application
     void OnEvent(Event& event);
     bool OnWindowClose(WindowCloseEvent& event);
     bool OnWindowResize(WindowResizeEvent& event);
+
+    static Application& Get();
+    Window& GetWindow();
 };
 
 // Should be defined in a client.

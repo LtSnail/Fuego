@@ -16,6 +16,7 @@ set( PROJECT_HEADERS
     Fuego/MouseCodes.h
     Fuego/KeyCodes.h
     Fuego/Layer.h
+    Fuego/Input.h
     Fuego/LayerStack.h
     Fuego/ImGui/ImGuiLayer.h
     Fuego.h
@@ -73,12 +74,14 @@ elseif ( WIN32 )
             Fuego/Windows/EventQueueWin.h
             Fuego/Windows/WindowWin.h
             Fuego/Windows/KeyCodesWin.h
+            Fuego/Windows/InputWin.h
         )
 
         set( SOURCES
             ${SOURCES}
             Fuego/Windows/EventQueueWin.cpp
             Fuego/Windows/WindowWin.cpp
+            Fuego/Windows/InputWin.cpp
         )
 
     else()
