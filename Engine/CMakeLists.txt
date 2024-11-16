@@ -17,6 +17,7 @@ set( PROJECT_HEADERS
     Fuego/KeyCodes.h
     Fuego/Layer.h
     Fuego/LayerStack.h
+    Fuego/Input.h
     Fuego/ImGui/ImGuiLayer.h
     Fuego.h
     fupch.h
