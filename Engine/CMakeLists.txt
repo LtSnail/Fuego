@@ -81,6 +81,10 @@ elseif ( WIN32 )
             Fuego/Windows/WindowWin.cpp
         )
 
+        set( DEPENDENCIES
+            ${DEPENDENCIES}
+        )
+
     else()
         message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
     endif()
