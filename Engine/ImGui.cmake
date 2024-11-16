@@ -43,6 +43,19 @@ if ( APPLE )
         ${MODELIO}
         ${GAMECONTROLLER}
     )
+    elseif( WIN32 )
+    set( PROJECT_HEADERS
+        ${PROJECT_HEADERS}
+        External/imgui/backends/imgui_impl_win32.h
+        External/imgui/backends/imgui_impl_opengl3.h
+    )
+
+    set( SOURCES
+        ${SOURCES}
+        External/imgui/backends/imgui_impl_win32.cpp
+        External/imgui/backends/imgui_impl_opengl3.cpp
+    )
+
 endif()
 
 add_library(ImGui STATIC
@@ -60,3 +73,21 @@ target_include_directories( ImGui
 target_link_libraries( ImGui PUBLIC
     ${DEPENDENCIES}
 )
+
+if ( WIN32 )
+
+    add_custom_command(
+        TARGET ImGui POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_SOURCE_DIR}/Engine/External/imgui/misc/debuggers/imgui.natstepfilter
+                    ${CMAKE_SOURCE_DIR}/build/win
+    )
+
+    add_custom_command(
+        TARGET ImGui POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${CMAKE_SOURCE_DIR}/Engine/External/imgui/misc/debuggers/imgui.natvis
+                    ${CMAKE_SOURCE_DIR}/build/win
+    )
+    
+endif()
