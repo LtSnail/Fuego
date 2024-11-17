@@ -24,7 +24,9 @@ elseif( WIN32 )
 	target_compile_definitions( CoreLibTests PUBLIC FUEGO_PLATFORM_WIN )
 endif()
 
-target_include_directories(CoreLibTests PRIVATE
+target_compile_definitions( CoreLibTests PUBLIC FUEGO_BUILD_LIB )
+
+target_include_directories( CoreLibTests PRIVATE
     ${ROOT}
 	${ROOT}/External/googletest/googletest/include
 )
