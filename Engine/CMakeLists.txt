@@ -40,12 +40,14 @@ if ( APPLE )
         ${PROJECT_HEADERS}
         Fuego/MacOS/EventQueueMacOS.h
         Fuego/MacOS/WindowMacOS.h
+        Fuego/MacOS/InputMacOS.h
     )
 
     set( SOURCES
         ${SOURCES}
         Fuego/MacOS/EventQueueMacOS.mm
         Fuego/MacOS/WindowMacOS.mm
+        Fuego/MacOS/InputMacOS.cpp
     )
 
     set( ENGINE_SHADERS 
