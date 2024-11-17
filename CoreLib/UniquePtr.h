@@ -9,14 +9,16 @@
 namespace Fuego
 {
 	template<class DeleterType, class PointerType>
-	concept DeleterOf = requires (DeleterType deleter, PointerType * ptr)
+	concept DeleterOf =
+	requires (DeleterType deleter, PointerType * ptr)
 	{
 			{ deleter(ptr) } -> std::convertible_to<void>;
 	} 
-	                 || requires (DeleterType deleter, std::remove_extent_t<PointerType> ptr [])
+	||
+	(std::is_array_v<PointerType> && requires (DeleterType deleter, PointerType ptr)
 	{
 		{ deleter(ptr) } -> std::convertible_to<void>;
-	};
+	});
 
 	template<class T, class Deleter = std::default_delete<T>> requires DeleterOf<Deleter, T>
 	class FUEGO_API UniquePtr
@@ -25,7 +27,7 @@ namespace Fuego
 		FUEGO_NON_COPYABLE(UniquePtr)
 
 		UniquePtr() = default;
-		explicit UniquePtr(std::remove_extent_t<T>* Ptr) noexcept;
+		explicit UniquePtr(std::remove_extent_t<T>* ptr) noexcept;
 
 		~UniquePtr();
 
@@ -43,7 +45,7 @@ namespace Fuego
 		void Swap(UniquePtr<T>& Other) noexcept;
 
 		T* Release() noexcept;
-		void Reset(T* Ptr = nullptr) noexcept;
+		void Reset(T* ptr = nullptr) noexcept;
 
 		T const * Get() const noexcept;
 		T* Get() noexcept;
@@ -60,28 +62,28 @@ namespace Fuego
 		requires std::is_array_v<U>;
 
 	private:
-		std::remove_extent_t<T>* Ptr_ = nullptr;
-		Deleter Deleter_ {};
+		std::remove_extent_t<T>* _ptr = nullptr;
+		Deleter _deleter {};
 	};
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
-	inline UniquePtr<T, Deleter>::UniquePtr(std::remove_extent_t<T>* Ptr) noexcept
-		: Ptr_(Ptr)
+	inline UniquePtr<T, Deleter>::UniquePtr(std::remove_extent_t<T>* ptr) noexcept
+		: _ptr(ptr)
 	{
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline UniquePtr<T, Deleter>::~UniquePtr()
 	{
-		if (Ptr_)
+		if (_ptr)
 		{
-			Deleter_(Ptr_);
+			_deleter(_ptr);
 		}
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline UniquePtr<T, Deleter>::UniquePtr(UniquePtr<T, Deleter>&& Other) noexcept
-		: Ptr_(Other.Release()), Deleter_(std::move_if_noexcept(Other.Deleter_))
+		: _ptr(Other.Release()), _deleter(std::move_if_noexcept(Other._deleter))
 	{
 	}
 
@@ -91,7 +93,7 @@ namespace Fuego
 		if (this != &Other)
 		{
 			Reset(Other.Release());
-			Deleter_ = std::move_if_noexcept(Other.Deleter_);
+			_deleter = std::move_if_noexcept(Other._deleter);
 		}
 
 		return *this;
@@ -100,84 +102,84 @@ namespace Fuego
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T const& UniquePtr<T, Deleter>::operator*() const noexcept
 	{
-		FU_ASSERT(Ptr_, "Null pointer dereferencing");
-		return *Ptr_;
+		FU_ASSERT(_ptr, "Null pointer dereferencing");
+		return *_ptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T& UniquePtr<T, Deleter>::operator*() noexcept
 	{
-		FU_ASSERT(Ptr_, "Null pointer dereferencing");
-		return *Ptr_;
+		FU_ASSERT(_ptr, "Null pointer dereferencing");
+		return *_ptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T const* UniquePtr<T, Deleter>::operator->() const noexcept
 	{
-		return Ptr_;
+		return _ptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T* UniquePtr<T, Deleter>::operator->() noexcept
 	{
-		return Ptr_;
+		return _ptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline UniquePtr<T, Deleter>::operator bool() const noexcept
 	{
-		return Ptr_ != nullptr;
+		return _ptr != nullptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline void UniquePtr<T, Deleter>::Swap(UniquePtr<T>& Other) noexcept
 	{
-		std::swap(Ptr_, Other.Ptr_);
-		std::swap(Deleter_, Other.Deleter_);
+		std::swap(_ptr, Other._ptr);
+		std::swap(_deleter, Other._deleter);
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T* UniquePtr<T, Deleter>::Release() noexcept
 	{
-		T* Temp = Ptr_;
-		Ptr_ = nullptr;
+		T* Temp = _ptr;
+		_ptr = nullptr;
 		return Temp;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
-	inline void UniquePtr<T, Deleter>::Reset(T* Ptr) noexcept
+	inline void UniquePtr<T, Deleter>::Reset(T* ptr) noexcept
 	{
-		T* OldPtr = Ptr_;
-		Ptr_ = Ptr;
+		T* OldPtr = _ptr;
+		_ptr = ptr;
 
 		if (OldPtr)
 		{
-			Deleter_(OldPtr);
+			_deleter(OldPtr);
 		}
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T const* UniquePtr<T, Deleter>::Get() const noexcept
 	{
-		return Ptr_;
+		return _ptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline T* UniquePtr<T, Deleter>::Get() noexcept
 	{
-		return Ptr_;
+		return _ptr;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline Deleter const& UniquePtr<T, Deleter>::GetDeleter() const noexcept
 	{
-		return Deleter_;
+		return _deleter;
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
 	inline Deleter& UniquePtr<T, Deleter>::GetDeleter() noexcept
 	{
-		return Deleter_;
+		return _deleter;
 	}
 
 	template<class T, class Deleter>  requires DeleterOf<Deleter, T>
@@ -185,7 +187,7 @@ namespace Fuego
 	inline std::remove_extent_t<U> const& UniquePtr<T, Deleter>::operator[](size_t Index) const noexcept
 	requires std::is_array_v<U>
 	{
-		return Ptr_[Index];
+		return _ptr[Index];
 	}
 
 	template<class T, class Deleter> requires DeleterOf<Deleter, T>
@@ -193,7 +195,7 @@ namespace Fuego
 	inline std::remove_extent_t<U>& UniquePtr<T, Deleter>::operator[](size_t Index) noexcept
 		requires std::is_array_v<U>
 	{
-		return Ptr_[Index];
+		return _ptr[Index];
 	}
 
 }
