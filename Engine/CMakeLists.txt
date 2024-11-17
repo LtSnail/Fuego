@@ -1,5 +1,7 @@
 # Engine
 
+set ( FUEGO_DYNAMIC_LIB ON CACHE BOOL "Build dynamic library (ON/OFF)" )
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
 
 set( PROJECT_HEADERS 
@@ -90,11 +92,21 @@ elseif ( WIN32 )
     endif()
 endif()
 
-add_library( FuegoEngine
-    SHARED
-    ${SOURCES}
-    ${PROJECT_HEADERS}
+if ( FUEGO_DYNAMIC_LIB )
+    add_library( FuegoEngine
+        SHARED
+        ${SOURCES}
+        ${PROJECT_HEADERS}
+    )
+
+else()
+    add_library( FuegoEngine
+        STATIC
+        ${SOURCES}
+        ${PROJECT_HEADERS}
 )
+
+endif()
 
 target_link_libraries( FuegoEngine PUBLIC
     ${DEPENDENCIES}
@@ -127,6 +139,11 @@ if ( WIN32 )
 endif()
 
 target_precompile_headers( FuegoEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h )
+
+if ( FUEGO_DYNAMIC_LIB )
+    target_compile_definitions( FuegoEngine PRIVATE FUEGO_DYNAMIC_LIB )
+endif()
+
 target_compile_definitions( FuegoEngine PRIVATE FUEGO_BUILD_LIB )
 target_compile_features( FuegoEngine PUBLIC cxx_std_20 )
 

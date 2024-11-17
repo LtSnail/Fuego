@@ -51,11 +51,17 @@
 #define FU_CORE_ASSERT(x, ...)
 #endif
 
-#if defined(FUEGO_BUILD_LIB)
-#define FUEGO_API EXPORT
+// clang-format off
+#if defined(FUEGO_DYNAMIC_LIB)
+    #if defined(FUEGO_BUILD_LIB)
+        #define FUEGO_API EXPORT
+    #else
+        #define FUEGO_API IMPORT
+    #endif
 #else
-#define FUEGO_API IMPORT
+    #define FUEGO_API
 #endif
+// clang-format on
 
 #define FUEGO_NON_COPYABLE_NON_MOVABLE(ClassName)    \
     ClassName(const ClassName&) = delete;            \
@@ -63,9 +69,9 @@
     ClassName(ClassName&&) = delete;                 \
     ClassName& operator=(ClassName&&) = delete;
 
-#define FUEGO_NON_COPYABLE(ClassName)                \
-    ClassName(const ClassName&) = delete;            \
-    ClassName& operator=(const ClassName&) = delete; 
+#define FUEGO_NON_COPYABLE(ClassName)     \
+    ClassName(const ClassName&) = delete; \
+    ClassName& operator=(const ClassName&) = delete;
 
 // TODO: Rewrite to use a custom unique pointer
 #define FUEGO_INTERFACE(ClassName) \
