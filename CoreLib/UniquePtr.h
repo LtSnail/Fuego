@@ -1,27 +1,13 @@
 ﻿#pragma once
 
+
+#include "CoreLibConcepts.h"
+
 #include <Engine/Fuego/Core.h>
 
-#include <concepts>
-#include <memory>
 
 namespace Fuego
 {
-    template<class T, class Deleter>
-    concept TypeDeleter = !std::is_array_v<T> && requires (Deleter deleter, std::remove_extent_t<T>* ptr)
-    {
-        { deleter(ptr) } ->  std::convertible_to<void>;
-    };
-
-    template<class T, class Deleter>
-    concept UnboundedArrayDeleter = std::is_unbounded_array_v<T> && requires (Deleter deleter, std::remove_extent_t<T>* ptr)
-    {
-        { deleter(ptr) } -> std::convertible_to<void>;
-    };
-
-    template<class T, class Deleter>
-    concept IsDefaultCompatibleDeleter = TypeDeleter<T, Deleter> || UnboundedArrayDeleter<T, Deleter>;
-
     template<class T, class Deleter = std::default_delete<T>> requires IsDefaultCompatibleDeleter<T, Deleter>
     class UniquePtr
     {
