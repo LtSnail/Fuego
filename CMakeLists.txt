@@ -17,3 +17,5 @@ set( ORGANIZATION FUEGO )
 add_subdirectory( Engine )
 add_subdirectory( Sandbox )
 add_subdirectory( CoreLib )
+
+add_subdirectory( External/googletest ) 
