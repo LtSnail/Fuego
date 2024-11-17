@@ -3,7 +3,7 @@
 
 #include "CoreLibConcepts.h"
 
-#include <Engine/Fuego/Core.h>
+#include <Core.h>
 
 
 namespace Fuego

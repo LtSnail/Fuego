@@ -28,7 +28,7 @@ endif()
 target_compile_definitions( CoreLibTests PUBLIC FUEGO_BUILD_LIB )
 
 target_include_directories( CoreLibTests PRIVATE
-    ${ROOT}
+    ${ROOT}/Engine/Fuego
     ${ROOT}/External/googletest/googletest/include
 )
 
