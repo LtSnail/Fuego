@@ -19,7 +19,7 @@ namespace Fuego
 	};
 
 	template<class T, class Deleter = std::default_delete<T>> requires DeleterOf<Deleter, T>
-	class UniquePtr
+	class FUEGO_API UniquePtr
 	{
 	public:
 		FUEGO_NON_COPYABLE(UniquePtr)
