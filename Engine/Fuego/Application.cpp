@@ -87,9 +87,6 @@ void Application::Run()
             layer->OnUpdate();
         }
 
-        auto [x, y] = Input::GetMousePosition();
-        FU_CORE_TRACE("{0}, {1}", x, y);
-
         while (!d->m_EventQueue->Empty())
         {
             auto ev = d->m_EventQueue->Front();
