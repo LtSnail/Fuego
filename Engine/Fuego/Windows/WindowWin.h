@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EventQueueWin.h"
+#include "OpenGL/OpenGLContext.h"
 #include "Window.h"
 
 namespace Fuego
@@ -40,6 +41,8 @@ class WindowWin : public Window
     void Shutdown();
     static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg,
                                              WPARAM wParam, LPARAM lParam);
+
+    GraphicsContext* _context;
 
     EventQueueWin* m_EventQueue;
     Input::KeyInfo _lastKey;

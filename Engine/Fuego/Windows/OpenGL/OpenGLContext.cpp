@@ -1,0 +1,56 @@
+﻿#include "OpenGLContext.h"
+
+// clang-format off
+#include "fupch.h"
+#include "glad/gl.h"
+#include "glad/wgl.h"
+// clang-format on
+
+namespace Fuego
+{
+OpenGLContext::OpenGLContext(HWND* windowHandle)
+    : _windowHandle(windowHandle), _openGLContext(nullptr)
+{
+    FU_CORE_ASSERT(_windowHandle, "OpenGL context is nullptr");
+}
+
+OpenGLContext::~OpenGLContext()
+{
+    wglMakeCurrent(nullptr, nullptr);
+    wglDeleteContext(_openGLContext);
+}
+
+bool OpenGLContext::Init()
+{
+    HDC hdc = GetDC(*_windowHandle);
+
+    PIXELFORMATDESCRIPTOR pfd = {};
+    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 32;
+    pfd.cDepthBits = 24;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+
+    int pixelFormat = ChoosePixelFormat(hdc, &pfd);
+    SetPixelFormat(hdc, pixelFormat, &pfd);
+
+    _openGLContext = wglCreateContext(hdc);
+
+    wglMakeCurrent(hdc, _openGLContext);
+
+    if (!gladLoaderLoadWGL(hdc))
+    {
+        FU_CORE_CRITICAL("[OpenGL] hasn't been initialized!");
+        return false;
+    }
+
+    return true;
+}
+void OpenGLContext::SwapBuffers()
+{
+    HDC hdc = GetDC(*_windowHandle);
+    ::SwapBuffers(hdc);
+}
+}  // namespace Fuego
