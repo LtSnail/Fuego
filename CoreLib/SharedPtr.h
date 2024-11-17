@@ -9,18 +9,6 @@
 
 namespace Fuego
 {
-    template<class T, class SharedPtrT>
-    concept HasControlBlock = requires
-    {
-        typename SharedPtrT::_ControlBlock;
-        requires requires(typename SharedPtrT::_ControlBlock cb)
-        {
-            { cb._weak_count } -> std::same_as<uint32_t>;
-            { cb._strong_count } -> std::same_as<uint32_t>;
-            { cb._ptr } -> std::same_as<std::remove_extent_t<T>*>;
-        };
-    };
-
     template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
     class SharedPtr;
 

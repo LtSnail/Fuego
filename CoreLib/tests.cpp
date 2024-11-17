@@ -1,4 +1,5 @@
 ﻿#include "UniquePtr.h"
+#include "SharedPtr.h"
 
 #include <gtest/gtest.h>
 
@@ -183,12 +184,174 @@ public:
 
 TEST(CoreLibTests, UniquePtr_ClassPtrTest)
 {
-    UniquePtr<CheckClassPtr> ptr (new CheckClassPtr);
-    EXPECT_EQ(ptr->Call(), 11);
+    UniquePtr<CheckClassPtr> Ptr (new CheckClassPtr);
+    EXPECT_EQ(Ptr->Call(), 11);
 }
 
 TEST(CoreLibTests, UniquePtr_ClassPtrDereferanceTest)
 {
-    UniquePtr<CheckClassPtr> ptr(new CheckClassPtr);
-    EXPECT_EQ((*ptr).Call(), 11);
+    UniquePtr<CheckClassPtr> Ptr(new CheckClassPtr);
+    EXPECT_EQ((*Ptr).Call(), 11);
+}
+
+TEST(CoreLibTests, SharedPtr_DefaultConstructorTest)
+{
+    SharedPtr<int> Sp;
+    EXPECT_EQ(Sp.Get(), nullptr);
+    EXPECT_EQ(Sp.UseCount(), 0);
+}
+
+TEST(CoreLibTests, SharedPtr_ConstructorWithPointerTest)
+{
+    SharedPtr<int> Sp (new int(42));
+    EXPECT_NE(Sp.Get(), nullptr);
+    EXPECT_EQ(*Sp, 42);
+    EXPECT_EQ(Sp.UseCount(), 1);
+}
+
+TEST(CoreLibTests, SharedPtr_DestructorReleasesResourceTest)
+{
+    SharedPtr<int>* Sp = new SharedPtr<int>(new int(42));
+    delete Sp;
+    SUCCEED();
+}
+
+TEST(CoreLibTests, SharedPtr_CopyConstructorTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = Sp1;
+    EXPECT_EQ(Sp1.Get(), Sp2.Get());
+    EXPECT_EQ(Sp1.UseCount(), 2);
+}
+
+TEST(CoreLibTests, SharedPtr_MoveConstructorTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = std::move(Sp1);
+    EXPECT_EQ(Sp1.Get(), nullptr);
+    EXPECT_EQ(Sp2.UseCount(), 1);
+}
+
+TEST(CoreLibTests, SharedPtr_CopyAssignmentTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = SharedPtr<int>();
+    Sp2 = Sp1;
+    EXPECT_EQ(Sp1.Get(), Sp2.Get());
+    EXPECT_EQ(Sp1.UseCount(), 2);
+}
+
+TEST(CoreLibTests, SharedPtr_MoveAssignmentTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = SharedPtr<int>();
+    Sp2 = std::move(Sp1);
+    EXPECT_EQ(Sp1.Get(), nullptr);
+    EXPECT_EQ(Sp2.UseCount(), 1);
+}
+
+TEST(CoreLibTests, SharedPtr_ArrayAccessTest)
+{
+    auto Sp = SharedPtr<int[]>(new int[3] {1, 2, 3});
+    EXPECT_EQ(Sp[0], 1);
+    EXPECT_EQ(Sp[1], 2);
+    EXPECT_EQ(Sp[2], 3);
+    Sp[1] = 42;
+    EXPECT_EQ(Sp[1], 42);
+}
+
+TEST(CoreLibTests, WeakPtr_LockReturnsSharedPtrTest)
+{
+    auto Sp = SharedPtr<int>(new int(42));
+    WeakPtr<int> Wp(Sp);
+    auto Sp2 = Wp.Lock();
+    EXPECT_EQ(Sp.Get(), Sp2.Get());
+    EXPECT_EQ(Sp2.UseCount(), 2);
+}
+
+TEST(CoreLibTests, WeakPtr_ExpiredReturnsTrueTest)
+{
+    WeakPtr<int> Wp;
+    {
+        auto Sp = SharedPtr<int>(new int(42));
+        Wp = Sp;
+    }
+    EXPECT_TRUE(Wp.Expired());
+}
+
+TEST(CoreLibTests, WeakPtr_ReleaseResetsWeakPtrTest)
+{
+    auto Sp = SharedPtr<int>(new int(42));
+    WeakPtr<int> Wp(Sp);
+    Wp.Release();
+    EXPECT_TRUE(Wp.Expired());
+    EXPECT_EQ(Wp.Lock().Get(), nullptr);
+}
+
+TEST(CoreLibTests, SharedPtr_ResetReleasesResourceTest)
+{
+    auto Sp = SharedPtr<int>(new int(42));
+    Sp.Reset();
+    EXPECT_EQ(Sp.Get(), nullptr);
+    EXPECT_EQ(Sp.UseCount(), 0);
+}
+
+TEST(CoreLibTests, SharedPtr_SwapExchangesResourcesTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = SharedPtr<int>(new int(24));
+    Sp1.Swap(Sp2);
+    EXPECT_EQ(*Sp1, 24);
+    EXPECT_EQ(*Sp2, 42);
+}
+
+TEST(CoreLibTests, SharedPtr_EqualityOperatorTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = Sp1;
+    EXPECT_TRUE(Sp1 == Sp2.Get());
+    EXPECT_FALSE(Sp1 == nullptr);
+}
+
+TEST(CoreLibTests, SharedPtr_InequalityOperatorTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = SharedPtr<int>(new int(24));
+    EXPECT_TRUE(Sp1 != Sp2.Get());
+    EXPECT_FALSE(Sp1 != Sp1.Get());
+}
+
+TEST(CoreLibTests, SharedPtr_UseCountIncreasesOnCopyTest)
+{
+    auto Sp1 = SharedPtr<int>(new int(42));
+    auto Sp2 = Sp1;
+    EXPECT_EQ(Sp1.UseCount(), 2);
+    EXPECT_EQ(Sp2.UseCount(), 2);
+}
+
+TEST(CoreLibTests, SharedPtr_UseCountDecreasesOnResetTest)
+{
+    auto Sp = SharedPtr<int>(new int(42));
+    Sp.Reset();
+    EXPECT_EQ(Sp.UseCount(), 0);
+}
+
+TEST(CoreLibTests, SharedPtrWeakPtr_SharedPtrFromWeakPtrTest)
+{
+    auto Sp = SharedPtr<int>(new int(42));
+    WeakPtr<int> Wp(Sp);
+    auto Sp2 = Wp.Lock();
+    EXPECT_EQ(Sp.Get(), Sp2.Get());
+    EXPECT_EQ(Sp2.UseCount(), 2);
+}
+
+TEST(CoreLibTests, SharedPtrWeakPtr_WeakPtrTracksResourceTest)
+{
+    WeakPtr<int> Wp;
+    {
+        auto Sp = SharedPtr<int>(new int(42));
+        Wp = Sp;
+        EXPECT_FALSE(Wp.Expired());
+    }
+    EXPECT_TRUE(Wp.Expired());
 }
