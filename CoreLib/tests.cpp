@@ -171,3 +171,24 @@ TEST(CoreLibTests, UniquePtr_BoolCastTest)
 	UniquePtr<int> Ptr(nullptr);
 	EXPECT_FALSE(bool(Ptr));
 }
+
+class CheckClassPtr
+{
+public:
+	int Call()
+	{
+		return 11;
+	}
+};
+
+TEST(CoreLibTests, UniquePtr_ClassPtrTest)
+{
+	UniquePtr<CheckClassPtr> ptr (new CheckClassPtr);
+	EXPECT_EQ(ptr->Call(), 11);
+}
+
+TEST(CoreLibTests, UniquePtr_ClassPtrDereferanceTest)
+{
+	UniquePtr<CheckClassPtr> ptr(new CheckClassPtr);
+	EXPECT_EQ((*ptr).Call(), 11);
+}
