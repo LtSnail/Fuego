@@ -43,6 +43,7 @@ TEST(CoreLibTests, UniquePtr_ReleaseTest)
 	UniquePtr<int> Ptr(new int(25));
 	int* RawPtr = Ptr.Release();
 	EXPECT_EQ(Ptr.Get(), nullptr);
+	EXPECT_EQ(*RawPtr, 25);
 	delete RawPtr;
 }
 
