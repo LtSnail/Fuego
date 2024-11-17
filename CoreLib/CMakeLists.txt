@@ -27,5 +27,7 @@ target_compile_definitions( CoreLibTests PUBLIC FUEGO_BUILD_LIB )
 
 target_include_directories( CoreLibTests PRIVATE
     ${ROOT}
-	${ROOT}/External/googletest/googletest/include
+    ${ROOT}/External/googletest/googletest/include
 )
+
+add_test(NAME CoreLibTests COMMAND ${CMAKE_BINARY_DIR}/CoreLib/$<CONFIG>/CoreLibTests)
