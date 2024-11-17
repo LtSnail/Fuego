@@ -172,7 +172,13 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
                             nullptr);
     FU_CORE_ASSERT(m_Hwnd, "[AppWindow] hasn't been initialized!");
     hwndMap.emplace(m_Hwnd, this);
+
+    _context = new OpenGLContext(&m_Hwnd);
+    _context->Init();
+    FU_CORE_ASSERT(_context, "[GraphicsContext] hasn't been initialized!");
+
     ShowWindow(m_Hwnd, SW_SHOW);
+
     bool input = Input::Init(new InputWin());
     FU_CORE_ASSERT(input, "[Input] hasn't been initialized!");
 }

@@ -21,6 +21,7 @@ set( PROJECT_HEADERS
     Fuego/ImGui/ImGuiLayer.h
     Fuego.h
     fupch.h
+    Fuego/Renderer/GraphicsContext.h
 )
 
 set( SOURCES
@@ -75,6 +76,7 @@ elseif ( WIN32 )
             Fuego/Windows/WindowWin.h
             Fuego/Windows/KeyCodesWin.h
             Fuego/Windows/InputWin.h
+            Fuego/Windows/OpenGL/OpenGLContext.h
         )
 
         set( SOURCES
@@ -82,8 +84,9 @@ elseif ( WIN32 )
             Fuego/Windows/EventQueueWin.cpp
             Fuego/Windows/WindowWin.cpp
             Fuego/Windows/InputWin.cpp
+            Fuego/Windows/OpenGL/OpenGLContext.cpp
         )
-
+        
     else()
         message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
     endif()
@@ -122,6 +125,8 @@ if ( WIN32 )
         PRIVATE 
         ${GLAD_SOURCE_DIR}/include
     )
+
+    target_link_libraries(FuegoEngine PRIVATE opengl32)
 
 endif()
 
