@@ -2,7 +2,9 @@
 set( CMAKE_CXX_STANDARD 20 )
 
 set( CORELIB_HEADERS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/CoreLibConcepts.h
     ${CMAKE_CURRENT_SOURCE_DIR}/UniquePtr.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/SharedPtr.h
 )
 
 set( CORELIB_SOURCES 
