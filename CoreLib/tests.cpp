@@ -59,7 +59,7 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterTest)
 
 TEST(CoreLibTests, UniquePtr_ArrayTest)
 {
-	UniquePtr<int[3]> Ptr(new int[3] {1, 2, 3});
+	UniquePtr<int[]> Ptr(new int[3] {1, 2, 3});
 	EXPECT_EQ(Ptr[0], 1);
 	EXPECT_EQ(Ptr[2], 3);
 }
@@ -77,7 +77,24 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterTypeTest)
 	};
 
 	UniquePtr<int, CustomDeleter> Ptr(new int(10));
-	auto& Deleter = Ptr.GetDeleter();
+	auto Deleter = Ptr.GetDeleter();
+	EXPECT_EQ(Deleter.Check(), 3);
+}
+
+TEST(CoreLibTests, UniquePtr_CustomDeleterArrayTypeTest)
+{
+	struct CustomDeleter {
+		void operator()(int* ptr) {
+			delete[] ptr;
+		}
+		int Check()
+		{
+			return 3;
+		}
+	};
+
+	UniquePtr<int[], CustomDeleter> Ptr(new int[3] {1, 2, 3});
+	auto Deleter = Ptr.GetDeleter();
 	EXPECT_EQ(Deleter.Check(), 3);
 }
 
@@ -141,7 +158,7 @@ TEST(CoreLibTests, UniquePtr_ArrayMemoryLeakTest)
 	int InstanceCount = 0;
 
 	{
-		UniquePtr<LeakChecker[3]> Ptr(new LeakChecker[3] { InstanceCount , InstanceCount , InstanceCount });
+		UniquePtr<LeakChecker[]> Ptr(new LeakChecker[3] { InstanceCount , InstanceCount , InstanceCount });
 		EXPECT_EQ(Ptr[2].GetInstanceCount(), 3);
 	}
 
