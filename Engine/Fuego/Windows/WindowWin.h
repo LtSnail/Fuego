@@ -29,8 +29,6 @@ class WindowWin : public Window
     virtual void SetVSync(bool enabled) override;
     virtual bool IsVSync() const override;
 
-    inline virtual void* GetNativeWindow() const { return m_Hwnd; }
-
     LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
     static std::unordered_map<HWND, WindowWin*> hwndMap;
 
