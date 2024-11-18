@@ -3,7 +3,6 @@
 #include "EventQueue.h"
 #include "Events/Event.h"
 #include "Input.h"
-#include "Log.h"
 #include "fupch.h"
 
 namespace Fuego

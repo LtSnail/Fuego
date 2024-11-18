@@ -1,7 +1,6 @@
 #include "Application.h"
 
 #include "Input.h"
-#include "Log.h"
 
 namespace Fuego
 {
