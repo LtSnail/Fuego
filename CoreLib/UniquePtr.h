@@ -32,7 +32,7 @@ namespace Fuego
         explicit UniquePtr(std::remove_extent_t<T>* ptr) noexcept;
 
         UniquePtr(UniquePtr<T, Deleter>&& other) noexcept;
-        UniquePtr& operator=(UniquePtr<T, Deleter>&& other) noexcept;
+        UniquePtr<T, Deleter>& operator=(UniquePtr<T, Deleter>&& other) noexcept;
 
         ~UniquePtr();
 
