@@ -2,7 +2,6 @@
 
 // Compiled in a client application
 #if defined(FUEGO_PLATFORM_MACOS)
-#include "Log.h"
 #include "fupch.h"
 
 @interface FuegoApplication : NSApplication

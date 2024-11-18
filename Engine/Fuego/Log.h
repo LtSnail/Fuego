@@ -17,12 +17,13 @@ class FUEGO_API Log
 };
 }  // namespace Fuego
 
+// clang-format off
 #if defined(FUEGO_BUILD_LIB)
 #define FU_CORE_TRACE(...) ::Fuego::Log::GetCoreLogger()->trace(__VA_ARGS__)
 #define FU_CORE_INFO(...) ::Fuego::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define FU_CORE_WARN(...) ::Fuego::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define FU_CORE_ERROR(...) ::Fuego::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define FU_CORE_FATAL(...) ::Fuego::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define FU_CORE_CRITICAL(...) ::Fuego::Log::GetCoreLogger()->critical(__VA_ARGS__)
 #endif
 
 #if !defined(FUEGO_BUILD_LIB)
@@ -32,3 +33,4 @@ class FUEGO_API Log
 #define FU_ERROR(...) ::Fuego::Log::GetClientLogger()->error(__VA_ARGS__)
 #define FU_FATAL(...) ::Fuego::Log::GetClientLogger()->fatal(__VA_ARGS__)
 #endif
+// clang-format on
