@@ -54,6 +54,34 @@ namespace Fuego
         std::remove_extent_t<T> const * operator->() const noexcept;
         std::remove_extent_t<T>* operator->() noexcept;
 
+        template<class U>
+        bool operator==(std::remove_extent_t<U>* other) const noexcept;
+
+        template<class U>
+        bool operator<(std::remove_extent_t<U>* other) const noexcept;
+
+        template<class U>
+        bool operator>(std::remove_extent_t<U>* other) const noexcept;
+
+        template<class U>
+        bool operator<=(std::remove_extent_t<U>* other) const noexcept;
+
+        template<class U>
+        bool operator>=(std::remove_extent_t<U>* other) const noexcept;
+
+        template<class U>
+        bool operator!=(std::remove_extent_t<U>* other) const noexcept;
+
+        bool operator==(std::remove_extent_t<T>* other) const noexcept;
+        bool operator<(std::remove_extent_t<T>* other) const noexcept;
+        bool operator>(std::remove_extent_t<T>* other) const noexcept;
+        bool operator<=(std::remove_extent_t<T>* other) const noexcept;
+        bool operator>=(std::remove_extent_t<T>* other) const noexcept;
+        bool operator!=(std::remove_extent_t<T>* other) const noexcept;
+
+        bool operator==(std::nullptr_t other) const noexcept;
+        bool operator!=(std::nullptr_t other) const noexcept;
+
         template<class U=T> requires std::is_array_v<U>
         std::remove_extent_t<T> const & operator[](size_t index) const noexcept;
 
@@ -170,6 +198,96 @@ namespace Fuego
     inline std::remove_extent_t<T>* UniquePtr<T, Deleter>::operator->() noexcept
     {
         return _ptr;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator==(std::nullptr_t other) const noexcept
+    {
+        return _ptr == other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator!=(std::nullptr_t other) const noexcept
+    {
+        return _ptr != other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    template<class U>
+    inline bool UniquePtr<T, Deleter>::operator==(std::remove_extent_t<U>* other) const noexcept
+    {
+        return _ptr == other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    template<class U>
+    inline bool UniquePtr<T, Deleter>::operator<(std::remove_extent_t<U>* other) const noexcept
+    {
+        return _ptr < other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    template<class U>
+    inline bool UniquePtr<T, Deleter>::operator>(std::remove_extent_t<U>* other) const noexcept
+    {
+        return _ptr > other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    template<class U>
+    inline bool UniquePtr<T, Deleter>::operator<=(std::remove_extent_t<U>* other) const noexcept
+    {
+        return _ptr <= other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    template<class U>
+    inline bool UniquePtr<T, Deleter>::operator>=(std::remove_extent_t<U>* other) const noexcept
+    {
+        return _ptr >= other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    template<class U>
+    inline bool UniquePtr<T, Deleter>::operator!=(std::remove_extent_t<U>* other) const noexcept
+    {
+        return _ptr != other;
+    }
+    
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator==(std::remove_extent_t<T>* other) const noexcept
+    {
+        return _ptr == other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator<(std::remove_extent_t<T>* other) const noexcept
+    {
+        return _ptr < other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator>(std::remove_extent_t<T>* other) const noexcept
+    {
+        return _ptr > other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator<=(std::remove_extent_t<T>* other) const noexcept
+    {
+        return _ptr <= other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator>=(std::remove_extent_t<T>* other) const noexcept
+    {
+        return _ptr >= other;
+    }
+
+    template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
+    inline bool UniquePtr<T, Deleter>::operator!=(std::remove_extent_t<T>* other) const noexcept
+    {
+        return _ptr != other;
     }
 
     template<class T, class Deleter> requires IsDefaultCompatibleDeleter<T, Deleter>
