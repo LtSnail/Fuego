@@ -26,7 +26,7 @@ namespace Fuego
     class UniquePtr
     {
     public:
-        FUEGO_NON_COPYABLE(UniquePtr)
+        FUEGO_NON_COPYABLE(UniquePtr);
 
         UniquePtr() = default;
         explicit UniquePtr(std::remove_extent_t<T>* ptr) noexcept;
