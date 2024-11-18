@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <cstdint>
 
 namespace Fuego
@@ -139,7 +139,9 @@ enum : KeyCode
     RightControl    = 185,
     RightAlt        = 186,
     RightSuper      = 187,
-    Menu            = 188
+    Menu            = 188,
+    
+    Unknown
     // clang-format on
 };
 

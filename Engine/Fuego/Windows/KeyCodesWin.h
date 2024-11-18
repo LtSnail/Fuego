@@ -216,4 +216,9 @@ static inline Fuego::KeyCode GetKeyCode(int winKey)
             return KEY(RightSuper);
         case VK_MENU:
             return KEY(Menu);
+        default:
+            FU_CORE_ASSERT(false, "Unknown key code: {}", key);
+            return KEY(Unknown);
     }
+#undef KEY
+}

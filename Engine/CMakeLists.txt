@@ -43,6 +43,7 @@ if ( APPLE )
         Fuego/MacOS/EventQueueMacOS.h
         Fuego/MacOS/WindowMacOS.h
         Fuego/MacOS/InputMacOS.h
+        Fuego/MacOS/KeyCodesMacOS.h
     )
 
     set( SOURCES

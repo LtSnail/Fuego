@@ -2,8 +2,10 @@
 
 #include "Events/ApplicationEvent.h"
 #include "Events/MouseEvent.h"
+#include "Events/KeyEvent.h"
 #include "Log.h"
 #include "MouseCodes.h"
+#include "KeyCodesMacOS.h"
 
 void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<Event> ev)
 {
@@ -86,8 +88,12 @@ void EventQueueMacOS::Update()
                 case NSEventTypeSystemDefined:
                     break;
                 case NSEventTypeKeyDown:
+                    PushEvent(this,
+                              std::make_shared<KeyPressedEvent>(nsEvent.keyCode, 0));
                     break;
                 case NSEventTypeKeyUp:
+                    PushEvent(this,
+                              std::make_shared<KeyReleasedEvent>(nsEvent.keyCode));
                     break;
                 case NSEventTypeLeftMouseDown:
                     PushEvent(this,
