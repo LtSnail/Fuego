@@ -12,6 +12,8 @@
 #include <string>
 #include <vector>
 
+#include "Log.h"
+
 #ifdef FUEGO_PLATFORM_MACOS
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
