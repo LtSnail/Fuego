@@ -4,10 +4,17 @@
 
 using namespace Fuego;
 
-TEST(CoreLibTests, UniquePtr_NullptrTest)
+TEST(CoreLibTests, UniquePtr_NullptrTest_1)
 {
     UniquePtr<int> Ptr;
     EXPECT_EQ(Ptr.Get(), nullptr);
+}
+
+
+TEST(CoreLibTests, UniquePtr_NullptrTest_2)
+{
+    UniquePtr<int> Ptr;
+    EXPECT_EQ(Ptr, nullptr);
 }
 
 TEST(CoreLibTests, UniquePtr_GetRawTest)
