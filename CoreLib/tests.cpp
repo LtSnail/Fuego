@@ -192,3 +192,75 @@ TEST(CoreLibTests, UniquePtr_ClassPtrDereferanceTest)
     UniquePtr<CheckClassPtr> ptr(new CheckClassPtr);
     EXPECT_EQ((*ptr).Call(), 11);
 }
+
+TEST(CoreLibTests, UniquePtr_ComparisonWithRawPointer_EqualityTest)
+{
+    auto Ptr = new int(42);
+    UniquePtr<int> Uptr(Ptr);
+
+    EXPECT_TRUE(Uptr == Ptr);
+    EXPECT_FALSE(Uptr != Ptr);
+}
+
+TEST(CoreLibTests, UniquePtr_ComparisonWithRawPointer_InequalityTest)
+{
+    auto Ptr1 = new int(42);
+    auto Ptr2 = new int(24);
+    UniquePtr<int> uptr(Ptr1);
+
+    EXPECT_FALSE(uptr == Ptr2);
+    EXPECT_TRUE(uptr != Ptr2);
+
+    delete Ptr2;
+}
+
+TEST(CoreLibTests, UniquePtr_ComparisonWithRawPointer_LessThanTest)
+{
+    auto Ptr1 = new int(42);
+    auto Ptr2 = Ptr1 + 1;
+    UniquePtr<int> Uptr(Ptr1);
+
+    EXPECT_TRUE(Uptr < Ptr2);
+    EXPECT_FALSE(Uptr >= Ptr2);
+
+    delete Ptr1;
+}
+
+TEST(CoreLibTests, UniquePtr_ComparisonWithRawPointer_GreaterThanTest)
+{
+    auto Ptr1 = new int(42);
+    auto Ptr2 = Ptr1 - 1;
+    UniquePtr<int> Uptr(Ptr1);
+
+    EXPECT_TRUE(Uptr > Ptr2);
+    EXPECT_FALSE(Uptr <= Ptr2);
+
+    delete Ptr1;
+}
+
+TEST(CoreLibTests, UniquePtr_ComparisonWithNullptr_EqualityTest)
+{
+    UniquePtr<int> Uptr;
+
+    EXPECT_TRUE(Uptr == nullptr);
+    EXPECT_FALSE(Uptr != nullptr);
+}
+
+TEST(CoreLibTests, UniquePtr_ComparisonWithNullptr_InequalityTest)
+{
+    UniquePtr<int> Uptr(new int(42));
+
+    EXPECT_FALSE(Uptr == nullptr);
+    EXPECT_TRUE(Uptr != nullptr);
+}
+
+TEST(CoreLibTests, UniquePtr_ArrayComparisonWithRawPointerTest)
+{
+    auto Array = new int[3] {1, 2, 3};
+    Fuego::UniquePtr<int[]> Uptr(Array);
+
+    EXPECT_TRUE(Uptr == Array);
+    EXPECT_FALSE(Uptr != Array);
+    EXPECT_FALSE(Uptr < Array);
+    EXPECT_FALSE(Uptr > Array);
+}
