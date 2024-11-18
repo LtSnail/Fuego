@@ -86,7 +86,9 @@ elseif ( WIN32 )
             Fuego/Windows/InputWin.cpp
             Fuego/Windows/OpenGL/OpenGLContext.cpp
         )
-        
+
+        add_subdirectory(External/glad)
+
     else()
         message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
     endif()
@@ -113,17 +115,14 @@ target_include_directories( FuegoEngine
 
 if ( WIN32 )
     #GLAD
-    set( GLAD_SOURCE_DIR 
-        External/glad
-    )
-
-    list( APPEND 
-        SOURCES ${GLAD_SOURCE_DIR}/src/glad.c
+    target_link_libraries ( FuegoEngine 
+        PRIVATE 
+        Glad
     )
 
     target_include_directories( FuegoEngine 
         PRIVATE 
-        ${GLAD_SOURCE_DIR}/include
+        External/glad/include
     )
 
     target_link_libraries(FuegoEngine PRIVATE opengl32)

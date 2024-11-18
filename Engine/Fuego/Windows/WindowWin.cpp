@@ -174,8 +174,8 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     hwndMap.emplace(m_Hwnd, this);
 
     _context = new OpenGLContext(&m_Hwnd);
-    _context->Init();
-    FU_CORE_ASSERT(_context, "[GraphicsContext] hasn't been initialized!");
+    bool res = _context->Init();
+    FU_CORE_ASSERT(res, "[GraphicsContext] hasn't been initialized!");
 
     ShowWindow(m_Hwnd, SW_SHOW);
 

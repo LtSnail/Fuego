@@ -1,8 +1,10 @@
-#include "OpenGLContext.h"
+﻿#include "OpenGLContext.h"
 
 // clang-format off
-#include <glad/glad.h>
 #include "fupch.h"
+#include "glad/gl.h"
+#include "glad/wgl.h"
+// clang-format on
 
 namespace Fuego
 {
@@ -21,21 +23,28 @@ OpenGLContext::~OpenGLContext()
 bool OpenGLContext::Init()
 {
     HDC hdc = GetDC(*_windowHandle);
+
+    PIXELFORMATDESCRIPTOR pfd = {};
+    pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+    pfd.nVersion = 1;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.cColorBits = 32;
+    pfd.cDepthBits = 24;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+
+    int pixelFormat = ChoosePixelFormat(hdc, &pfd);
+    SetPixelFormat(hdc, pixelFormat, &pfd);
+
     _openGLContext = wglCreateContext(hdc);
 
-        if (!::gladLoadGLLoader((GLADloadproc)::wglGetProcAddress))
+    wglMakeCurrent(hdc, _openGLContext);
+
+    if (!gladLoaderLoadWGL(hdc))
     {
-        FU_CORE_CRITICAL("[Glad hasn't been initialized!]");
+        FU_CORE_CRITICAL("[OpenGL] hasn't been initialized!");
         return false;
     }
-
-    if (!wglMakeCurrent(hdc, _openGLContext))
-    {
-        FU_CORE_CRITICAL("[Failed to make OpenGL context current!]");
-        return false;
-    }
-
-
 
     return true;
 }
