@@ -1,13 +1,12 @@
 project ( Glad )
 
 set( SOURCES
-    src/gl.c
-    src/wgl.c
+    src/glad.c
 )
 
 set( HEADERS
-    include/glad/gl.h
-	include/glad/wgl.h
+    include/glad/glad.h
+    include/KHR/khrplatform.h
 )
 
 add_library ( Glad 
@@ -16,4 +15,9 @@ add_library ( Glad
  	${SOURCES}
  )
 
-target_include_directories ( Glad PUBLIC include/)
+target_include_directories ( Glad 
+	PUBLIC
+	include/
+)
+
+target_compile_features( Glad PUBLIC cxx_std_20 )

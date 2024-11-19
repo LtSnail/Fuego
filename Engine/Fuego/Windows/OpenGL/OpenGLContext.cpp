@@ -1,11 +1,5 @@
 ﻿#include "OpenGLContext.h"
 
-// clang-format off
-#include "fupch.h"
-#include "glad/gl.h"
-#include "glad/wgl.h"
-// clang-format on
-
 namespace Fuego
 {
 OpenGLContext::OpenGLContext(HWND* windowHandle)
@@ -40,7 +34,7 @@ bool OpenGLContext::Init()
 
     wglMakeCurrent(hdc, _openGLContext);
 
-    if (!gladLoaderLoadWGL(hdc))
+    if (!gladLoadGL())
     {
         FU_CORE_CRITICAL("[OpenGL] hasn't been initialized!");
         return false;
