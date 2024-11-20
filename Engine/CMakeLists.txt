@@ -24,6 +24,8 @@ set( PROJECT_HEADERS
     Fuego.h
     fupch.h
     Fuego/Renderer/GraphicsContext.h
+    Fuego/Renderer/Buffer.h
+    Fuego/Renderer/Renderer.h
 )
 
 set( SOURCES
@@ -32,6 +34,8 @@ set( SOURCES
     Fuego/Layer.cpp
     Fuego/LayerStack.cpp
     Fuego/ImGui/ImGuiLayer.cpp
+    Fuego/Renderer/Buffer.cpp
+    Fuego/Renderer/Renderer.cpp
 )
 
 set( DEPENDENCIES
