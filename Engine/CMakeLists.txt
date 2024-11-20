@@ -25,7 +25,6 @@ set( PROJECT_HEADERS
     fupch.h
     Fuego/Renderer/GraphicsContext.h
     Fuego/Renderer/Buffer.h
-    Fuego/Renderer/Renderer.h
 )
 
 set( SOURCES
@@ -34,8 +33,6 @@ set( SOURCES
     Fuego/Layer.cpp
     Fuego/LayerStack.cpp
     Fuego/ImGui/ImGuiLayer.cpp
-    Fuego/Renderer/Buffer.cpp
-    Fuego/Renderer/Renderer.cpp
 )
 
 set( DEPENDENCIES
@@ -49,6 +46,7 @@ if ( APPLE )
         Fuego/MacOS/WindowMacOS.h
         Fuego/MacOS/InputMacOS.h
         Fuego/MacOS/KeyCodesMacOS.h
+        Fuego/MacOS/BufferMetal.h
     )
 
     set( SOURCES
@@ -56,6 +54,7 @@ if ( APPLE )
         Fuego/MacOS/EventQueueMacOS.mm
         Fuego/MacOS/WindowMacOS.mm
         Fuego/MacOS/InputMacOS.cpp
+        Fuego/MacOS/BufferMetal.cpp
     )
 
     set( ENGINE_SHADERS 
@@ -86,6 +85,7 @@ elseif ( WIN32 )
             Fuego/Windows/KeyCodesWin.h
             Fuego/Windows/InputWin.h
             Fuego/Windows/OpenGL/OpenGLContext.h
+            Fuego/Windows/OpenGL/BufferOpenGL.h
         )
 
         set( SOURCES
@@ -94,6 +94,7 @@ elseif ( WIN32 )
             Fuego/Windows/WindowWin.cpp
             Fuego/Windows/InputWin.cpp
             Fuego/Windows/OpenGL/OpenGLContext.cpp
+            Fuego/Windows/OpenGL/BufferOpenGL.cpp
         )
 
         add_subdirectory(External/glad)
