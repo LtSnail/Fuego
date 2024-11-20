@@ -1,7 +1,28 @@
-# C++, Objective C++, Objective C
 BasedOnStyle: Google
 IndentWidth: 4
-BinPackArguments: false
-AllowAllParametersOfDeclarationOnNextLine: false
-UseTab: Never
+ColumnLimit: 160
+AccessModifierOffset: -4
+DerivePointerAlignment: false
+PointerAlignment: Left
 BreakBeforeBraces: Allman
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
+AllowShortIfStatementsOnASingleLine: false
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+MaxEmptyLinesToKeep: 2
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AlignAfterOpenBracket: true
+IndentCaseLabels: false
+PackConstructorInitializers: Never
+BreakConstructorInitializers: BeforeComma
