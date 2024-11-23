@@ -47,6 +47,7 @@ if ( APPLE )
         Fuego/MacOS/InputMacOS.h
         Fuego/MacOS/KeyCodesMacOS.h
         Fuego/MacOS/BufferMetal.h
+        Fuego/MacOS//Metal/MetalContext.h
     )
 
     set( SOURCES
@@ -55,10 +56,12 @@ if ( APPLE )
         Fuego/MacOS/WindowMacOS.mm
         Fuego/MacOS/InputMacOS.cpp
         Fuego/MacOS/BufferMetal.cpp
+        Fuego/MacOS/Metal/MetalContext.mm
+        Fuego/MacOS/Metal/MetalImplementation.cpp
     )
 
     set( ENGINE_SHADERS 
-        ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Shaders.metal
+        ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Metal/Triangle.metal
         PARENT_SCOPE
     )
 
@@ -66,6 +69,7 @@ if ( APPLE )
     find_library( METAL Metal )
     find_library( METALKIT MetalKit )
     find_library( MODELIO ModelIO )
+    find_library( QUARTZCORE QuartzCore )
 
     set( DEPENDENCIES
         ${DEPENDENCIES}
@@ -74,6 +78,7 @@ if ( APPLE )
         ${METALKIT}
         ${MODELIO}
         ${GAMECONTROLLER}
+        ${QUARTZCORE}
     )
 
 elseif ( WIN32 )

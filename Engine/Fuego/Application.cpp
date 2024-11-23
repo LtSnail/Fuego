@@ -26,7 +26,7 @@ Application::Application() : d(new ApplicationImpl())
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->m_Running = true;
-
+    
     // Temp::
     float vertices[3 * 3] = {
         -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};

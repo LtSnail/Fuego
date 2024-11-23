@@ -1,4 +1,5 @@
 #include "WindowMacOS.h"
+#include "Metal/MetalContext.h"
 
 @interface FuegoWindow : NSWindow
 {
@@ -129,6 +130,10 @@ WindowMacOS::WindowMacOS(const WindowProps& props, EventQueue& eventQueue)
         
         [w setContentView:v];
         [w makeKeyAndOrderFront:NSApp];
+
+        _context = new Fuego::MetalContext(m_Window);
+        FU_CORE_ASSERT(_context->Init(),
+                    "[GraphicsContext] hasn't been initialized!");
         
         m_Props = props;
     }
@@ -144,6 +149,7 @@ void WindowMacOS::Update()
     @autoreleasepool
     {
         [NSApp updateWindows];
+        _context->SwapBuffers();
     }
 }
 

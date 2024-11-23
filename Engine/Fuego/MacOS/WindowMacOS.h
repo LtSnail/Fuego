@@ -3,6 +3,8 @@
 #include "Core.h"
 #include "Window.h"
 
+#include "Metal/MetalContext.h"
+
 namespace Fuego
 {
 class WindowMacOS : public Window
@@ -34,6 +36,8 @@ class WindowMacOS : public Window
 
     // FuegoView*
     void* m_View;
+    
+    MetalContext* _context;
 
     WindowProps m_Props;
 };
