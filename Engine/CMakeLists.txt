@@ -151,6 +151,11 @@ if ( WIN32 )
         opengl32
     )
 
+elseif( APPLE )
+    target_include_directories( FuegoEngine 
+        PRIVATE 
+        External/metal-cpp
+    )
 endif()
 
 target_precompile_headers( FuegoEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h )
