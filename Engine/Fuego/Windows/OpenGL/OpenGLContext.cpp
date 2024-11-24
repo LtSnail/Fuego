@@ -39,6 +39,12 @@ bool OpenGLContext::Init()
         FU_CORE_CRITICAL("[OpenGL] hasn't been initialized!");
         return false;
     }
+    FU_CORE_INFO("OpenGL info:");
+    FU_CORE_INFO("  Version: {0}", (const char*)glGetString(GL_VERSION));
+    FU_CORE_INFO("  GLSL Version: {0}",
+                 (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+    FU_CORE_INFO("  GPU Vendor: {0}", (const char*)glGetString(GL_VENDOR));
+    FU_CORE_INFO("  Renderer: {0}", (const char*)glGetString(GL_RENDERER));
 
     return true;
 }
