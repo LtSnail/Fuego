@@ -16,6 +16,7 @@ set(ORGANIZATION FUEGO)
 enable_testing()
 
 add_subdirectory(Engine)
+add_subdirectory(ShaderTranslator)
 add_subdirectory(Sandbox)
 add_subdirectory(CoreLib)
 
