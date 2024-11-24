@@ -1,15 +1,14 @@
 #pragma once
 
 #include "Core.h"
-#include "Window.h"
-
 #include "Metal/MetalContext.h"
+#include "Window.h"
 
 namespace Fuego
 {
 class WindowMacOS : public Window
 {
-   public:
+public:
     WindowMacOS(const WindowProps& props, EventQueue& eventQueue);
     ~WindowMacOS();
 
@@ -24,10 +23,16 @@ class WindowMacOS : public Window
         return m_Props.Height;
     }
 
-    inline virtual void SetVSync(bool enabled) override { UNUSED(enabled); }
-    inline virtual bool IsVSync() const override { return true; }
+    inline virtual void SetVSync(bool enabled) override
+    {
+        UNUSED(enabled);
+    }
+    inline virtual bool IsVSync() const override
+    {
+        return true;
+    }
 
-   private:
+private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();
 
@@ -36,7 +41,7 @@ class WindowMacOS : public Window
 
     // FuegoView*
     void* m_View;
-    
+
     MetalContext* _context;
 
     WindowProps m_Props;

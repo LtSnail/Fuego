@@ -1,7 +1,7 @@
-﻿#include "UniquePtr.h"
-#include "SharedPtr.h"
+﻿#include <gtest/gtest.h>
 
-#include <gtest/gtest.h>
+#include "SharedPtr.h"
+#include "UniquePtr.h"
 
 using namespace Fuego;
 
@@ -50,8 +50,10 @@ TEST(CoreLibTests, UniquePtr_ReleaseTest)
 
 TEST(CoreLibTests, UniquePtr_CustomDeleterTest)
 {
-    struct CustomDeleter {
-        void operator()(int* ptr) {
+    struct CustomDeleter
+    {
+        void operator()(int* ptr)
+        {
             delete ptr;
         }
     };
@@ -61,15 +63,17 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterTest)
 
 TEST(CoreLibTests, UniquePtr_ArrayTest)
 {
-    UniquePtr<int[]> Ptr(new int[3] {1, 2, 3});
+    UniquePtr<int[]> Ptr(new int[3]{1, 2, 3});
     EXPECT_EQ(Ptr[0], 1);
     EXPECT_EQ(Ptr[2], 3);
 }
 
 TEST(CoreLibTests, UniquePtr_CustomDeleterTypeTest)
 {
-    struct CustomDeleter {
-        void operator()(int* ptr) {
+    struct CustomDeleter
+    {
+        void operator()(int* ptr)
+        {
             delete ptr;
         }
         int Check()
@@ -85,8 +89,10 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterTypeTest)
 
 TEST(CoreLibTests, UniquePtr_CustomDeleterArrayTypeTest)
 {
-    struct CustomDeleter {
-        void operator()(int* ptr) {
+    struct CustomDeleter
+    {
+        void operator()(int* ptr)
+        {
             delete[] ptr;
         }
         int Check()
@@ -95,7 +101,7 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterArrayTypeTest)
         }
     };
 
-    UniquePtr<int[], CustomDeleter> Ptr(new int[3] {1, 2, 3});
+    UniquePtr<int[], CustomDeleter> Ptr(new int[3]{1, 2, 3});
     auto Deleter = Ptr.GetDeleter();
     EXPECT_EQ(Deleter.Check(), 3);
 }
@@ -160,7 +166,7 @@ TEST(CoreLibTests, UniquePtr_ArrayMemoryLeakTest)
     int InstanceCount = 0;
 
     {
-        UniquePtr<LeakChecker[]> Ptr(new LeakChecker[3] { InstanceCount , InstanceCount , InstanceCount });
+        UniquePtr<LeakChecker[]> Ptr(new LeakChecker[3]{InstanceCount, InstanceCount, InstanceCount});
         EXPECT_EQ(Ptr[2].GetInstanceCount(), 3);
     }
 
@@ -184,7 +190,7 @@ public:
 
 TEST(CoreLibTests, UniquePtr_ClassPtrTest)
 {
-    UniquePtr<CheckClassPtr> Ptr (new CheckClassPtr);
+    UniquePtr<CheckClassPtr> Ptr(new CheckClassPtr);
     EXPECT_EQ(Ptr->Call(), 11);
 }
 
@@ -203,7 +209,7 @@ TEST(CoreLibTests, SharedPtr_DefaultConstructorTest)
 
 TEST(CoreLibTests, SharedPtr_ConstructorWithPointerTest)
 {
-    SharedPtr<int> Sp (new int(42));
+    SharedPtr<int> Sp(new int(42));
     EXPECT_NE(Sp.Get(), nullptr);
     EXPECT_EQ(*Sp, 42);
     EXPECT_EQ(Sp.UseCount(), 1);
@@ -252,7 +258,7 @@ TEST(CoreLibTests, SharedPtr_MoveAssignmentTest)
 
 TEST(CoreLibTests, SharedPtr_ArrayAccessTest)
 {
-    auto Sp = SharedPtr<int[]>(new int[3] {1, 2, 3});
+    auto Sp = SharedPtr<int[]>(new int[3]{1, 2, 3});
     EXPECT_EQ(Sp[0], 1);
     EXPECT_EQ(Sp[1], 2);
     EXPECT_EQ(Sp[2], 3);

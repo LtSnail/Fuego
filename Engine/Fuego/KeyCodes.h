@@ -15,7 +15,7 @@ enum : KeyCode
     Minus           = 3,
     Period          = 4,
     Slash           = 5,
-                    
+
     D0              = 10,
     D1              = 11,
     D2              = 12,
@@ -26,7 +26,7 @@ enum : KeyCode
     D7              = 17,
     D8              = 18,
     D9              = 19,
-                    
+
     Semicolon       = 20,
     Equal           = 21,
 
@@ -140,7 +140,7 @@ enum : KeyCode
     RightAlt        = 186,
     RightSuper      = 187,
     Menu            = 188,
-    
+
     Unknown
     // clang-format on
 };

@@ -8,12 +8,11 @@ namespace Fuego
 {
 #define LAST_CODE UINT16_MAX
 
-LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam,
-                                  LPARAM lParam);
+LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 class WindowWin : public Window
 {
-   public:
+public:
     WindowWin(const WindowProps& props, EventQueue& eventQueue);
 
     virtual void Update() override;
@@ -37,10 +36,9 @@ class WindowWin : public Window
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
     void GetCursorPos(OUT float& xPos, OUT float& yPos) const;
 
-   private:
+private:
     void Shutdown();
-    static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg,
-                                             WPARAM wParam, LPARAM lParam);
+    static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     GraphicsContext* _context;
 

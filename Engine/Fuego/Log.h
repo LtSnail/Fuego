@@ -7,10 +7,10 @@ namespace Fuego
 {
 class FUEGO_API Log
 {
-   private:
+private:
     class LogImpl;
 
-   public:
+public:
     static void Init();
     static std::shared_ptr<spdlog::logger>& GetCoreLogger();
     static std::shared_ptr<spdlog::logger>& GetClientLogger();

@@ -19,4 +19,4 @@ public:
 
     const std::string& GetName() const;
 };
-}
+}  // namespace Fuego

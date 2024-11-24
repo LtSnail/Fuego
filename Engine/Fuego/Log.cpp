@@ -6,7 +6,7 @@ namespace Fuego
 {
 class Log::LogImpl
 {
-   private:
+private:
     friend class Log;
     static std::shared_ptr<spdlog::logger> s_CoreLogger;
     static std::shared_ptr<spdlog::logger> s_ClientLogger;

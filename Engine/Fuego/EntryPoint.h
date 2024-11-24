@@ -17,12 +17,8 @@
 
 - (void)run
 {
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:NSApplicationWillFinishLaunchingNotification
-                      object:NSApp];
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:NSApplicationDidFinishLaunchingNotification
-                      object:NSApp];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationWillFinishLaunchingNotification object:NSApp];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NSApplicationDidFinishLaunchingNotification object:NSApp];
 
     _application->Run();
 }
@@ -42,9 +38,7 @@ int main(int argc, const char* argv[])
 
         if ([applicationObject respondsToSelector:@selector(run)])
         {
-            [applicationObject performSelectorOnMainThread:@selector(run)
-                                                withObject:nil
-                                             waitUntilDone:YES];
+            [applicationObject performSelectorOnMainThread:@selector(run) withObject:nil waitUntilDone:YES];
         }
 
         delete app;
@@ -55,8 +49,7 @@ int main(int argc, const char* argv[])
 #elif (FUEGO_PLATFORM_WIN)
 #include "fupch.h"
 
-int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline,
-                     int cmdshow)
+int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmdshow)
 {
     UNUSED(hInst);
     UNUSED(hInstPrev);

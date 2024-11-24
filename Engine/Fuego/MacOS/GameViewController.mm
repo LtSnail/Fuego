@@ -3,16 +3,16 @@
 
 @implementation GameViewController
 {
-    MTKView *_view;
+    MTKView* _view;
 
-    Renderer *_renderer;
+    Renderer* _renderer;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    _view = (MTKView *)self.view;
+    _view = (MTKView*)self.view;
 
     _view.device = MTLCreateSystemDefaultDevice();
 

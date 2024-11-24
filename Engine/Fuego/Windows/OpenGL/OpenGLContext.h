@@ -8,14 +8,14 @@ namespace Fuego
 {
 class OpenGLContext : public GraphicsContext
 {
-   public:
+public:
     OpenGLContext(HWND* windowHandle);
     virtual ~OpenGLContext() override;
 
     virtual bool Init() override;
     virtual void SwapBuffers() override;
 
-   private:
+private:
     HWND* _windowHandle;
     HGLRC _openGLContext;
 };

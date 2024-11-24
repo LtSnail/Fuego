@@ -4,14 +4,12 @@ class ExampleLayer : public Fuego::Layer
 {
 public:
     ExampleLayer()
-    : Layer("Example")
+        : Layer("Example")
     {
-        
     }
 
     void OnUpdate() override
     {
-
     }
 
     void OnEvent(Fuego::Event& event) override
@@ -22,11 +20,14 @@ public:
 
 class SandboxApp : public Fuego::Application
 {
-   public:
+public:
     SandboxApp()
     {
         PushLayer(new ExampleLayer);
     }
 };
 
-Fuego::Application* Fuego::CreateApplication() { return new SandboxApp(); }
+Fuego::Application* Fuego::CreateApplication()
+{
+    return new SandboxApp();
+}

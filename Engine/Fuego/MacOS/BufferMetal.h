@@ -6,19 +6,19 @@ namespace Fuego
 {
 class VertexBufferMetal : VertexBuffer
 {
-   public:
+public:
     VertexBufferMetal();
     virtual ~VertexBufferMetal() override;
 
     virtual void Bind() const override;
     virtual void Unbind() const override;
 
-   private:
+private:
 };
 
 class IndexBufferMetal : IndexBuffer
 {
-   public:
+public:
     IndexBufferMetal() = default;
     virtual ~IndexBufferMetal();
 

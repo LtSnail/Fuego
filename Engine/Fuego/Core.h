@@ -75,7 +75,7 @@
 
 // TODO: Rewrite to use a custom unique pointer
 #define FUEGO_INTERFACE(ClassName) \
-   private:                        \
+private:                           \
     class ClassName##Impl;         \
     ClassName##Impl* d;
 

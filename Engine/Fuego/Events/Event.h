@@ -44,25 +44,43 @@ enum EventCategory
     EventCategoryMouseButton = BIT(4)
 };
 
-#define EVENT_CLASS_TYPE(type)                                              \
-    static EventType GetStaticType() { return EventType::EventType##type; } \
-    EventType GetEventType() const override { return GetStaticType(); }     \
-    const char* GetName() const override { return #type; }
+#define EVENT_CLASS_TYPE(type)              \
+    static EventType GetStaticType()        \
+    {                                       \
+        return EventType::EventType##type;  \
+    }                                       \
+    EventType GetEventType() const override \
+    {                                       \
+        return GetStaticType();             \
+    }                                       \
+    const char* GetName() const override    \
+    {                                       \
+        return #type;                       \
+    }
 
-#define EVENT_CLASS_CATEGORY(category) \
-    int GetCategoryFlags() const override { return category; }
+#define EVENT_CLASS_CATEGORY(category)    \
+    int GetCategoryFlags() const override \
+    {                                     \
+        return category;                  \
+    }
 
 class FUEGO_API Event
 {
     friend class EventDispatcher;
 
-   public:
+public:
     Event() = default;
     virtual EventType GetEventType() const = 0;
     virtual const char* GetName() const = 0;
     virtual int GetCategoryFlags() const = 0;
-    virtual std::string ToString() const { return GetName(); }
-    virtual bool Handled() const { return m_handled; }
+    virtual std::string ToString() const
+    {
+        return GetName();
+    }
+    virtual bool Handled() const
+    {
+        return m_handled;
+    }
 
     inline bool IsInCategory(EventCategory category) const
     {
@@ -71,7 +89,7 @@ class FUEGO_API Event
 
     virtual ~Event() = default;
 
-   protected:
+protected:
     bool m_handled = false;
 };
 
@@ -83,8 +101,11 @@ class EventDispatcher
     template <typename T>
     using EventFn = std::function<bool(T&)>;
 
-   public:
-    EventDispatcher(Event& ev) : m_Event(ev) {}
+public:
+    EventDispatcher(Event& ev)
+        : m_Event(ev)
+    {
+    }
 
     template <DerivedFromEvent T>
     bool Dispatch(EventFn<T> func)
@@ -98,7 +119,7 @@ class EventDispatcher
         return false;
     }
 
-   private:
+private:
     Event& m_Event;
 };
 

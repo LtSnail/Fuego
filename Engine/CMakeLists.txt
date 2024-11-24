@@ -1,10 +1,12 @@
 # Engine
 
-set ( FUEGO_DYNAMIC_LIB ON CACHE BOOL "Build dynamic library (ON/OFF)" )
+set(FUEGO_DYNAMIC_LIB
+    ON
+    CACHE BOOL "Build dynamic library (ON/OFF)")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
 
-set( PROJECT_HEADERS 
+set(PROJECT_HEADERS
     Fuego/Application.h
     Fuego/Core.h
     Fuego/EntryPoint.h
@@ -24,169 +26,126 @@ set( PROJECT_HEADERS
     Fuego.h
     fupch.h
     Fuego/Renderer/GraphicsContext.h
-    Fuego/Renderer/Buffer.h
-)
+    Fuego/Renderer/Buffer.h)
 
-set( SOURCES
-    Fuego/Application.cpp
-    Fuego/Log.cpp
-    Fuego/Layer.cpp
-    Fuego/LayerStack.cpp
-    Fuego/ImGui/ImGuiLayer.cpp
-)
+set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
+            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp)
 
-set( DEPENDENCIES
-    ImGui
-)
+set(DEPENDENCIES ImGui)
 
-if ( APPLE )
-    set( PROJECT_HEADERS
+if(APPLE)
+  set(PROJECT_HEADERS
+      ${PROJECT_HEADERS}
+      Fuego/MacOS/EventQueueMacOS.h
+      Fuego/MacOS/WindowMacOS.h
+      Fuego/MacOS/InputMacOS.h
+      Fuego/MacOS/KeyCodesMacOS.h
+      Fuego/MacOS/BufferMetal.h
+      Fuego/MacOS//Metal/MetalContext.h)
+
+  set(SOURCES
+      ${SOURCES}
+      Fuego/MacOS/EventQueueMacOS.mm
+      Fuego/MacOS/WindowMacOS.mm
+      Fuego/MacOS/InputMacOS.cpp
+      Fuego/MacOS/BufferMetal.cpp
+      Fuego/MacOS/Metal/MetalContext.mm
+      Fuego/MacOS/Metal/MetalImplementation.cpp)
+
+  set(ENGINE_SHADERS
+      ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Metal/Triangle.metal
+      PARENT_SCOPE)
+
+  find_library(APPKIT AppKit)
+  find_library(METAL Metal)
+  find_library(METALKIT MetalKit)
+  find_library(MODELIO ModelIO)
+  find_library(QUARTZCORE QuartzCore)
+
+  set(DEPENDENCIES
+      ${DEPENDENCIES}
+      ${APPKIT}
+      ${METAL}
+      ${METALKIT}
+      ${MODELIO}
+      ${GAMECONTROLLER}
+      ${QUARTZCORE})
+
+elseif(WIN32)
+  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(PROJECT_HEADERS
         ${PROJECT_HEADERS}
-        Fuego/MacOS/EventQueueMacOS.h
-        Fuego/MacOS/WindowMacOS.h
-        Fuego/MacOS/InputMacOS.h
-        Fuego/MacOS/KeyCodesMacOS.h
-        Fuego/MacOS/BufferMetal.h
-        Fuego/MacOS//Metal/MetalContext.h
-    )
+        Fuego/Windows/EventQueueWin.h
+        Fuego/Windows/WindowWin.h
+        Fuego/Windows/KeyCodesWin.h
+        Fuego/Windows/InputWin.h
+        Fuego/Windows/OpenGL/OpenGLContext.h
+        Fuego/Windows/OpenGL/BufferOpenGL.h)
 
-    set( SOURCES
-        ${SOURCES}
-        Fuego/MacOS/EventQueueMacOS.mm
-        Fuego/MacOS/WindowMacOS.mm
-        Fuego/MacOS/InputMacOS.cpp
-        Fuego/MacOS/BufferMetal.cpp
-        Fuego/MacOS/Metal/MetalContext.mm
-        Fuego/MacOS/Metal/MetalImplementation.cpp
-    )
+    set(SOURCES
+        ${SOURCES} Fuego/Windows/EventQueueWin.cpp Fuego/Windows/WindowWin.cpp
+        Fuego/Windows/InputWin.cpp Fuego/Windows/OpenGL/OpenGLContext.cpp
+        Fuego/Windows/OpenGL/BufferOpenGL.cpp)
 
-    set( ENGINE_SHADERS 
-        ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Metal/Triangle.metal
-        PARENT_SCOPE
-    )
+    add_subdirectory(External/glad)
 
-    find_library( APPKIT AppKit )
-    find_library( METAL Metal )
-    find_library( METALKIT MetalKit )
-    find_library( MODELIO ModelIO )
-    find_library( QUARTZCORE QuartzCore )
-
-    set( DEPENDENCIES
-        ${DEPENDENCIES}
-        ${APPKIT}
-        ${METAL}
-        ${METALKIT}
-        ${MODELIO}
-        ${GAMECONTROLLER}
-        ${QUARTZCORE}
-    )
-
-elseif ( WIN32 )
-    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set( PROJECT_HEADERS
-            ${PROJECT_HEADERS}
-            Fuego/Windows/EventQueueWin.h
-            Fuego/Windows/WindowWin.h
-            Fuego/Windows/KeyCodesWin.h
-            Fuego/Windows/InputWin.h
-            Fuego/Windows/OpenGL/OpenGLContext.h
-            Fuego/Windows/OpenGL/BufferOpenGL.h
-        )
-
-        set( SOURCES
-            ${SOURCES}
-            Fuego/Windows/EventQueueWin.cpp
-            Fuego/Windows/WindowWin.cpp
-            Fuego/Windows/InputWin.cpp
-            Fuego/Windows/OpenGL/OpenGLContext.cpp
-            Fuego/Windows/OpenGL/BufferOpenGL.cpp
-        )
-
-        add_subdirectory(External/glad)
-
-    else()
-        message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
-    endif()
+  else()
+    message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
+  endif()
 endif()
 
-if ( FUEGO_DYNAMIC_LIB )
-    add_library( FuegoEngine
-        SHARED
-        ${SOURCES}
-        ${PROJECT_HEADERS}
-    )
+if(FUEGO_DYNAMIC_LIB)
+  add_library(FuegoEngine SHARED ${SOURCES} ${PROJECT_HEADERS})
 
 else()
-    add_library( FuegoEngine
-        STATIC
-        ${SOURCES}
-        ${PROJECT_HEADERS}
-)
+  add_library(FuegoEngine STATIC ${SOURCES} ${PROJECT_HEADERS})
 
 endif()
 
-target_link_libraries( FuegoEngine 
-    PUBLIC
-    ${DEPENDENCIES}
-)
+target_link_libraries(FuegoEngine PUBLIC ${DEPENDENCIES})
 
-target_include_directories( FuegoEngine 
-    PUBLIC
-    External/spdlog/include
-    External/glm
-    External/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
-)
+target_include_directories(
+  FuegoEngine
+  PUBLIC External/spdlog/include External/glm External/imgui
+         ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Fuego)
 
-if ( WIN32 )
-    #GLAD
-    target_link_libraries ( FuegoEngine 
-        PRIVATE 
-        Glad
-    )
+if(WIN32)
+  # GLAD
+  target_link_libraries(FuegoEngine PRIVATE Glad)
 
-    target_include_directories( FuegoEngine 
-        PRIVATE 
-        External/glad/include
-    )
+  target_include_directories(FuegoEngine PRIVATE External/glad/include)
 
-    target_link_libraries(FuegoEngine 
-        PRIVATE 
-        opengl32
-    )
+  target_link_libraries(FuegoEngine PRIVATE opengl32)
 
-elseif( APPLE )
-    target_include_directories( FuegoEngine 
-        PRIVATE 
-        External/metal-cpp
-    )
+elseif(APPLE)
+  target_include_directories(FuegoEngine PRIVATE External/metal-cpp)
 endif()
 
-target_precompile_headers( FuegoEngine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h )
+target_precompile_headers(FuegoEngine PRIVATE
+                          ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 
-if ( FUEGO_DYNAMIC_LIB )
-    target_compile_definitions( FuegoEngine PRIVATE FUEGO_DYNAMIC_LIB )
+if(FUEGO_DYNAMIC_LIB)
+  target_compile_definitions(FuegoEngine PRIVATE FUEGO_DYNAMIC_LIB)
 endif()
 
-target_compile_definitions( FuegoEngine PRIVATE FUEGO_BUILD_LIB )
-target_compile_features( FuegoEngine PUBLIC cxx_std_20 )
+target_compile_definitions(FuegoEngine PRIVATE FUEGO_BUILD_LIB)
+target_compile_features(FuegoEngine PUBLIC cxx_std_20)
 
-target_compile_definitions( FuegoEngine PUBLIC FUEGO_ENABLE_ASSERTS )
+target_compile_definitions(FuegoEngine PUBLIC FUEGO_ENABLE_ASSERTS)
 
-if ( MSVC )
-    target_compile_options( FuegoEngine PRIVATE /W4 /WX /permissive- )
-    target_compile_options( FuegoEngine PUBLIC /utf-8 )
+if(MSVC)
+  target_compile_options(FuegoEngine PRIVATE /W4 /WX /permissive-)
+  target_compile_options(FuegoEngine PUBLIC /utf-8)
 else()
-    # -pedantic
-    target_compile_options( FuegoEngine PRIVATE -Wall -Wextra -Werror )
+  # -pedantic
+  target_compile_options(FuegoEngine PRIVATE -Wall -Wextra -Werror)
 endif()
 
-if( UNIX AND APPLE )
-    message( STATUS "The target platform is MacOS" )
-    target_compile_definitions( FuegoEngine PUBLIC FUEGO_PLATFORM_MACOS )
-    target_compile_options( FuegoEngine PRIVATE -fobjc-arc )
-elseif( WIN32 )
-    message( STATUS "The target platform is Windows" )
-    target_compile_definitions( FuegoEngine PUBLIC FUEGO_PLATFORM_WIN )
+if(UNIX AND APPLE)
+  message(STATUS "The target platform is MacOS")
+  target_compile_definitions(FuegoEngine PUBLIC FUEGO_PLATFORM_MACOS)
+  target_compile_options(FuegoEngine PRIVATE -fobjc-arc)
+elseif(WIN32)
+  message(STATUS "The target platform is Windows")
+  target_compile_definitions(FuegoEngine PUBLIC FUEGO_PLATFORM_WIN)
 endif()

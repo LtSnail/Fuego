@@ -2,13 +2,24 @@
 
 namespace Fuego
 {
-void EventQueueWin::Update() {}
+void EventQueueWin::Update()
+{
+}
 
-std::shared_ptr<Event> EventQueueWin::Front() { return m_Queue.front(); }
+std::shared_ptr<Event> EventQueueWin::Front()
+{
+    return m_Queue.front();
+}
 
-void EventQueueWin::Pop() { m_Queue.pop(); }
+void EventQueueWin::Pop()
+{
+    m_Queue.pop();
+}
 
-bool EventQueueWin::Empty() { return m_Queue.empty(); }
+bool EventQueueWin::Empty()
+{
+    return m_Queue.empty();
+}
 
 void EventQueueWin::PushEvent(std::shared_ptr<Event>&& e)
 {

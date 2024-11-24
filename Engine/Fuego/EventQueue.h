@@ -7,7 +7,7 @@ namespace Fuego
 {
 class FUEGO_API EventQueue
 {
-   public:
+public:
     EventQueue() = default;
     FUEGO_NON_COPYABLE_NON_MOVABLE(EventQueue)
 

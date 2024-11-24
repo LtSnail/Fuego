@@ -35,7 +35,7 @@ struct WindowProps
 
 class Window
 {
-   public:
+public:
     virtual ~Window() = default;
 
     virtual void Update() = 0;
@@ -46,7 +46,6 @@ class Window
     virtual void SetVSync(bool enabled) = 0;
     virtual bool IsVSync() const = 0;
 
-    static std::unique_ptr<Window> CreateAppWindow(const WindowProps& props,
-                                                   EventQueue& eventQueue);
+    static std::unique_ptr<Window> CreateAppWindow(const WindowProps& props, EventQueue& eventQueue);
 };
 }  // namespace Fuego

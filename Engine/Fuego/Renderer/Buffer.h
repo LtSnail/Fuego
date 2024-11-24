@@ -6,9 +6,9 @@ namespace Fuego
 {
 class VertexBuffer
 {
-   public:
+public:
     VertexBuffer() = default;
-    virtual ~VertexBuffer(){};
+    virtual ~VertexBuffer() {};
 
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;
@@ -18,9 +18,9 @@ class VertexBuffer
 
 class IndexBuffer
 {
-   public:
+public:
     IndexBuffer() = default;
-    virtual ~IndexBuffer(){};
+    virtual ~IndexBuffer() {};
 
     virtual void Bind() const = 0;
     virtual void Unbind() const = 0;

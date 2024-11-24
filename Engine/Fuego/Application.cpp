@@ -20,26 +20,31 @@ class Application::ApplicationImpl
 };
 Application* Application::ApplicationImpl::m_Instance = nullptr;
 
-Application::Application() : d(new ApplicationImpl())
+Application::Application()
+    : d(new ApplicationImpl())
 {
     ApplicationImpl::m_Instance = this;
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->m_Running = true;
-    
+
     // Temp::
-    float vertices[3 * 3] = {
-        -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
     d->_vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
     uint32_t indices[3] = {0, 1, 2};
-    d->_indexBuffer.reset(
-        IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+    d->_indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 }
 
-Application::~Application() { delete d; }
+Application::~Application()
+{
+    delete d;
+}
 
-void Application::PushLayer(Layer* layer) { d->m_LayerStack.PushLayer(layer); }
+void Application::PushLayer(Layer* layer)
+{
+    d->m_LayerStack.PushLayer(layer);
+}
 
 void Application::PushOverlay(Layer* overlay)
 {
@@ -49,10 +54,8 @@ void Application::PushOverlay(Layer* overlay)
 void Application::OnEvent(Event& event)
 {
     EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<WindowCloseEvent>(
-        std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
-    dispatcher.Dispatch<WindowResizeEvent>(
-        std::bind(&Application::OnWindowResize, this, std::placeholders::_1));
+    dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+    dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Application::OnWindowResize, this, std::placeholders::_1));
 
     FU_CORE_TRACE("{0}", event.ToString());
 
@@ -85,7 +88,10 @@ Application& Application::Get()
     return *Application::ApplicationImpl::m_Instance;
 }
 
-Window& Application::GetWindow() { return *d->m_Window; }
+Window& Application::GetWindow()
+{
+    return *d->m_Window;
+}
 
 void Application::Run()
 {

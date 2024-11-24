@@ -23,17 +23,14 @@ Layer::~Layer()
 
 void Layer::OnAttach()
 {
-    
 }
 
 void Layer::OnDetach()
 {
-    
 }
 
 void Layer::OnUpdate()
 {
-    
 }
 
 void Layer::OnEvent(Event& event)
@@ -45,4 +42,4 @@ const std::string& Layer::GetName() const
 {
     return d->m_Name;
 }
-}
+}  // namespace Fuego

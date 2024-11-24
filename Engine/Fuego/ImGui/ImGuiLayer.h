@@ -15,4 +15,4 @@ public:
     void OnUpdate() override;
     void OnEvent(Event& event) override;
 };
-}
+}  // namespace Fuego

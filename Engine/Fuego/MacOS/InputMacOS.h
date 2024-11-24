@@ -6,7 +6,7 @@ namespace Fuego
 {
 class InputMacOS : public Input
 {
-   protected:
+protected:
     virtual bool IsKeyPressedImpl(KeyCode keyCode) override;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) override;
@@ -16,7 +16,7 @@ class InputMacOS : public Input
 
     friend class WindowWin;
 
-   private:
+private:
     InputMacOS() = default;
 };
 }  // namespace Fuego

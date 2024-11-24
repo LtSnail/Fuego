@@ -5,7 +5,7 @@ namespace Fuego
 {
 class FUEGO_API EventQueueMacOS : public EventQueue
 {
-   public:
+public:
     EventQueueMacOS();
     ~EventQueueMacOS();
 
@@ -14,7 +14,7 @@ class FUEGO_API EventQueueMacOS : public EventQueue
     virtual void Pop() override;
     virtual bool Empty() override;
 
-   private:
+private:
     friend void PushEvent(EventQueueMacOS* eq, std::shared_ptr<Event> ev);
     std::queue<std::shared_ptr<Event>> m_Queue;
 

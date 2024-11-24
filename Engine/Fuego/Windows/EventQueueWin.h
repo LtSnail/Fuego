@@ -12,13 +12,13 @@ class EventQueueWin : public EventQueue
 {
     friend class WindowWin;
 
-   public:
+public:
     virtual void Update() override;
     virtual std::shared_ptr<Event> Front() override;
     virtual void Pop() override;
     virtual bool Empty() override;
 
-   private:
+private:
     virtual void PushEvent(std::shared_ptr<Event>&& e);
 
     std::queue<std::shared_ptr<Event>> m_Queue;

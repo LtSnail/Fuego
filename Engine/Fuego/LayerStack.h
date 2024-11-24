@@ -2,14 +2,13 @@
 
 #include <Layer.h>
 
-
 namespace Fuego
 {
 class FUEGO_API LayerStack
 {
     FUEGO_INTERFACE(LayerStack)
 
-   public:
+public:
     LayerStack();
     ~LayerStack();
 
@@ -23,4 +22,4 @@ class FUEGO_API LayerStack
     std::vector<Layer*>::iterator begin();
     std::vector<Layer*>::iterator end();
 };
-}
+}  // namespace Fuego

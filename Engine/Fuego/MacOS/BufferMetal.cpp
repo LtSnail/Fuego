@@ -9,19 +9,36 @@ VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
     return nullptr;
 }
 
-VertexBufferMetal::VertexBufferMetal() {}
+VertexBufferMetal::VertexBufferMetal()
+{
+}
 
-VertexBufferMetal::~VertexBufferMetal() {}
-void VertexBufferMetal::Bind() const {}
-void VertexBufferMetal::Unbind() const {}
+VertexBufferMetal::~VertexBufferMetal()
+{
+}
+void VertexBufferMetal::Bind() const
+{
+}
+void VertexBufferMetal::Unbind() const
+{
+}
 
-IndexBufferMetal::~IndexBufferMetal() {}
+IndexBufferMetal::~IndexBufferMetal()
+{
+}
 
-void IndexBufferMetal::Bind() const {}
+void IndexBufferMetal::Bind() const
+{
+}
 
-void IndexBufferMetal::Unbind() const {}
+void IndexBufferMetal::Unbind() const
+{
+}
 
-uint32_t IndexBufferMetal::GetCount() const { return 0; }
+uint32_t IndexBufferMetal::GetCount() const
+{
+    return 0;
+}
 
 IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size)
 {

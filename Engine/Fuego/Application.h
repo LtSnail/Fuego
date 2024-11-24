@@ -12,7 +12,7 @@ class FUEGO_API Application
 {
     FUEGO_INTERFACE(Application);
 
-   public:
+public:
     Application();
     virtual ~Application();
     FUEGO_NON_COPYABLE_NON_MOVABLE(Application)

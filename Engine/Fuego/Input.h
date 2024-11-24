@@ -8,7 +8,7 @@ namespace Fuego
 {
 class FUEGO_API Input
 {
-   public:
+public:
     static inline bool IsKeyPressed(KeyCode keyCode)
     {
         return m_Instance->IsKeyPressedImpl(keyCode);
@@ -19,9 +19,15 @@ class FUEGO_API Input
         return m_Instance->IsMouseButtonPressedImpl(mouseCode);
     };
 
-    static inline float GetMouseX() { return m_Instance->GetMouseXImpl(); };
+    static inline float GetMouseX()
+    {
+        return m_Instance->GetMouseXImpl();
+    };
 
-    static inline float GetMouseY() { return m_Instance->GetMouseYImpl(); };
+    static inline float GetMouseY()
+    {
+        return m_Instance->GetMouseYImpl();
+    };
     static inline std::pair<float, float> GetMousePosition()
     {
         return m_Instance->GetMousePositionImpl();
@@ -70,7 +76,7 @@ class FUEGO_API Input
         float y;
     };
 
-   protected:
+protected:
     virtual bool IsKeyPressedImpl(KeyCode keyCode) = 0;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) = 0;
@@ -78,7 +84,7 @@ class FUEGO_API Input
     virtual float GetMouseXImpl() const = 0;
     virtual float GetMouseYImpl() const = 0;
 
-   private:
+private:
     static Input* m_Instance;
 };
 }  // namespace Fuego

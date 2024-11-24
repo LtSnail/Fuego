@@ -9,7 +9,8 @@ VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
     return new VertexBufferOpenGL(vertices, size);
 }
 
-VertexBufferOpenGL::VertexBufferOpenGL(float* vertices, uint32_t size) : _VBO(0)
+VertexBufferOpenGL::VertexBufferOpenGL(float* vertices, uint32_t size)
+    : _VBO(0)
 {
     if (!_isVAO)
     {
@@ -25,32 +26,43 @@ VertexBufferOpenGL::VertexBufferOpenGL(float* vertices, uint32_t size) : _VBO(0)
     glEnableVertexAttribArray(0);
 }
 
-VertexBufferOpenGL::~VertexBufferOpenGL() { glDeleteBuffers(1, &_VBO); }
+VertexBufferOpenGL::~VertexBufferOpenGL()
+{
+    glDeleteBuffers(1, &_VBO);
+}
 
-void VertexBufferOpenGL::Bind() const {}
+void VertexBufferOpenGL::Bind() const
+{
+}
 
-void VertexBufferOpenGL::Unbind() const {}
+void VertexBufferOpenGL::Unbind() const
+{
+}
 
 //////////////////////////////////////////////////////////////
 /// IndexBuffer /////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
 IndexBufferOpenGL::IndexBufferOpenGL(uint32_t* indices, uint32_t count)
-    : _EBO(0), _count(count)
+    : _EBO(0)
+    , _count(count)
 {
     glGenBuffers(1, &_EBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 count * sizeof(uint32_t),
-                 indices,
-                 GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 }
 
-IndexBufferOpenGL::~IndexBufferOpenGL() {}
+IndexBufferOpenGL::~IndexBufferOpenGL()
+{
+}
 
-void IndexBufferOpenGL::Bind() const {}
+void IndexBufferOpenGL::Bind() const
+{
+}
 
-void IndexBufferOpenGL::Unbind() const {}
+void IndexBufferOpenGL::Unbind() const
+{
+}
 
 IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size)
 {
