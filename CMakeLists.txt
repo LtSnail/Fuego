@@ -15,6 +15,8 @@ project(
   DESCRIPTION "Sandbox project"
   LANGUAGES CXX)
 
+enable_language(C CXX)
+
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(CMAKE_CXX_EXTENSIONS OFF)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -31,6 +33,7 @@ elseif(WIN32)
 endif()
 
 add_subdirectory(Engine)
+add_subdirectory(ShaderTranslator)
 add_subdirectory(Sandbox)
 add_subdirectory(CoreLib)
 
