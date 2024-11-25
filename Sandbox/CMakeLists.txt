@@ -36,12 +36,6 @@ if(APPLE)
   )
 elseif(WIN32)
   add_executable(Sandbox WIN32 ${SOURCES})
-  add_custom_command(
-    TARGET Sandbox
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:FuegoEngine>
-            $<TARGET_FILE_DIR:Sandbox>
-    COMMENT "Copy .dll to .exe folder")
 endif()
 
 target_link_libraries(Sandbox ${DEPENDENCIES})
