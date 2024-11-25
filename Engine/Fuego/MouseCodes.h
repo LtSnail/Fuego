@@ -1,5 +1,7 @@
 #pragma once
 
+#include "fupch.h"
+
 namespace Fuego
 {
 using MouseCode = uint16_t;
@@ -27,26 +29,26 @@ inline std::string GetMouseButtonName(MouseCode button)
 {
     switch (button)
     {
-        case ButtonLeft:
-            return "ButtonLeft";
-        case ButtonRight:
-            return "ButtonRight";
-        case ButtonMiddle:
-            return "ButtonMiddle";
+    case ButtonLeft:
+        return "ButtonLeft";
+    case ButtonRight:
+        return "ButtonRight";
+    case ButtonMiddle:
+        return "ButtonMiddle";
 
-        case Button3:
-            return "Button3";
-        case Button4:
-            return "Button4";
-        case Button5:
-            return "Button5";
-        case Button6:
-            return "Button6";
-        case Button7:
-            return "Button7";
+    case Button3:
+        return "Button3";
+    case Button4:
+        return "Button4";
+    case Button5:
+        return "Button5";
+    case Button6:
+        return "Button6";
+    case Button7:
+        return "Button7";
 
-        default:
-            return "UnknownButton";
+    default:
+        return "UnknownButton";
     }
 }
 }  // namespace Mouse

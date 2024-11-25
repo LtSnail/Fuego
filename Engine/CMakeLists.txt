@@ -5,6 +5,7 @@ set(FUEGO_DYNAMIC_LIB
     CACHE BOOL "Build dynamic library (ON/OFF)")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/WindowsDep.cmake)
 
 set(PROJECT_HEADERS
     Fuego/Application.h
@@ -32,6 +33,9 @@ set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
             Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp)
 
 set(DEPENDENCIES ImGui)
+if(WIN32)
+  list(APPEND DEPENDENCIES WindowsDep)
+endif()
 
 if(APPLE)
   set(PROJECT_HEADERS
@@ -71,35 +75,14 @@ if(APPLE)
       ${GAMECONTROLLER}
       ${QUARTZCORE})
 
-elseif(WIN32)
-  if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(PROJECT_HEADERS
-        ${PROJECT_HEADERS}
-        Fuego/Windows/EventQueueWin.h
-        Fuego/Windows/WindowWin.h
-        Fuego/Windows/KeyCodesWin.h
-        Fuego/Windows/InputWin.h
-        Fuego/Windows/OpenGL/OpenGLContext.h
-        Fuego/Windows/OpenGL/BufferOpenGL.h)
-
-    set(SOURCES
-        ${SOURCES} Fuego/Windows/EventQueueWin.cpp Fuego/Windows/WindowWin.cpp
-        Fuego/Windows/InputWin.cpp Fuego/Windows/OpenGL/OpenGLContext.cpp
-        Fuego/Windows/OpenGL/BufferOpenGL.cpp)
-
-    add_subdirectory(External/glad)
-
-  else()
-    message(FATAL_ERROR "Target platform is not X64 - Compilation denied")
-  endif()
 endif()
 
 if(FUEGO_DYNAMIC_LIB)
   add_library(FuegoEngine SHARED ${SOURCES} ${PROJECT_HEADERS})
-
 else()
   add_library(FuegoEngine STATIC ${SOURCES} ${PROJECT_HEADERS})
 
+  message(FATAL_ERROR "Target platform is not supported - Compilation denied")
 endif()
 
 target_link_libraries(FuegoEngine PUBLIC ${DEPENDENCIES})
@@ -109,15 +92,7 @@ target_include_directories(
   PUBLIC External/spdlog/include External/glm External/imgui
          ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Fuego)
 
-if(WIN32)
-  # GLAD
-  target_link_libraries(FuegoEngine PRIVATE Glad)
-
-  target_include_directories(FuegoEngine PRIVATE External/glad/include)
-
-  target_link_libraries(FuegoEngine PRIVATE opengl32)
-
-elseif(APPLE)
+if(APPLE)
   target_include_directories(FuegoEngine PRIVATE External/metal-cpp)
 endif()
 
