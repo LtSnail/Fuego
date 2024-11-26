@@ -195,4 +195,95 @@ inline std::remove_extent_t<T>& UniquePtr<T, Deleter>::operator[](size_t index) 
     return _ptr[index];
 }
 
+template <class T, class DeleterT, class U, class DeleterU>
+    requires IsDefaultCompatibleDeleter<T, DeleterT> && IsDefaultCompatibleDeleter<U, DeleterU>
+auto operator<=>(const UniquePtr<T, DeleterT>& lhs, const UniquePtr<U, DeleterU>& rhs) noexcept
+{
+    return std::compare_three_way{}(lhs.Get(), rhs.Get());
+}
+
+template <class T, class DeleterT, class U, class DeleterU>
+    requires IsDefaultCompatibleDeleter<T, DeleterT> && IsDefaultCompatibleDeleter<U, DeleterU>
+bool operator==(const UniquePtr<T, DeleterT>& lhs, const UniquePtr<U, DeleterU>& rhs) noexcept
+{
+    return lhs.Get() == rhs.Get();
+}
+
+template <class T, class DeleterT, class U, class DeleterU>
+    requires IsDefaultCompatibleDeleter<T, DeleterT> && IsDefaultCompatibleDeleter<U, DeleterU>
+bool operator!=(const UniquePtr<T, DeleterT>& lhs, const UniquePtr<U, DeleterU>& rhs) noexcept
+{
+    return lhs.Get() != rhs.Get();
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(const UniquePtr<T, Deleter>& lhs, std::nullptr_t) noexcept
+{
+    return lhs.Get() == nullptr;
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(const UniquePtr<T, Deleter>& lhs, std::nullptr_t) noexcept
+{
+    return lhs.Get() != nullptr;
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(std::nullptr_t, const UniquePtr<T, Deleter>& lhs) noexcept
+{
+    return lhs.Get() == nullptr;
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(std::nullptr_t, const UniquePtr<T, Deleter>& lhs) noexcept
+{
+    return lhs.Get() != nullptr;
+}
+
+template <class T, class Deleter, class U>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+auto operator<=>(const UniquePtr<T, Deleter>& lhs, U const* rhs) noexcept
+{
+    return std::compare_three_way{}(lhs.Get(), rhs);
+}
+
+template <class U, class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+auto operator<=>(U const* lhs, const UniquePtr<T, Deleter>& rhs) noexcept
+{
+    return std::compare_three_way{}(lhs, rhs.Get());
+}
+
+template <class T, class Deleter, class U>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(const UniquePtr<T, Deleter>& lhs, U const* rhs) noexcept
+{
+    return lhs.Get() == rhs;
+}
+
+template <class U, class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(U const* lhs, const UniquePtr<T, Deleter>& rhs) noexcept
+{
+    return lhs == rhs.Get();
+}
+
+template <class T, class Deleter, class U>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(const UniquePtr<T, Deleter>& lhs, U const* rhs) noexcept
+{
+    return lhs.Get() != rhs;
+}
+
+template <class U, class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(U const* lhs, const UniquePtr<T, Deleter>& rhs) noexcept
+{
+    return lhs != rhs.Get();
+}
+
 }  // namespace Fuego
