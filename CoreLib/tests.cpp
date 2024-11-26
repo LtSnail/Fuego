@@ -5,7 +5,7 @@
 
 using namespace Fuego;
 
-TEST(CoreLibTests, UniquePtr_NullptrTest)
+TEST(CoreLibTests, UniquePtr_NullPtrTest)
 {
     UniquePtr<int> Ptr;
     EXPECT_EQ(Ptr.Get(), nullptr);
@@ -52,9 +52,9 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterTest)
 {
     struct CustomDeleter
     {
-        void operator()(int* ptr)
+        void operator()(int* Ptr)
         {
-            delete ptr;
+            delete Ptr;
         }
     };
     UniquePtr<int, CustomDeleter> Ptr(new int(5));
@@ -72,9 +72,9 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterTypeTest)
 {
     struct CustomDeleter
     {
-        void operator()(int* ptr)
+        void operator()(int* Ptr)
         {
-            delete ptr;
+            delete Ptr;
         }
         int Check()
         {
@@ -91,9 +91,9 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterArrayTypeTest)
 {
     struct CustomDeleter
     {
-        void operator()(int* ptr)
+        void operator()(int* Ptr)
         {
-            delete[] ptr;
+            delete[] Ptr;
         }
         int Check()
         {
@@ -108,11 +108,11 @@ TEST(CoreLibTests, UniquePtr_CustomDeleterArrayTypeTest)
 
 TEST(CoreLibTests, UniquePtr_SwapTest)
 {
-    UniquePtr<int> ptr1(new int(1));
-    UniquePtr<int> ptr2(new int(2));
-    ptr1.Swap(ptr2);
-    EXPECT_EQ(*ptr1, 2);
-    EXPECT_EQ(*ptr2, 1);
+    UniquePtr<int> Ptr1(new int(1));
+    UniquePtr<int> Ptr2(new int(2));
+    Ptr1.Swap(Ptr2);
+    EXPECT_EQ(*Ptr1, 2);
+    EXPECT_EQ(*Ptr2, 1);
 }
 
 class LeakChecker
