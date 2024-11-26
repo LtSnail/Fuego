@@ -75,34 +75,6 @@ public:
         requires IsDefaultCompatibleDeleter<U, DeleterU>
     friend class WeakPtr;
 
-    template <class U>
-    bool operator==(std::remove_extent_t<U>* other) const noexcept;
-
-    template <class U>
-    bool operator<(std::remove_extent_t<U>* other) const noexcept;
-
-    template <class U>
-    bool operator>(std::remove_extent_t<U>* other) const noexcept;
-
-    template <class U>
-    bool operator<=(std::remove_extent_t<U>* other) const noexcept;
-
-    template <class U>
-    bool operator>=(std::remove_extent_t<U>* other) const noexcept;
-
-    template <class U>
-    bool operator!=(std::remove_extent_t<U>* other) const noexcept;
-
-    bool operator==(std::remove_extent_t<T>* other) const noexcept;
-    bool operator<(std::remove_extent_t<T>* other) const noexcept;
-    bool operator>(std::remove_extent_t<T>* other) const noexcept;
-    bool operator<=(std::remove_extent_t<T>* other) const noexcept;
-    bool operator>=(std::remove_extent_t<T>* other) const noexcept;
-    bool operator!=(std::remove_extent_t<T>* other) const noexcept;
-
-    bool operator==(std::nullptr_t other) const noexcept;
-    bool operator!=(std::nullptr_t other) const noexcept;
-
     template <class U = T>
         requires std::is_array_v<U>
     std::remove_extent_t<T> const& operator[](size_t index) const noexcept;
@@ -354,96 +326,6 @@ inline std::remove_extent_t<T>* SharedPtr<T, Deleter>::operator->() noexcept
 template <class T, class Deleter>
     requires IsDefaultCompatibleDeleter<T, Deleter>
 template <class U>
-inline bool SharedPtr<T, Deleter>::operator==(std::remove_extent_t<U>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr == other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-template <class U>
-inline bool SharedPtr<T, Deleter>::operator<(std::remove_extent_t<U>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr < other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-template <class U>
-inline bool SharedPtr<T, Deleter>::operator>(std::remove_extent_t<U>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr > other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-template <class U>
-inline bool SharedPtr<T, Deleter>::operator<=(std::remove_extent_t<U>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr <= other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-template <class U>
-inline bool SharedPtr<T, Deleter>::operator>=(std::remove_extent_t<U>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr >= other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-template <class U>
-inline bool SharedPtr<T, Deleter>::operator!=(std::remove_extent_t<U>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr != other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator==(std::remove_extent_t<T>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr == other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator<(std::remove_extent_t<T>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr < other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator>(std::remove_extent_t<T>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr > other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator<=(std::remove_extent_t<T>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr <= other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator>=(std::remove_extent_t<T>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr >= other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator!=(std::remove_extent_t<T>* other) const noexcept
-{
-    return _control_block ? _control_block->_ptr != other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-template <class U>
     requires std::is_array_v<U>
 inline std::remove_extent_t<T> const& SharedPtr<T, Deleter>::operator[](size_t index) const noexcept
 {
@@ -511,20 +393,6 @@ inline void SharedPtr<T, Deleter>::Swap(SharedPtr<T, Deleter>& other) noexcept
 
 template <class T, class Deleter>
     requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator==(std::nullptr_t other) const noexcept
-{
-    return _control_block ? _control_block->_ptr == other : true;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
-inline bool SharedPtr<T, Deleter>::operator!=(std::nullptr_t other) const noexcept
-{
-    return _control_block ? _control_block->_ptr != other : false;
-}
-
-template <class T, class Deleter>
-    requires IsDefaultCompatibleDeleter<T, Deleter>
 inline SharedPtr<T, Deleter>::_ControlBlock* SharedPtr<T, Deleter>::GetControlBlock() const noexcept
 {
     return _control_block;
@@ -536,5 +404,96 @@ inline SharedPtr<T, Deleter>::SharedPtr(SharedPtr::_ControlBlock* cb) noexcept
     : _control_block(cb)
 {
     ++(_control_block->_strong_count);
+}
+
+template <class T, class DeleterT, class U, class DeleterU>
+    requires IsDefaultCompatibleDeleter<T, DeleterT> && IsDefaultCompatibleDeleter<U, DeleterU>
+auto operator<=>(const SharedPtr<T, DeleterT>& lhs, const SharedPtr<U, DeleterU>& rhs) noexcept
+{
+    return std::compare_three_way{}(lhs.Get(), rhs.Get());
+}
+
+template <class T, class DeleterT, class U, class DeleterU>
+    requires IsDefaultCompatibleDeleter<T, DeleterT> && IsDefaultCompatibleDeleter<U, DeleterU>
+bool operator==(const SharedPtr<T, DeleterT>& lhs, const SharedPtr<U, DeleterU>& rhs) noexcept
+{
+    return lhs.Get() == rhs.Get();
+}
+
+template <class T, class DeleterT, class U, class DeleterU>
+    requires IsDefaultCompatibleDeleter<T, DeleterT> && IsDefaultCompatibleDeleter<U, DeleterU>
+bool operator!=(const SharedPtr<T, DeleterT>& lhs, const SharedPtr<U, DeleterU>& rhs) noexcept
+{
+    return lhs.Get() != rhs.Get();
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(const SharedPtr<T, Deleter>& lhs, std::nullptr_t) noexcept
+{
+    return lhs.Get() == nullptr;
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(const SharedPtr<T, Deleter>& lhs, std::nullptr_t) noexcept
+{
+    return lhs.Get() != nullptr;
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(std::nullptr_t, const SharedPtr<T, Deleter>& lhs) noexcept
+{
+    return lhs.Get() == nullptr;
+}
+
+template <class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(std::nullptr_t, const SharedPtr<T, Deleter>& lhs) noexcept
+{
+    return lhs.Get() != nullptr;
+}
+
+template <class T, class Deleter, class U>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+auto operator<=>(const SharedPtr<T, Deleter>& lhs, U const* rhs) noexcept
+{
+    return std::compare_three_way{}(lhs.Get(), rhs);
+}
+
+template <class U, class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+auto operator<=>(U const* lhs, const SharedPtr<T, Deleter>& rhs) noexcept
+{
+    return std::compare_three_way{}(lhs, rhs.Get());
+}
+
+template <class T, class Deleter, class U>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(const SharedPtr<T, Deleter>& lhs, U const* rhs) noexcept
+{
+    return lhs.Get() == rhs;
+}
+
+template <class U, class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator==(U const* rhs, const SharedPtr<T, Deleter>& lhs) noexcept
+{
+    return rhs == lhs.Get();
+}
+
+template <class T, class Deleter, class U>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(const SharedPtr<T, Deleter>& lhs, U const* rhs) noexcept
+{
+    return lhs.Get() != rhs;
+}
+
+template <class U, class T, class Deleter>
+    requires IsDefaultCompatibleDeleter<T, Deleter>
+bool operator!=(U const* lhs, const SharedPtr<T, Deleter>& rhs) noexcept
+{
+    return lhs != rhs.Get();
 }
 }  // namespace Fuego
