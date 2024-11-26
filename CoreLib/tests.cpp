@@ -311,22 +311,6 @@ TEST(CoreLibTests, SharedPtr_SwapExchangesResourcesTest)
     EXPECT_EQ(*Sp2, 42);
 }
 
-TEST(CoreLibTests, SharedPtr_EqualityOperatorTest)
-{
-    auto Sp1 = SharedPtr<int>(new int(42));
-    auto Sp2 = Sp1;
-    EXPECT_TRUE(Sp1 == Sp2.Get());
-    EXPECT_FALSE(Sp1 == nullptr);
-}
-
-TEST(CoreLibTests, SharedPtr_InequalityOperatorTest)
-{
-    auto Sp1 = SharedPtr<int>(new int(42));
-    auto Sp2 = SharedPtr<int>(new int(24));
-    EXPECT_TRUE(Sp1 != Sp2.Get());
-    EXPECT_FALSE(Sp1 != Sp1.Get());
-}
-
 TEST(CoreLibTests, SharedPtr_UseCountIncreasesOnCopyTest)
 {
     auto Sp1 = SharedPtr<int>(new int(42));
@@ -360,4 +344,98 @@ TEST(CoreLibTests, SharedPtrWeakPtr_WeakPtrTracksResourceTest)
         EXPECT_FALSE(Wp.Expired());
     }
     EXPECT_TRUE(Wp.Expired());
+}
+
+TEST(CoreLibTests, SharedPtr_CompareTwoNullPtrs)
+{
+    SharedPtr<int> Ptr1;
+    SharedPtr<int> Ptr2;
+
+    EXPECT_TRUE(Ptr1 == Ptr2);
+    EXPECT_FALSE(Ptr1 != Ptr2);
+    EXPECT_FALSE(Ptr1 < Ptr2);
+    EXPECT_FALSE(Ptr1 > Ptr2);
+    EXPECT_TRUE(Ptr1 <= Ptr2);
+    EXPECT_TRUE(Ptr1 >= Ptr2);
+}
+
+TEST(CoreLibTests, SharedPtr_CompareSameObject)
+{
+    auto RawPtr = new int(10);
+    SharedPtr<int> Ptr1(RawPtr);
+    SharedPtr<int> Ptr2(Ptr1);
+
+    EXPECT_TRUE(Ptr1 == Ptr2);
+    EXPECT_FALSE(Ptr1 != Ptr2);
+    EXPECT_FALSE(Ptr1 < Ptr2);
+    EXPECT_FALSE(Ptr1 > Ptr2);
+    EXPECT_TRUE(Ptr1 <= Ptr2);
+    EXPECT_TRUE(Ptr1 >= Ptr2);
+}
+
+TEST(CoreLibTests, SharedPtr_CompareDifferentObjects)
+{
+    SharedPtr<int> Ptr1(new int(10));
+    SharedPtr<int> Ptr2(new int(20));
+
+    EXPECT_FALSE(Ptr1 == Ptr2);
+    EXPECT_TRUE(Ptr1 != Ptr2);
+    EXPECT_TRUE((Ptr1 < Ptr2) || (Ptr1 > Ptr2));
+}
+
+TEST(CoreLibTests, SharedPtr_CompareWithNullPtr)
+{
+    SharedPtr<int> Ptr(new int(10));
+    SharedPtr<int> nPtr;
+
+    EXPECT_FALSE(Ptr == nPtr);
+    EXPECT_TRUE(Ptr != nPtr);
+    EXPECT_TRUE(nPtr == nPtr);
+    EXPECT_FALSE(nPtr != nPtr);
+}
+
+TEST(CoreLibTests, SharedPtr_CompareWithRawPointer)
+{
+    int* RawPtr = new int(10);
+    SharedPtr<int> Ptr(RawPtr);
+
+    EXPECT_TRUE(Ptr == RawPtr);
+    EXPECT_FALSE(Ptr != RawPtr);
+}
+
+TEST(CoreLibTests, UniquePtr_CompareTwoNullPtrs)
+{
+    UniquePtr<int> Ptr1;
+    UniquePtr<int> Ptr2;
+
+    EXPECT_TRUE(Ptr1 == Ptr2);
+    EXPECT_FALSE(Ptr1 != Ptr2);
+}
+
+TEST(CoreLibTests, UniquePtr_CompareWithSelf)
+{
+    UniquePtr<int> Ptr(new int(10));
+
+    EXPECT_TRUE(Ptr == Ptr);
+    EXPECT_FALSE(Ptr != Ptr);
+}
+
+TEST(CoreLibTests, UniquePtr_CompareDifferentObjects)
+{
+    UniquePtr<int> Ptr1(new int(10));
+    UniquePtr<int> Ptr2(new int(20));
+
+    EXPECT_FALSE(Ptr1 == Ptr2);
+    EXPECT_TRUE(Ptr1 != Ptr2);
+}
+
+TEST(CoreLibTests, UniquePtr_CompareWithNullPtr)
+{
+    UniquePtr<int> Ptr(new int(10));
+    UniquePtr<int> nPtr;
+
+    EXPECT_FALSE(Ptr == nPtr);
+    EXPECT_TRUE(Ptr != nPtr);
+    EXPECT_TRUE(nPtr == nPtr);
+    EXPECT_FALSE(nPtr != nPtr);
 }
