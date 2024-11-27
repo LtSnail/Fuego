@@ -22,5 +22,4 @@ target_link_libraries(CoreLibTests PRIVATE FuegoEngine) # Linker issue with log
 target_include_directories(
   CoreLibTests PRIVATE ${ROOT}/External/googletest/googletest/include)
 
-add_test(NAME CoreLibTests
-         COMMAND ${CMAKE_BINARY_DIR}/CoreLib/$<CONFIG>/CoreLibTests)
+add_test(NAME CoreLibTests COMMAND ${OUTPUT_DIR}/$<CONFIG>/CoreLibTests)
