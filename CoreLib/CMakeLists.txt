@@ -16,12 +16,6 @@ add_executable(CoreLibTests ${CORELIB_SOURCES} ${CORELIB_HEADERS})
 
 target_link_libraries(CoreLibTests PRIVATE gtest gtest_main)
 
-if(APPLE)
-  target_compile_definitions(CoreLibTests PUBLIC FUEGO_PLATFORM_MACOS)
-elseif(WIN32)
-  target_compile_definitions(CoreLibTests PUBLIC FUEGO_PLATFORM_WIN)
-endif()
-
 target_compile_definitions(CoreLibTests PUBLIC FUEGO_BUILD_LIB)
 
 target_include_directories(

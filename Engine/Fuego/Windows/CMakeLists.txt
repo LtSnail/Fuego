@@ -34,6 +34,5 @@ target_precompile_headers(WindowsDep PUBLIC
 target_link_libraries(WindowsDep PUBLIC Glad)
 
 target_compile_features(WindowsDep PUBLIC cxx_std_20)
-target_compile_definitions(WindowsDep PUBLIC FUEGO_PLATFORM_WIN)
 target_compile_definitions(WindowsDep PRIVATE FUEGO_BUILD_LIB)
 target_compile_definitions(WindowsDep PRIVATE FUEGO_ENABLE_ASSERTS)

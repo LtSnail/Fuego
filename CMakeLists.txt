@@ -22,6 +22,12 @@ set(ORGANIZATION FUEGO)
 
 enable_testing()
 
+if(APPLE)
+  add_compile_definitions(FUEGO_PLATFORM_MACOS)
+elseif(WIN32)
+  add_compile_definitions(FUEGO_PLATFORM_WIN)
+endif()
+
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)
 add_subdirectory(CoreLib)
