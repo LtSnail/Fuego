@@ -1,7 +1,5 @@
 #pragma once
 
-#include "fupch.h"
-
 namespace Fuego
 {
 using MouseCode = uint16_t;

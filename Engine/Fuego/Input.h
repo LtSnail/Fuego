@@ -2,7 +2,6 @@
 
 #include "KeyCodes.h"
 #include "MouseCodes.h"
-#include "fupch.h"
 
 namespace Fuego
 {

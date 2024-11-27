@@ -5,7 +5,6 @@ set(FUEGO_DYNAMIC_LIB
     CACHE BOOL "Build dynamic library (ON/OFF)")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/WindowsDep.cmake)
 
 set(PROJECT_HEADERS
     Fuego/Application.h
@@ -34,6 +33,7 @@ set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
 
 set(DEPENDENCIES ImGui)
 if(WIN32)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
   list(APPEND DEPENDENCIES WindowsDep)
 endif()
 
@@ -81,8 +81,6 @@ if(FUEGO_DYNAMIC_LIB)
   add_library(FuegoEngine SHARED ${SOURCES} ${PROJECT_HEADERS})
 else()
   add_library(FuegoEngine STATIC ${SOURCES} ${PROJECT_HEADERS})
-
-  message(FATAL_ERROR "Target platform is not supported - Compilation denied")
 endif()
 
 target_link_libraries(FuegoEngine PUBLIC ${DEPENDENCIES})
@@ -90,13 +88,15 @@ target_link_libraries(FuegoEngine PUBLIC ${DEPENDENCIES})
 target_include_directories(
   FuegoEngine
   PUBLIC External/spdlog/include External/glm External/imgui
-         ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Fuego)
+         ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/)
 
 if(APPLE)
   target_include_directories(FuegoEngine PRIVATE External/metal-cpp)
 endif()
-
-target_precompile_headers(FuegoEngine PRIVATE
+if(WIN32)
+  target_include_directories(FuegoEngine PUBLIC Fuego/Windows)
+endif()
+target_precompile_headers(FuegoEngine PUBLIC
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 
 if(FUEGO_DYNAMIC_LIB)
