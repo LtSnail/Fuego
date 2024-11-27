@@ -1,6 +1,7 @@
 ﻿#include "WindowWin.h"
 
 #include "InputWin.h"
+#include "Log.h"
 
 namespace Fuego
 {

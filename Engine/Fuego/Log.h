@@ -34,3 +34,44 @@ public:
 #define FU_CRITICAL(...) ::Fuego::Log::GetClientLogger()->critical(__VA_ARGS__)
 #endif
 // clang-format on
+
+#if defined(FUEGO_ENABLE_ASSERTS)
+#if defined(FUEGO_PLATFORM_WIN)
+#define FU_ASSERT(x, ...)                                  \
+    {                                                      \
+        if (!(x))                                          \
+        {                                                  \
+            FU_ERROR("Assertion Failed {0}", __VA_ARGS__); \
+            __debugbreak();                                \
+        }                                                  \
+    }
+#define FU_CORE_ASSERT(x, ...)                                  \
+    {                                                           \
+        if (!(x))                                               \
+        {                                                       \
+            FU_CORE_ERROR("Assertion Failed {0}", __VA_ARGS__); \
+            __debugbreak();                                     \
+        }                                                       \
+    }
+#elif defined(FUEGO_PLATFORM_MACOS)
+#define FU_ASSERT(x, ...)                                  \
+    {                                                      \
+        if (!(x))                                          \
+        {                                                  \
+            FU_ERROR("Assertion Failed {0}", __VA_ARGS__); \
+            __builtin_debugtrap();                         \
+        }                                                  \
+    }
+#define FU_CORE_ASSERT(x, ...)                                  \
+    {                                                           \
+        if (!(x))                                               \
+        {                                                       \
+            FU_CORE_ERROR("Assertion Failed {0}", __VA_ARGS__); \
+            __builtin_debugtrap();                              \
+        }                                                       \
+    }
+#endif
+#else
+#define FU_ASSERT(x, ...)
+#define FU_CORE_ASSERT(x, ...)
+#endif

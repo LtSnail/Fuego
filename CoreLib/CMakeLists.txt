@@ -16,11 +16,10 @@ add_executable(CoreLibTests ${CORELIB_SOURCES} ${CORELIB_HEADERS})
 
 target_link_libraries(CoreLibTests PRIVATE gtest gtest_main)
 
-target_compile_definitions(CoreLibTests PUBLIC FUEGO_BUILD_LIB)
+target_link_libraries(CoreLibTests PRIVATE FuegoInterface)
 
 target_include_directories(
-  CoreLibTests PRIVATE ${ROOT}/Engine/Fuego
-                       ${ROOT}/External/googletest/googletest/include)
+  CoreLibTests PRIVATE ${ROOT}/External/googletest/googletest/include)
 
 add_test(NAME CoreLibTests
          COMMAND ${CMAKE_BINARY_DIR}/CoreLib/$<CONFIG>/CoreLibTests)

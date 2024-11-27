@@ -20,19 +20,9 @@ set_target_properties(
 
 add_library(WindowsDep STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 
-target_compile_options(WindowsDep PUBLIC /utf-8)
-
 target_include_directories(
-  WindowsDep
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../ ${CMAKE_CURRENT_SOURCE_DIR}/../../
-         ${CMAKE_CURRENT_SOURCE_DIR}/../../External/spdlog/include
-         ${CMAKE_CURRENT_SOURCE_DIR}/../../External/glad/include)
+  WindowsDep PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../../External/glad/include)
 
-target_precompile_headers(WindowsDep PUBLIC
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../../fupch.h)
-
-target_link_libraries(WindowsDep PUBLIC Glad)
-
-target_compile_features(WindowsDep PUBLIC cxx_std_20)
-target_compile_definitions(WindowsDep PRIVATE FUEGO_BUILD_LIB)
-target_compile_definitions(WindowsDep PRIVATE FUEGO_ENABLE_ASSERTS)
+target_link_libraries(WindowsDep PRIVATE Glad)
+target_link_libraries(WindowsDep PRIVATE FuegoInterface)

@@ -1,5 +1,7 @@
 ﻿#include "OpenGLContext.h"
 
+#include "Log.h"
+
 namespace Fuego
 {
 OpenGLContext::OpenGLContext(HWND* windowHandle)

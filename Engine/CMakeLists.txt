@@ -39,37 +39,25 @@ else()
 endif()
 
 # Common setup
-set(PLATFORM_DEPENDENCIES ImGui)
-set(PLATFORM_INCLUDES
-    External/spdlog/include External/glm External/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/ ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/)
+set(ENGINE_DEPENDENCIES ImGui)
 
-set(PUBLIC_PLATFORM_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
+set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
 
-set(PPIVATE_PLATFORM_COMPILE_DEFS ${DLL_COMPILE_DEF} FUEGO_BUILD_LIB)
+set(PPIVATE_ENGINE_COMPILE_DEFS ${DLL_COMPILE_DEF} FUEGO_BUILD_LIB)
 
-set(PUBLIC_PLATFORM_COMPILE_FEATURES cxx_std_20)
+set(PUBLIC_ENGINE_COMPILE_FEATURES cxx_std_20)
 
 if(MSVC)
-  set(PRIVATE_PLATFORM_COMPILE_OPTIONS /W4 /WX /permissive-)
+  set(PRIVATE_ENGINE_COMPILE_OPTIONS /W4 /WX /permissive-)
+  set(PUBLIC_ENGINE_COMPILE_OPTIONS /utf-8)
 else()
-  set(PRIVATE_PLATFORM_COMPILE_OPTIONS -Wall -Wextra -Werror)
+  set(PRIVATE_ENGINE_COMPILE_OPTIONS -Wall -Wextra -Werror)
 endif()
 
 # End of common
 if(WIN32)
-  list(APPEND PLATFORM_DEPENDENCIES WindowsDep)
-
+  list(APPEND ENGINE_DEPENDENCIES WindowsDep)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
-  list(APPEND PLATFORM_INCLUDES Fuego/Windows)
-  list(APPEND PUBLIC_PLATFORM_COMPILE_DEFS FUEGO_PLATFORM_WIN)
-  list(APPEND PPIVATE_PLATFORM_COMPILE_DEFS)
-  list(APPEND PUBLIC_PLATFORM_COMPILE_FEATURES)
-
-  set(PUBLIC_PLATFORM_COMPILE_OPTIONS /utf-8)
-
-  list(APPEND PRIVATE_PLATFORM_COMPILE_OPTIONS)
-
 elseif(APPLE)
 
   find_library(APPKIT AppKit)
@@ -80,7 +68,7 @@ elseif(APPLE)
 
   list(
     APPEND
-    PLATFORM_DEPENDENCIES
+    ENGINE_DEPENDENCIES
     MacOSDep
     ${APPKIT}
     ${METAL}
@@ -93,26 +81,49 @@ elseif(APPLE)
       PARENT_SCOPE)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS)
 
-  list(APPEND PLATFORM_INCLUDES Fuego/MacOS)
+  list(APPEND ENGINE_INCLUDE_DIRECTORIES Fuego/MacOS)
 
-  set(PRIVATE_PLATFORM_INCLUDES External/metal-cpp)
-  list(APPEND PUBLIC_PLATFORM_COMPILE_DEFS FUEGO_PLATFORM_MACOS)
-  list(APPEND PPIVATE_PLATFORM_COMPILE_DEFS)
-  list(APPEND PUBLIC_PLATFORM_COMPILE_FEATURES)
+  set(PRIVATE_ENGINE_INCLUDE_DIRECTORIES External/metal-cpp)
+  list(APPEND PUBLIC_ENGINE_COMPILE_DEFS FUEGO_PLATFORM_MACOS)
 
-  set(PUBLIC_PLATFORM_COMPILE_OPTIONS)
-  list(APPEND PRIVATE_PLATFORM_COMPILE_OPTIONS -fobjc-arc)
+  list(APPEND PUBLIC_ENGINE_COMPILE_FEATURES)
+
+  set(PUBLIC_ENGINE_COMPILE_OPTIONS)
+  list(APPEND PRIVATE_ENGINE_COMPILE_OPTIONS -fobjc-arc)
 
 endif()
 # End Project set up
 
 add_subdirectory(${PLATFORM_SUBDIRECTORIES})
 
+set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/glm
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include)
+
+# An interface library to propagate headers to platform implementations
+add_library(FuegoInterface INTERFACE)
+target_include_directories(FuegoInterface
+                           INTERFACE ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
+target_precompile_headers(FuegoInterface INTERFACE
+                          ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
+target_compile_features(FuegoInterface
+                        INTERFACE ${PUBLIC_ENGINE_COMPILE_FEATURES})
+target_compile_definitions(
+  FuegoInterface INTERFACE ${PUBLIC_ENGINE_COMPILE_DEFS} FUEGO_BUILD_LIB)
+target_compile_options(FuegoInterface
+                       INTERFACE ${PUBLIC_ENGINE_COMPILE_OPTIONS})
+target_compile_options(FuegoInterface
+                       INTERFACE ${PRIVATE_ENGINE_COMPILE_OPTIONS})
+
+# An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
 
-target_link_libraries(FuegoEngine PUBLIC ${PLATFORM_DEPENDENCIES})
-target_include_directories(FuegoEngine PUBLIC ${PUBLIC_PLATFORM_INCLUDES})
-target_include_directories(FuegoEngine PRIVATE ${PRIVATE_PLATFORM_INCLUDES})
+target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES})
+target_include_directories(FuegoEngine
+                           PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
 
 target_precompile_headers(FuegoEngine PUBLIC
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
@@ -123,8 +134,9 @@ if(UNIX AND APPLE)
   target_compile_options(FuegoEngine PRIVATE -fobjc-arc)
 endif()
 
-target_compile_definitions(FuegoEngine PUBLIC ${PUBLIC_PLATFORM_COMPILE_DEFS})
-target_compile_definitions(FuegoEngine PRIVATE ${PPIVATE_PLATFORM_COMPILE_DEFS})
-target_compile_features(FuegoEngine PUBLIC ${PUBLIC_PLATFORM_COMPILE_FEATURES})
-target_compile_options(FuegoEngine PUBLIC ${PUBLIC_PLATFORM_COMPILE_OPTIONS})
-target_compile_options(FuegoEngine PRIVATE ${PRIVATE_PLATFORM_COMPILE_OPTIONS})
+target_compile_definitions(FuegoEngine PUBLIC ${PUBLIC_ENGINE_COMPILE_DEFS})
+target_compile_definitions(FuegoEngine PRIVATE ${PPIVATE_ENGINE_COMPILE_DEFS})
+target_compile_features(FuegoEngine PUBLIC ${PUBLIC_ENGINE_COMPILE_FEATURES})
+target_compile_features(FuegoEngine PRIVATE ${PRIVATE_ENGINE_COMPILE_FEATURES})
+target_compile_options(FuegoEngine PUBLIC ${PUBLIC_ENGINE_COMPILE_OPTIONS})
+target_compile_options(FuegoEngine PRIVATE ${PRIVATE_ENGINE_COMPILE_OPTIONS})

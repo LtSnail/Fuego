@@ -10,47 +10,6 @@
 #error Unsupported platform!
 #endif
 
-#if defined(FUEGO_ENABLE_ASSERTS)
-#if defined(FUEGO_PLATFORM_WIN)
-#define FU_ASSERT(x, ...)                                  \
-    {                                                      \
-        if (!(x))                                          \
-        {                                                  \
-            FU_ERROR("Assertion Failed {0}", __VA_ARGS__); \
-            __debugbreak();                                \
-        }                                                  \
-    }
-#define FU_CORE_ASSERT(x, ...)                                  \
-    {                                                           \
-        if (!(x))                                               \
-        {                                                       \
-            FU_CORE_ERROR("Assertion Failed {0}", __VA_ARGS__); \
-            __debugbreak();                                     \
-        }                                                       \
-    }
-#elif defined(FUEGO_PLATFORM_MACOS)
-#define FU_ASSERT(x, ...)                                  \
-    {                                                      \
-        if (!(x))                                          \
-        {                                                  \
-            FU_ERROR("Assertion Failed {0}", __VA_ARGS__); \
-            __builtin_debugtrap();                         \
-        }                                                  \
-    }
-#define FU_CORE_ASSERT(x, ...)                                  \
-    {                                                           \
-        if (!(x))                                               \
-        {                                                       \
-            FU_CORE_ERROR("Assertion Failed {0}", __VA_ARGS__); \
-            __builtin_debugtrap();                              \
-        }                                                       \
-    }
-#endif
-#else
-#define FU_ASSERT(x, ...)
-#define FU_CORE_ASSERT(x, ...)
-#endif
-
 // clang-format off
 #if defined(FUEGO_DYNAMIC_LIB)
     #if defined(FUEGO_BUILD_LIB)
