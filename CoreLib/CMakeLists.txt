@@ -17,6 +17,7 @@ add_executable(CoreLibTests ${CORELIB_SOURCES} ${CORELIB_HEADERS})
 target_link_libraries(CoreLibTests PRIVATE gtest gtest_main)
 
 target_link_libraries(CoreLibTests PRIVATE FuegoInterface)
+target_link_libraries(CoreLibTests PRIVATE FuegoEngine) # Linker issue with log
 
 target_include_directories(
   CoreLibTests PRIVATE ${ROOT}/External/googletest/googletest/include)

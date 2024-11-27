@@ -149,7 +149,7 @@ template <class T, class Deleter>
     requires IsDefaultCompatibleDeleter<T, Deleter>
 inline std::remove_extent_t<T> const& UniquePtr<T, Deleter>::operator*() const noexcept
 {
-    FU_ASSERT(_ptr);
+    FU_CORE_ASSERT(_ptr, "");
     return *_ptr;
 }
 
@@ -157,7 +157,7 @@ template <class T, class Deleter>
     requires IsDefaultCompatibleDeleter<T, Deleter>
 inline std::remove_extent_t<T>& UniquePtr<T, Deleter>::operator*() noexcept
 {
-    FU_ASSERT(_ptr);
+    FU_CORE_ASSERT(_ptr, "");
     return *_ptr;
 }
 
@@ -181,7 +181,7 @@ template <class U>
     requires std::is_array_v<U>
 inline std::remove_extent_t<T> const& UniquePtr<T, Deleter>::operator[](size_t index) const noexcept
 {
-    FU_ASSERT(_ptr);
+    FU_CORE_ASSERT(_ptr, "");
     return _ptr[index];
 }
 
@@ -191,7 +191,7 @@ template <class U>
     requires std::is_array_v<U>
 inline std::remove_extent_t<T>& UniquePtr<T, Deleter>::operator[](size_t index) noexcept
 {
-    FU_ASSERT(_ptr);
+    FU_CORE_ASSERT(_ptr, "");
     return _ptr[index];
 }
 

@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "CoreLibConcepts.h"
+#include "Log.h"
 
 namespace Fuego
 {
@@ -295,8 +296,8 @@ template <class T, class Deleter>
     requires IsDefaultCompatibleDeleter<T, Deleter>
 inline std::remove_extent_t<T> const& SharedPtr<T, Deleter>::operator*() const noexcept
 {
-    FU_ASSERT(_control_block);
-    FU_ASSERT(_control_block->_ptr);
+    FU_CORE_ASSERT(_control_block, "");
+    FU_CORE_ASSERT(_control_block->_ptr, "");
     return *(_control_block->_ptr);
 }
 
@@ -304,8 +305,8 @@ template <class T, class Deleter>
     requires IsDefaultCompatibleDeleter<T, Deleter>
 inline std::remove_extent_t<T>& SharedPtr<T, Deleter>::operator*() noexcept
 {
-    FU_ASSERT(_control_block);
-    FU_ASSERT(_control_block->_ptr);
+    FU_CORE_ASSERT(_control_block, "");
+    FU_CORE_ASSERT(_control_block->_ptr, "");
     return *(_control_block->_ptr);
 }
 
@@ -329,8 +330,8 @@ template <class U>
     requires std::is_array_v<U>
 inline std::remove_extent_t<T> const& SharedPtr<T, Deleter>::operator[](size_t index) const noexcept
 {
-    FU_ASSERT(_control_block);
-    FU_ASSERT(_control_block->_ptr);
+    FU_CORE_ASSERT(_control_block, "");
+    FU_CORE_ASSERT(_control_block->_ptr, "");
     return _control_block->_ptr[index];
 }
 
@@ -340,8 +341,8 @@ template <class U>
     requires std::is_array_v<U>
 inline std::remove_extent_t<T>& SharedPtr<T, Deleter>::operator[](size_t index) noexcept
 {
-    FU_ASSERT(_control_block);
-    FU_ASSERT(_control_block->_ptr);
+    FU_CORE_ASSERT(_control_block, "");
+    FU_CORE_ASSERT(_control_block->_ptr, "");
     return _control_block->_ptr[index];
 }
 
