@@ -3,11 +3,8 @@
 set(PROJECT_HEADERS
     BufferMetal.h
     EventQueueMacOS.h
-    GameViewController.h
     InputMacOS.h
     KeyCodesMacOS.h
-    Renderer.h
-    ShaderTypes.h
     WindowMacOS.h
     Metal/MetalContext.h)
 
@@ -15,8 +12,6 @@ set(PROJECT_SOURCES
     BufferMetal.cpp
     InputMacOS.cpp
     EventQueueMacOS.mm
-    GameViewController.mm
-    Renderer.mm
     WindowMacOS.mm
     Metal/MetalContext.mm
     Metal/MetalImplementation.cpp)
