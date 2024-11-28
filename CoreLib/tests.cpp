@@ -439,3 +439,59 @@ TEST(CoreLibTests, UniquePtr_CompareWithNullPtr)
     EXPECT_TRUE(nPtr == nPtr);
     EXPECT_FALSE(nPtr != nPtr);
 }
+
+TEST(CoreLibTests, SharedPtr_AddOffset)
+{
+    int array[5] = {10, 20, 30, 40, 50};
+    SharedPtr<int> Ptr(array);
+
+    int* PtrOffset = Ptr + 2;
+    EXPECT_EQ(*PtrOffset, 30);
+}
+
+TEST(CoreLibTests, SharedPtr_SubtractOffset)
+{
+    int array[5] = {10, 20, 30, 40, 50};
+    SharedPtr<int> Ptr(array + 4);
+
+    int* PtrOffset = Ptr - 2;
+    EXPECT_EQ(*PtrOffset, 30);
+}
+
+TEST(CoreLibTests, SharedPtr_PointerDifference)
+{
+    int array[5] = {10, 20, 30, 40, 50};
+    SharedPtr<int> Ptr1(array);
+    SharedPtr<int> Ptr2(array + 3);
+
+    ptrdiff_t diff = Ptr2 - Ptr1;
+    EXPECT_EQ(diff, 3);
+}
+
+TEST(CoreLibTests, UniquePtr_AddOffset)
+{
+    int array[5] = {10, 20, 30, 40, 50};
+    UniquePtr<int> Ptr(array);
+
+    int* PtrOffset = Ptr + 2;
+    EXPECT_EQ(*PtrOffset, 30);
+}
+
+TEST(CoreLibTests, UniquePtr_SubtractOffset)
+{
+    int array[5] = {10, 20, 30, 40, 50};
+    UniquePtr<int> Ptr(array + 4);
+
+    int* PtrOffset = Ptr - 2;
+    EXPECT_EQ(*PtrOffset, 30);
+}
+
+TEST(CoreLibTests, UniquePtr_PointerDifference)
+{
+    int array[5] = {10, 20, 30, 40, 50};
+    UniquePtr<int> Ptr1(array);
+    UniquePtr<int> Ptr2(array + 3);
+
+    ptrdiff_t diff = Ptr2 - Ptr1;
+    EXPECT_EQ(diff, 3);
+}
