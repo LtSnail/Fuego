@@ -85,8 +85,9 @@ target_compile_definitions(
   FuegoInterface INTERFACE ${PUBLIC_ENGINE_COMPILE_DEFS} FUEGO_BUILD_LIB)
 target_compile_options(FuegoInterface
                        INTERFACE ${PUBLIC_ENGINE_COMPILE_OPTIONS})
-target_compile_options(FuegoInterface
-                       INTERFACE ${PRIVATE_ENGINE_COMPILE_OPTIONS})
+# Uncomment the line bellow after CoreLib refactor
+# target_compile_options(FuegoInterface INTERFACE
+# ${PRIVATE_ENGINE_COMPILE_OPTIONS})
 
 # An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
