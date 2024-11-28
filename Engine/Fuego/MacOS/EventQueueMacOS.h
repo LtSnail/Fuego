@@ -1,5 +1,4 @@
 #include "EventQueue.h"
-#include "fupch.h"
 
 namespace Fuego
 {
