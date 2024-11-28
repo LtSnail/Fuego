@@ -286,4 +286,27 @@ bool operator!=(U const* lhs, const UniquePtr<T, Deleter>& rhs) noexcept
     return lhs != rhs.Get();
 }
 
+template <class T, class DeleterT, class U, class DeleterU>
+ptrdiff_t operator-(UniquePtr<T, DeleterT>& lhs, UniquePtr<U, DeleterU>& rhs)
+{
+    return lhs.Get() - rhs.Get();
+}
+
+template <class T, class DeleterT>
+std::remove_extent_t<T>* operator+(UniquePtr<T, DeleterT>& ptr, ptrdiff_t n)
+{
+    return ptr.Get() + n;
+}
+
+template <class T, class DeleterT>
+std::remove_extent_t<T>* operator+(ptrdiff_t n, UniquePtr<T, DeleterT>& ptr)
+{
+    return n + ptr.Get();
+}
+
+template <class T, class DeleterT>
+std::remove_extent_t<T>* operator-(UniquePtr<T, DeleterT>& ptr, ptrdiff_t n)
+{
+    return ptr.Get() - n;
+}
 }  // namespace Fuego
