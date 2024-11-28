@@ -440,10 +440,18 @@ TEST(CoreLibTests, UniquePtr_CompareWithNullPtr)
     EXPECT_FALSE(nPtr != nPtr);
 }
 
+class EmptyDeleter
+{
+public:
+    void operator()(void* ptr)
+    {
+    }
+};
+
 TEST(CoreLibTests, SharedPtr_AddOffset)
 {
     int array[5] = {10, 20, 30, 40, 50};
-    SharedPtr<int> Ptr(array);
+    SharedPtr<int, EmptyDeleter> Ptr(array);
 
     int* PtrOffset = Ptr + 2;
     EXPECT_EQ(*PtrOffset, 30);
@@ -451,8 +459,8 @@ TEST(CoreLibTests, SharedPtr_AddOffset)
 
 TEST(CoreLibTests, SharedPtr_SubtractOffset)
 {
-    int array[5] = {10, 20, 30, 40, 50};
-    SharedPtr<int> Ptr(array + 4);
+    int Array[5] = {10, 20, 30, 40, 50};
+    SharedPtr<int, EmptyDeleter> Ptr(Array + 4);
 
     int* PtrOffset = Ptr - 2;
     EXPECT_EQ(*PtrOffset, 30);
@@ -460,9 +468,10 @@ TEST(CoreLibTests, SharedPtr_SubtractOffset)
 
 TEST(CoreLibTests, SharedPtr_PointerDifference)
 {
-    int array[5] = {10, 20, 30, 40, 50};
-    SharedPtr<int> Ptr1(array);
-    SharedPtr<int> Ptr2(array + 3);
+    int Array[5] = {10, 20, 30, 40, 50};
+
+    SharedPtr<int, EmptyDeleter> Ptr1(Array);
+    SharedPtr<int, EmptyDeleter> Ptr2(Array + 3);
 
     ptrdiff_t diff = Ptr2 - Ptr1;
     EXPECT_EQ(diff, 3);
@@ -470,8 +479,8 @@ TEST(CoreLibTests, SharedPtr_PointerDifference)
 
 TEST(CoreLibTests, UniquePtr_AddOffset)
 {
-    int array[5] = {10, 20, 30, 40, 50};
-    UniquePtr<int> Ptr(array);
+    int Array[5] = {10, 20, 30, 40, 50};
+    UniquePtr<int, EmptyDeleter> Ptr(Array);
 
     int* PtrOffset = Ptr + 2;
     EXPECT_EQ(*PtrOffset, 30);
@@ -479,8 +488,8 @@ TEST(CoreLibTests, UniquePtr_AddOffset)
 
 TEST(CoreLibTests, UniquePtr_SubtractOffset)
 {
-    int array[5] = {10, 20, 30, 40, 50};
-    UniquePtr<int> Ptr(array + 4);
+    int Array[5] = {10, 20, 30, 40, 50};
+    UniquePtr<int, EmptyDeleter> Ptr(Array + 4);
 
     int* PtrOffset = Ptr - 2;
     EXPECT_EQ(*PtrOffset, 30);
@@ -488,9 +497,9 @@ TEST(CoreLibTests, UniquePtr_SubtractOffset)
 
 TEST(CoreLibTests, UniquePtr_PointerDifference)
 {
-    int array[5] = {10, 20, 30, 40, 50};
-    UniquePtr<int> Ptr1(array);
-    UniquePtr<int> Ptr2(array + 3);
+    int Array[5] = {10, 20, 30, 40, 50};
+    UniquePtr<int, EmptyDeleter> Ptr1(Array);
+    UniquePtr<int, EmptyDeleter> Ptr2(Array + 3);
 
     ptrdiff_t diff = Ptr2 - Ptr1;
     EXPECT_EQ(diff, 3);
