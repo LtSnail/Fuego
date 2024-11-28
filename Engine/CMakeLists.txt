@@ -39,7 +39,7 @@ else()
 endif()
 
 # Common setup
-set(ENGINE_DEPENDENCIES ImGui)
+list(APPEND ENGINE_DEPENDENCIES ImGui)
 
 set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
 
@@ -59,38 +59,8 @@ if(WIN32)
   list(APPEND ENGINE_DEPENDENCIES WindowsDep)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
 elseif(APPLE)
-
-  find_library(APPKIT AppKit)
-  find_library(METAL Metal)
-  find_library(METALKIT MetalKit)
-  find_library(MODELIO ModelIO)
-  find_library(QUARTZCORE QuartzCore)
-
-  list(
-    APPEND
-    ENGINE_DEPENDENCIES
-    MacOSDep
-    ${APPKIT}
-    ${METAL}
-    ${METALKIT}
-    ${MODELIO}
-    ${GAMECONTROLLER}
-    ${QUARTZCORE})
-  set(ENGINE_SHADERS
-      ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Metal/Triangle.metal
-      PARENT_SCOPE)
+  list(APPEND ENGINE_DEPENDENCIES MacOSDep)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS)
-
-  list(APPEND ENGINE_INCLUDE_DIRECTORIES Fuego/MacOS)
-
-  set(PRIVATE_ENGINE_INCLUDE_DIRECTORIES External/metal-cpp)
-  list(APPEND PUBLIC_ENGINE_COMPILE_DEFS FUEGO_PLATFORM_MACOS)
-
-  list(APPEND PUBLIC_ENGINE_COMPILE_FEATURES)
-
-  set(PUBLIC_ENGINE_COMPILE_OPTIONS)
-  list(APPEND PRIVATE_ENGINE_COMPILE_OPTIONS -fobjc-arc)
-
 endif()
 # End Project set up
 
@@ -127,12 +97,6 @@ target_include_directories(FuegoEngine
 
 target_precompile_headers(FuegoEngine PUBLIC
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
-
-if(UNIX AND APPLE)
-  message(STATUS "The target platform is MacOS")
-  target_compile_definitions(FuegoEngine PUBLIC FUEGO_PLATFORM_MACOS)
-  target_compile_options(FuegoEngine PRIVATE -fobjc-arc)
-endif()
 
 target_compile_definitions(FuegoEngine PUBLIC ${PUBLIC_ENGINE_COMPILE_DEFS})
 target_compile_definitions(FuegoEngine PRIVATE ${PPIVATE_ENGINE_COMPILE_DEFS})
