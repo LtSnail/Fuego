@@ -33,7 +33,7 @@ void Layer::OnUpdate()
 {
 }
 
-void Layer::OnEvent(Event& event)
+void Layer::OnEvent(EventVariant& event)
 {
     UNUSED(event);
 }

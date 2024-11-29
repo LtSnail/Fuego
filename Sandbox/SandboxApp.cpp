@@ -12,9 +12,11 @@ public:
     {
     }
 
-    void OnEvent(Fuego::Event& event) override
+    void OnEvent(Fuego::EventVariant& event) override
     {
-        FU_TRACE("{0}", event.ToString());
+        auto LogEventVisitor = Fuego::EventVisitor{[](const Fuego::Event& ev) { FU_TRACE("{0}", ev.ToString()); }};
+
+        std::visit(LogEventVisitor, event);
     }
 };
 

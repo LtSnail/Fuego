@@ -1,9 +1,6 @@
 #pragma once
 
 #include "EventQueue.h"
-#include "Events/ApplicationEvent.h"
-#include "Events/KeyEvent.h"
-#include "Events/MouseEvent.h"
 #include "Window.h"
 
 namespace Fuego
@@ -14,13 +11,13 @@ class EventQueueWin : public EventQueue
 
 public:
     virtual void Update() override;
-    virtual std::shared_ptr<Event> Front() override;
+    virtual std::shared_ptr<EventVariant> Front() override;
     virtual void Pop() override;
     virtual bool Empty() override;
 
 private:
-    virtual void PushEvent(std::shared_ptr<Event>&& e);
+    virtual void PushEvent(std::shared_ptr<EventVariant>&& e);
 
-    std::queue<std::shared_ptr<Event>> m_Queue;
+    std::queue<std::shared_ptr<EventVariant>> _queue;
 };
 }  // namespace Fuego

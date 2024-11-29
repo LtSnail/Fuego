@@ -100,45 +100,45 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         float x = static_cast<float>(GET_X_LPARAM(lparam));
         float y = static_cast<float>(GET_Y_LPARAM(lparam));
         _cursorPos = {x, y};
-        m_EventQueue->PushEvent(std::make_shared<MouseMovedEvent>(x, y));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
         break;
     }
 
     case WM_LBUTTONDOWN:
-        m_EventQueue->PushEvent(std::make_shared<MouseButtonPressedEvent>(Mouse::Button0));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::Button0)));
         break;
 
     case WM_LBUTTONUP:
-        m_EventQueue->PushEvent(std::make_shared<MouseButtonReleasedEvent>(Mouse::Button0));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::Button0)));
         break;
 
     case WM_RBUTTONDOWN:
-        m_EventQueue->PushEvent(std::make_shared<MouseButtonPressedEvent>(Mouse::Button1));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::Button1)));
         break;
 
     case WM_RBUTTONUP:
-        m_EventQueue->PushEvent(std::make_shared<MouseButtonReleasedEvent>(Mouse::Button1));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::Button1)));
         break;
 
     case WM_MBUTTONDOWN:
-        m_EventQueue->PushEvent(std::make_shared<MouseButtonPressedEvent>(Mouse::Button2));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::Button2)));
         break;
 
     case WM_MBUTTONUP:
-        m_EventQueue->PushEvent(std::make_shared<MouseButtonReleasedEvent>(Mouse::Button2));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::Button2)));
         break;
 
     case WM_MOUSEWHEEL:
     {
         float yOffset = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
-        m_EventQueue->PushEvent(std::make_shared<MouseScrolledEvent>(yOffset, 0.f));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseScrolledEvent(yOffset, 0.f)));
         break;
     }
 
     case WM_MOUSEHWHEEL:
     {
         float xOffset = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
-        m_EventQueue->PushEvent(std::make_shared<MouseScrolledEvent>(0.f, xOffset));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(MouseScrolledEvent(0.f, xOffset)));
         break;
     }
 
@@ -146,16 +146,16 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
         int repeatCount = (lparam >> 16) & 0xFF;
         int keyCode = static_cast<int>(wparam);
-        m_EventQueue->PushEvent(std::make_shared<KeyPressedEvent>(keyCode, repeatCount));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(KeyPressedEvent(keyCode, repeatCount)));
         _lastKey = {Input::KEY_PRESSED, (uint16_t)keyCode};
         break;
     }
     case WM_KEYUP:
-        m_EventQueue->PushEvent(std::make_shared<KeyReleasedEvent>(static_cast<int>(wparam)));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(KeyReleasedEvent(static_cast<int>(wparam))));
         break;
 
     case WM_CLOSE:
-        m_EventQueue->PushEvent(std::make_shared<WindowCloseEvent>());
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(WindowCloseEvent()));
         break;
 
     case WM_SIZE:
@@ -163,7 +163,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         UINT width = LOWORD(lparam);
         UINT height = HIWORD(lparam);
 
-        m_EventQueue->PushEvent(std::make_shared<WindowResizeEvent>(width, height));
+        m_EventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
         break;
     }
 

@@ -2,6 +2,7 @@
 
 #include "EventQueue.h"
 #include "Events/ApplicationEvent.h"
+#include "Events/EventVisitor.h"
 #include "Layer.h"
 #include "LayerStack.h"
 #include "Window.h"
@@ -22,7 +23,7 @@ public:
     void PushLayer(Layer* layer);
     void PushOverlay(Layer* overlay);
 
-    void OnEvent(Event& event);
+    void OnEvent(EventVariant& event);
     bool OnWindowClose(WindowCloseEvent& event);
     bool OnWindowResize(WindowResizeEvent& event);
 

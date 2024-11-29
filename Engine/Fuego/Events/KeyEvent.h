@@ -12,7 +12,6 @@ public:
         return m_KeyCode;
     }
 
-    EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryKeyboard)
 protected:
     KeyEvent(int keycode)
         : Event()

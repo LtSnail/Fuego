@@ -6,24 +6,24 @@ void EventQueueWin::Update()
 {
 }
 
-std::shared_ptr<Event> EventQueueWin::Front()
+std::shared_ptr<EventVariant> EventQueueWin::Front()
 {
-    return m_Queue.front();
+    return _queue.front();
 }
 
 void EventQueueWin::Pop()
 {
-    m_Queue.pop();
+    _queue.pop();
 }
 
 bool EventQueueWin::Empty()
 {
-    return m_Queue.empty();
+    return _queue.empty();
 }
 
-void EventQueueWin::PushEvent(std::shared_ptr<Event>&& e)
+void EventQueueWin::PushEvent(std::shared_ptr<EventVariant>&& e)
 {
-    m_Queue.push(std::move(e));
+    _queue.push(std::move(e));
 }
 
 std::unique_ptr<EventQueue> EventQueue::CreateEventQueue()

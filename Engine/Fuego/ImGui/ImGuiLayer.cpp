@@ -30,7 +30,7 @@ void ImGuiLayer::OnUpdate()
 {
 }
 
-void ImGuiLayer::OnEvent(Event& event)
+void ImGuiLayer::OnEvent(EventVariant& event)
 {
     UNUSED(event);
 }

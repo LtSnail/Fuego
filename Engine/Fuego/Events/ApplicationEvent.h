@@ -13,11 +13,11 @@ public:
     {
     }
 
-    inline unsigned int GetWidth() const
+    unsigned int GetWidth() const
     {
         return m_Width;
     }
-    inline unsigned int GetHeight() const
+    unsigned int GetHeight() const
     {
         return m_Height;
     }
@@ -30,7 +30,6 @@ public:
     }
 
     EVENT_CLASS_TYPE(WindowResize)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 
 private:
     unsigned int m_Width, m_Height;
@@ -42,7 +41,6 @@ public:
     WindowCloseEvent() = default;
 
     EVENT_CLASS_TYPE(WindowClose)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
 
 class FUEGO_API AppTickEvent : public Event
@@ -51,7 +49,6 @@ public:
     AppTickEvent() = default;
 
     EVENT_CLASS_TYPE(AppTick)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
 
 class FUEGO_API AppUpdateEvent : public Event
@@ -60,7 +57,6 @@ public:
     AppUpdateEvent() = default;
 
     EVENT_CLASS_TYPE(AppUpdate)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
 
 class FUEGO_API AppRenderEvent : public Event
@@ -69,6 +65,5 @@ public:
     AppRenderEvent() = default;
 
     EVENT_CLASS_TYPE(AppRender)
-    EVENT_CLASS_CATEGORY(EventCategoryApplication)
 };
 }  // namespace Fuego

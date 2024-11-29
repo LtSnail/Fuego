@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include "Events/EventVisitor.h"
 #include "Input.h"
 #include "Renderer/Buffer.h"
 
@@ -53,18 +54,24 @@ void Application::PushOverlay(Layer* overlay)
     d->m_LayerStack.PushOverlay(overlay);
 }
 
-void Application::OnEvent(Event& event)
+void Application::OnEvent(EventVariant& event)
 {
-    EventDispatcher dispatcher(event);
-    dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
-    dispatcher.Dispatch<WindowResizeEvent>(std::bind(&Application::OnWindowResize, this, std::placeholders::_1));
+    auto ApplicationEventVisitor =
+        EventVisitor{[this](WindowCloseEvent& ev) { OnWindowClose(ev); }, [this](WindowResizeEvent& ev) { OnWindowResize(ev); }, [](Event&) {}};
 
-    FU_CORE_TRACE("{0}", event.ToString());
+    std::visit(ApplicationEventVisitor, event);
 
     for (auto it = d->m_LayerStack.end(); it != d->m_LayerStack.begin();)
     {
         (*--it)->OnEvent(event);
-        if (event.Handled())
+
+        auto HandledEventVisitor = EventVisitor{[](const Event& ev) -> bool
+                                                {
+                                                    FU_CORE_TRACE("{0}", ev.ToString());
+                                                    return ev.GetHandled();
+                                                }};
+
+        if (std::visit(HandledEventVisitor, event))
         {
             break;
         }
@@ -111,7 +118,6 @@ void Application::Run()
         {
             auto ev = d->m_EventQueue->Front();
             OnEvent(*ev);
-
             d->m_EventQueue->Pop();
         }
     }

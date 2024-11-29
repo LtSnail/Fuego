@@ -16,11 +16,11 @@ public:
     {
     }
 
-    inline float GetX() const
+    float GetX() const
     {
         return m_MouseX;
     }
-    inline float GetY() const
+    float GetY() const
     {
         return m_MouseY;
     }
@@ -33,7 +33,6 @@ public:
     }
 
     EVENT_CLASS_TYPE(MouseMoved)
-    EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
 private:
     float m_MouseX, m_MouseY;
@@ -48,11 +47,11 @@ public:
     {
     }
 
-    inline float GetXOffset() const
+    float GetXOffset() const
     {
         return m_xOffset;
     }
-    inline float GetYOffset() const
+    float GetYOffset() const
     {
         return m_yOffset;
     }
@@ -65,7 +64,6 @@ public:
     }
 
     EVENT_CLASS_TYPE(MouseScrolled)
-    EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
 private:
     float m_xOffset, m_yOffset;
@@ -74,12 +72,10 @@ private:
 class FUEGO_API MouseButtonEvent : public Event
 {
 public:
-    inline int GetMouseButton() const
+    int GetMouseButton() const
     {
         return m_Button;
     }
-
-    EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 
 protected:
     MouseButtonEvent(MouseCode button)

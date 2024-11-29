@@ -15,6 +15,7 @@ set(PROJECT_HEADERS
     Fuego/Window.h
     Fuego/EventQueue.h
     Fuego/Events/Event.h
+    Fuego/Events/EventVisitor.h
     Fuego/Events/KeyEvent.h
     Fuego/Events/MouseEvent.h
     Fuego/Events/ApplicationEvent.h

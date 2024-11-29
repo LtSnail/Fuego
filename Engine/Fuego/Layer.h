@@ -2,6 +2,8 @@
 
 #include <Events/Event.h>
 
+#include "Events/EventVisitor.h"
+
 namespace Fuego
 {
 class FUEGO_API Layer
@@ -15,7 +17,7 @@ public:
     virtual void OnAttach();
     virtual void OnDetach();
     virtual void OnUpdate();
-    virtual void OnEvent(Event& event);
+    virtual void OnEvent(EventVariant& event);
 
     const std::string& GetName() const;
 };
