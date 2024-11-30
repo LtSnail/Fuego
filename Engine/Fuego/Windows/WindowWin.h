@@ -1,8 +1,8 @@
 #pragma once
 
 #include "EventQueueWin.h"
-#include "OpenGL/OpenGLContext.h"
 #include "OpenGL/BufferOpenGL.h"
+#include "OpenGL/OpenGLContext.h"
 #include "Window.h"
 
 namespace Fuego
@@ -43,7 +43,7 @@ private:
 
     GraphicsContext* _context;
 
-    EventQueueWin* m_EventQueue;
+    EventQueueWin* _eventQueue;
     Input::KeyInfo _lastKey;
     Input::MouseInfo _lastMouse;
     Input::CursorPos _cursorPos;
@@ -56,7 +56,6 @@ private:
     HDC _hdc;
 
 
-
     // Threads
     HANDLE _winThread;
     LPDWORD _winThreadID;
@@ -64,5 +63,5 @@ private:
 
     HANDLE _isCreatedEvent;
 };
-    
+
 }  // namespace Fuego
