@@ -14,6 +14,10 @@ class Application::ApplicationImpl
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
+    
+    // Renderer
+    std::unique_ptr<VertexBuffer> VBO;
+    std::unique_ptr<IndexBuffer> EBO;
 };
 Application* Application::ApplicationImpl::m_Instance = nullptr;
 
@@ -24,6 +28,14 @@ Application::Application()
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->m_Running = true;
+
+    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+    uint32_t indices[3] = {0, 1, 2};
+
+    d->VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+    FU_CORE_ASSERT(d->VBO, "[Vertex Buffer] hasn't been initialized!");
+    d->EBO.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+    FU_CORE_ASSERT(d->VBO, "[Element Buffer] hasn't been initialized!");
 }
 
 Application::~Application()
