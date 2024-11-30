@@ -25,10 +25,6 @@ add_library(MacOSDep STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 target_include_directories(MacOSDep PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(MacOSDep PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../External/metal-cpp)
 
-list(APPEND ENGINE_SHADERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Metal/Triangle.metal
-    PARENT_SCOPE)
-
 find_library(APPKIT AppKit)
 find_library(METAL Metal)
 find_library(METALKIT MetalKit)

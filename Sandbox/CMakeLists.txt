@@ -10,7 +10,7 @@ if(APPLE)
   set(GLOBAL_RESOURCES Resources/MacOS/Assets.xcassets)
 
   set(BASE_RESOURCES Resources/MacOS/Base.lproj/Main.storyboard
-                     ${ENGINE_SHADERS})
+                     Resources/MacOS/Triangle.metal)
 endif()
 
 set(RESOURCES ${GLOBAL_RESOURCES} ${BASE_RESOURCES})
