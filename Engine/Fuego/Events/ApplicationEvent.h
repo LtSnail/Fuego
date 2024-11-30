@@ -7,63 +7,66 @@ namespace Fuego
 class FUEGO_API WindowResizeEvent : public Event
 {
 public:
-    WindowResizeEvent(unsigned int width, unsigned int height)
-        : m_Width(width)
-        , m_Height(height)
+    WindowResizeEvent(uint32_t width, uint32_t height)
+        : Event(EVENT_NAME(WindowResizeEvent))
+        , _width(width)
+        , _height(height)
     {
     }
 
-    unsigned int GetWidth() const
+    inline uint32_t GetWidth() const
     {
-        return m_Width;
+        return _width;
     }
-    unsigned int GetHeight() const
+    inline uint32_t GetHeight() const
     {
-        return m_Height;
+        return _height;
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << " w: " << m_Width << ", h: " << m_Height;
+        ss << _name << " w: " << _width << ", h: " << _height;
         return ss.str();
     }
 
-    EVENT_CLASS_TYPE(WindowResize)
-
 private:
-    unsigned int m_Width, m_Height;
+    uint32_t _width, _height;
 };
 
 class FUEGO_API WindowCloseEvent : public Event
 {
 public:
-    WindowCloseEvent() = default;
-
-    EVENT_CLASS_TYPE(WindowClose)
+    WindowCloseEvent()
+        : Event(EVENT_NAME(WindowCloseEvent))
+    {
+    }
 };
 
 class FUEGO_API AppTickEvent : public Event
 {
 public:
-    AppTickEvent() = default;
-
-    EVENT_CLASS_TYPE(AppTick)
+    AppTickEvent()
+        : Event(EVENT_NAME(AppTickEvent))
+    {
+    }
 };
 
 class FUEGO_API AppUpdateEvent : public Event
 {
 public:
-    AppUpdateEvent() = default;
-
-    EVENT_CLASS_TYPE(AppUpdate)
+    AppUpdateEvent()
+        : Event(EVENT_NAME(AppUpdateEvent))
+    {
+    }
 };
 
 class FUEGO_API AppRenderEvent : public Event
 {
 public:
-    AppRenderEvent() = default;
-
-    EVENT_CLASS_TYPE(AppRender)
+    AppRenderEvent()
+        : Event(EVENT_NAME(AppRenderEvent))
+    {
+    }
 };
 }  // namespace Fuego

@@ -2,40 +2,39 @@
 
 #include "Core.h"
 
+#define EVENT_NAME(type) (#type)
 
 namespace Fuego
 {
-#define EVENT_CLASS_TYPE(type)           \
-    const char* GetName() const override \
-    {                                    \
-        return #type;                    \
-    }
-
 class FUEGO_API Event
 {
 public:
-    Event() = default;
-    virtual const char* GetName() const
-    {
-        return nullptr;
-    }
+    Event() = delete;
+
     virtual std::string ToString() const
     {
-        return GetName();
+        return _name;
     }
+
     virtual bool GetHandled() const
     {
-        return m_handled;
+        return _handled;
     }
     virtual void SetHandled()
     {
-        m_handled = true;
+        _handled = true;
     }
 
     virtual ~Event() = default;
 
 protected:
-    bool m_handled = false;
+    explicit Event(const char* name)
+        : _name(name)
+    {
+    }
+
+    bool _handled = false;
+    const char* _name;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Event& ev)

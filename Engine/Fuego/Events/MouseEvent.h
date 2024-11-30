@@ -7,118 +7,114 @@
 
 namespace Fuego
 {
-class FUEGO_API MouseMovedEvent : public Event
+class FUEGO_API MouseMovedEvent final : public Event
 {
 public:
     MouseMovedEvent(float x, float y)
-        : m_MouseX(x)
-        , m_MouseY(y)
+        : Event(EVENT_NAME(MouseMovedEvent))
+        , _mouseX(x)
+        , _mouseY(y)
     {
     }
 
-    float GetX() const
+    inline float GetX() const
     {
-        return m_MouseX;
+        return _mouseX;
     }
-    float GetY() const
+    inline float GetY() const
     {
-        return m_MouseY;
+        return _mouseY;
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << ": " << m_MouseX << ", " << m_MouseY;
+        ss << _name << ": " << _mouseX << ", " << _mouseY;
         return ss.str();
     }
 
-    EVENT_CLASS_TYPE(MouseMoved)
-
 private:
-    float m_MouseX, m_MouseY;
+    float _mouseX, _mouseY;
 };
 
-class FUEGO_API MouseScrolledEvent : public Event
+class FUEGO_API MouseScrolledEvent final : public Event
 {
 public:
     MouseScrolledEvent(float xOffset, float yOffset)
-        : m_xOffset(xOffset)
-        , m_yOffset(yOffset)
+        : Event(EVENT_NAME(MouseScrolledEvent))
+        , _offsetX(xOffset)
+        , _offsetY(yOffset)
     {
     }
 
-    float GetXOffset() const
+    inline float GetXOffset() const
     {
-        return m_xOffset;
+        return _offsetX;
     }
-    float GetYOffset() const
+    inline float GetYOffset() const
     {
-        return m_yOffset;
+        return _offsetY;
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << ": " << m_xOffset << ", " << m_yOffset;
+        ss << _name << ": " << _offsetX << ", " << _offsetY;
         return ss.str();
     }
 
-    EVENT_CLASS_TYPE(MouseScrolled)
-
 private:
-    float m_xOffset, m_yOffset;
+    float _offsetX, _offsetY;
 };
 
-class FUEGO_API MouseButtonEvent : public Event
+class FUEGO_API MouseButtonEvent
 {
 public:
-    int GetMouseButton() const
+    inline int GetMouseButton() const
     {
-        return m_Button;
+        return _button;
     }
 
 protected:
-    MouseButtonEvent(MouseCode button)
-        : m_Button(button)
+    explicit MouseButtonEvent(MouseCode button)
+        : _button(button)
     {
     }
 
-    uint16_t m_Button;
+    uint16_t _button;
 };
 
-class FUEGO_API MouseButtonPressedEvent : public MouseButtonEvent
+class FUEGO_API MouseButtonPressedEvent final : public Event, MouseButtonEvent
 {
 public:
     MouseButtonPressedEvent(MouseCode button)
-        : MouseButtonEvent(button)
+        : Event(EVENT_NAME(MouseButtonPressedEvent))
+        , MouseButtonEvent(button)
     {
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << ": " << Mouse::GetMouseButtonName(m_Button);
+        ss << _name << ": " << Mouse::GetMouseButtonName(_button);
         return ss.str();
     }
-
-    EVENT_CLASS_TYPE(MouseButtonPressed)
 };
 
-class FUEGO_API MouseButtonReleasedEvent : public MouseButtonEvent
+class FUEGO_API MouseButtonReleasedEvent final : public Event, MouseButtonEvent
 {
 public:
     MouseButtonReleasedEvent(MouseCode button)
-        : MouseButtonEvent(button)
+        : Event(EVENT_NAME(MouseButtonReleasedEvent))
+        , MouseButtonEvent(button)
     {
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << ": " << Mouse::GetMouseButtonName(m_Button);
+        ss << _name << ": " << Mouse::GetMouseButtonName(_button);
         return ss.str();
     }
-
-    EVENT_CLASS_TYPE(MouseButtonReleased)
 };
 }  // namespace Fuego

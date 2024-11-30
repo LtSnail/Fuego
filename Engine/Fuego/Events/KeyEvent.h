@@ -4,65 +4,64 @@
 
 namespace Fuego
 {
-class FUEGO_API KeyEvent : public Event
+class FUEGO_API KeyEvent
 {
 public:
     inline int GetKeyCode() const
     {
-        return m_KeyCode;
+        return _keyCode;
     }
 
 protected:
-    KeyEvent(int keycode)
-        : Event()
-        , m_KeyCode(keycode)
+    explicit KeyEvent(int keycode)
+        : _keyCode(keycode)
     {
     }
 
-    int m_KeyCode;
+    int _keyCode;
 };
 
-class FUEGO_API KeyPressedEvent : public KeyEvent
+class FUEGO_API KeyPressedEvent final : public Event, KeyEvent
 {
 public:
     KeyPressedEvent(int keycode, int repeatCount)
-        : KeyEvent(keycode)
-        , m_RepeatCount(repeatCount)
+        : Event(EVENT_NAME(KeyPressedEvent))
+        , KeyEvent(keycode)
+        , _repeatCount(repeatCount)
     {
+        _name = EVENT_NAME(KeyPressedEvent);
     }
 
     inline int GetRepeatCount() const
     {
-        return m_RepeatCount;
+        return _repeatCount;
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << ": " << m_KeyCode << " (" << m_RepeatCount << " repeats)";
+        ss << _name << ": " << _keyCode << " (" << _repeatCount << " repeats)";
         return ss.str();
     }
 
-    EVENT_CLASS_TYPE(KeyPressed)
 private:
-    int m_RepeatCount;
+    int _repeatCount;
 };
 
-class FUEGO_API KeyReleasedEvent : public KeyEvent
+class FUEGO_API KeyReleasedEvent final : public Event, KeyEvent
 {
 public:
     KeyReleasedEvent(int keycode)
-        : KeyEvent(keycode)
+        : Event(EVENT_NAME(KeyReleasedEvent))
+        , KeyEvent(keycode)
     {
     }
 
-    std::string ToString() const override
+    inline std::string ToString() const override
     {
         std::stringstream ss;
-        ss << GetName() << ": " << m_KeyCode;
+        ss << _name << ": " << _keyCode;
         return ss.str();
     }
-
-    EVENT_CLASS_TYPE(KeyReleased)
 };
 }  // namespace Fuego
