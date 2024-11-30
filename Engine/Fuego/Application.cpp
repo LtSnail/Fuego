@@ -14,9 +14,6 @@ class Application::ApplicationImpl
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
-
-    std::unique_ptr<VertexBuffer> _vertexBuffer;
-    std::unique_ptr<IndexBuffer> _indexBuffer;
 };
 Application* Application::ApplicationImpl::m_Instance = nullptr;
 
@@ -27,13 +24,6 @@ Application::Application()
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->m_Running = true;
-
-    // Temp::
-    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
-    d->_vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-
-    uint32_t indices[3] = {0, 1, 2};
-    d->_indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 }
 
 Application::~Application()

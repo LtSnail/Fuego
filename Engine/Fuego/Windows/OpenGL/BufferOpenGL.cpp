@@ -11,6 +11,7 @@ VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size)
 
 VertexBufferOpenGL::VertexBufferOpenGL(float* vertices, uint32_t size)
     : _VBO(0)
+    , _VAO(0)
 {
     if (!_isVAO)
     {
@@ -64,9 +65,9 @@ void IndexBufferOpenGL::Unbind() const
 {
 }
 
-IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t size)
+IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
 {
-    return new IndexBufferOpenGL(indices, size);
+    return new IndexBufferOpenGL(indices, count);
 }
 
 }  // namespace Fuego

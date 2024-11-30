@@ -2,6 +2,7 @@
 
 #include "EventQueueWin.h"
 #include "OpenGL/OpenGLContext.h"
+#include "OpenGL/BufferOpenGL.h"
 #include "Window.h"
 
 namespace Fuego
@@ -52,5 +53,15 @@ private:
     HINSTANCE m_HInstance;  // Relates to the Application
     HWND m_Hwnd;            // Relates to Actual Window instance
     WindowProps m_Props;
+
+    // Renderer
+    std::unique_ptr<VertexBuffer> VBO;
+    std::unique_ptr<IndexBuffer> EBO;
+
+    // Threads
+    HANDLE _winThread;
+    LPDWORD _winThreadID;
+    static DWORD WINAPI WinThreadMain(_In_ LPVOID lpParameter);
 };
+    
 }  // namespace Fuego

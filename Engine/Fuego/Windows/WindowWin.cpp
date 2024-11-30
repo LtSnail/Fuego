@@ -5,6 +5,66 @@
 
 namespace Fuego
 {
+
+DWORD __stdcall WindowWin::WinThreadMain(LPVOID lpParameter)
+{
+    WindowWin* _wnd = reinterpret_cast<WindowWin*>(lpParameter);
+
+    static TCHAR buffer[32] = TEXT("");
+#ifdef UNICODE
+    MultiByteToWideChar(CP_UTF8, 0, props.Title.c_str(), -1, buffer, _countof(buffer));
+#else
+    sprintf_s(buffer, _wnd->m_Props.Title.c_str());
+#endif
+    WNDCLASSEX wndClass = {};
+    wndClass.cbSize = sizeof(WNDCLASSEX);
+    wndClass.lpszClassName = _wnd->m_Props.APP_WINDOW_CLASS_NAME;
+    wndClass.hInstance = _wnd->m_HInstance;
+    wndClass.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
+    wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wndClass.lpfnWndProc = WindowProcStatic;
+
+    RegisterClassEx(&wndClass);
+
+    DWORD style = WS_OVERLAPPEDWINDOW | WS_SYSMENU;
+    RECT rect;
+    rect.left = _wnd->m_Props.x;
+    rect.top = _wnd->m_Props.y;
+    rect.right = rect.left + _wnd->m_Props.Width;
+    rect.bottom = rect.top + _wnd->m_Props.Height;
+
+    AdjustWindowRect(&rect, style, true);
+
+    _wnd->m_Hwnd = CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+                                  nullptr, nullptr, _wnd->m_HInstance, nullptr);
+    FU_CORE_ASSERT(_wnd->m_Hwnd, "[AppWindow] hasn't been initialized!");
+    hwndMap.emplace(_wnd->m_Hwnd, _wnd);
+
+    _wnd->_context = new OpenGLContext(&_wnd->m_Hwnd);
+    FU_CORE_ASSERT(_wnd->_context->Init(), "[GraphicsContext] hasn't been initialized!");
+
+    ShowWindow(_wnd->m_Hwnd, SW_SHOW);
+
+    FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
+
+    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+    uint32_t indices[3] = {0, 1, 2};
+
+    _wnd->VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+    FU_CORE_ASSERT(_wnd->VBO, "[Vertex Buffer] hasn't been initialized!");
+    _wnd->EBO.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+    FU_CORE_ASSERT(_wnd->VBO, "[Element Buffer] hasn't been initialized!");
+
+    MSG msg{};
+    while (GetMessage(&msg, nullptr, 0u, 0u))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+    return 0;
+}
+
 std::unordered_map<HWND, WindowWin*> WindowWin::hwndMap;
 
 LRESULT CALLBACK WindowWin::WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -132,53 +192,18 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , _lastKey{Input::KEY_NONE, LAST_CODE}
     , _lastMouse{Input::MOUSE_NONE, LAST_CODE}
     , _cursorPos{0.f, 0.f}
+    , _winThread{}
+    , _winThreadID(nullptr)
+    , VBO(nullptr)
+    , EBO(nullptr)
+    , _context(nullptr)
 {
-    static TCHAR buffer[32] = TEXT("");
-#ifdef UNICODE
-    MultiByteToWideChar(CP_UTF8, 0, props.Title.c_str(), -1, buffer, _countof(buffer));
-#else
-    sprintf_s(buffer, props.Title.c_str());
-#endif
-    WNDCLASSEX wndClass = {};
-    wndClass.cbSize = sizeof(WNDCLASSEX);
-    wndClass.lpszClassName = m_Props.APP_WINDOW_CLASS_NAME;
-    wndClass.hInstance = m_HInstance;
-    wndClass.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
-    wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-    wndClass.lpfnWndProc = WindowProcStatic;
-
-    RegisterClassEx(&wndClass);
-
-    DWORD style = WS_OVERLAPPEDWINDOW | WS_SYSMENU;
-    RECT rect;
-    rect.left = props.x;
-    rect.top = props.y;
-    rect.right = rect.left + props.Width;
-    rect.bottom = rect.top + props.Height;
-
-    AdjustWindowRect(&rect, style, true);
-
-    m_Hwnd = CreateWindowEx(0, props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, nullptr,
-                            nullptr, m_HInstance, nullptr);
-    FU_CORE_ASSERT(m_Hwnd, "[AppWindow] hasn't been initialized!");
-    hwndMap.emplace(m_Hwnd, this);
-
-    _context = new OpenGLContext(&m_Hwnd);
-    FU_CORE_ASSERT(_context->Init(), "[GraphicsContext] hasn't been initialized!");
-
-    ShowWindow(m_Hwnd, SW_SHOW);
-
-    FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
+    _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
 }
 
 void WindowWin::Update()
 {
-    MSG msg{};
-    while (PeekMessage(&msg, nullptr, 0u, 0u, PM_REMOVE))
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
+    
 }
 
 void WindowWin::SetVSync(bool enabled)
