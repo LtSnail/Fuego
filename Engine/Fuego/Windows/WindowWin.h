@@ -3,6 +3,7 @@
 #include "EventQueueWin.h"
 #include "OpenGL/BufferOpenGL.h"
 #include "OpenGL/OpenGLContext.h"
+#include "OpenGL/ShaderOpenGL.h"
 #include "Window.h"
 
 namespace Fuego
@@ -58,6 +59,7 @@ private:
     // Renderer
     std::unique_ptr<VertexBuffer> VBO;
     std::unique_ptr<IndexBuffer> EBO;
+    std::unique_ptr<ShaderOpenGL> _shader;
 
     // Threads
     HANDLE _winThread;
