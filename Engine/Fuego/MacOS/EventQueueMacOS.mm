@@ -7,9 +7,9 @@
 #include "Log.h"
 #include "MouseCodes.h"
 
-void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<Event> ev)
+void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<EventVariant> ev)
 {
-    eq->m_Queue.push(ev);
+    eq->_queue.push(ev);
 }
 
 @interface WindowEventsObserver : NSObject
@@ -24,14 +24,14 @@ void Fuego::PushEvent(EventQueueMacOS* eq, std::shared_ptr<Event> ev)
 
 - (void)_windowWillClose:(NSNotification*)notification
 {
-    Fuego::PushEvent(_eq, std::make_shared<Fuego::WindowCloseEvent>());
+    Fuego::PushEvent(_eq, std::make_shared<Fuego::EventVariant>(Fuego::WindowCloseEvent()));
 }
 
 - (void)_windowDidResize:(NSNotification*)notification
 {
     NSWindow* window = (NSWindow*)[notification object];
     NSRect rect = [window contentRectForFrameRect:[window frame]];
-    Fuego::PushEvent(_eq, std::make_shared<Fuego::WindowResizeEvent>(rect.size.width, rect.size.height));
+    Fuego::PushEvent(_eq, std::make_shared<Fuego::EventVariant>(Fuego::WindowResizeEvent(rect.size.width, rect.size.height)));
 }
 
 - (instancetype)initWithEventQueue:(Fuego::EventQueueMacOS*)eq
@@ -54,13 +54,13 @@ namespace Fuego
 EventQueueMacOS::EventQueueMacOS()
 {
     WindowEventsObserver* observerObj = [[WindowEventsObserver alloc] initWithEventQueue:this];
-    m_WindowEventsObserver = ((__bridge_retained void*)observerObj);
+    _windowEventsObserver = ((__bridge_retained void*)observerObj);
 }
 
 EventQueueMacOS::~EventQueueMacOS()
 {
     // Return ownership to ARC
-    __unused id observerObj = (__bridge_transfer id)m_WindowEventsObserver;
+    __unused id observerObj = (__bridge_transfer id)_windowEventsObserver;
 }
 
 void EventQueueMacOS::Update()
@@ -78,28 +78,28 @@ void EventQueueMacOS::Update()
             case NSEventTypeSystemDefined:
                 break;
             case NSEventTypeKeyDown:
-                PushEvent(this, std::make_shared<KeyPressedEvent>(nsEvent.keyCode, 0));
+                    PushEvent(this, std::make_shared<EventVariant>(KeyPressedEvent(nsEvent.keyCode, 0)));
                 break;
             case NSEventTypeKeyUp:
-                PushEvent(this, std::make_shared<KeyReleasedEvent>(nsEvent.keyCode));
+                PushEvent(this, std::make_shared<EventVariant>(KeyReleasedEvent(nsEvent.keyCode)));
                 break;
             case NSEventTypeLeftMouseDown:
-                PushEvent(this, std::make_shared<MouseButtonPressedEvent>(Mouse::ButtonLeft));
+                PushEvent(this, std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::ButtonLeft)));
                 break;
             case NSEventTypeLeftMouseUp:
-                PushEvent(this, std::make_shared<MouseButtonReleasedEvent>(Mouse::ButtonLeft));
+                PushEvent(this, std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::ButtonLeft)));
                 break;
             case NSEventTypeRightMouseDown:
-                PushEvent(this, std::make_shared<MouseButtonPressedEvent>(Mouse::ButtonRight));
+                PushEvent(this, std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::ButtonRight)));
                 break;
             case NSEventTypeRightMouseUp:
-                PushEvent(this, std::make_shared<MouseButtonPressedEvent>(Mouse::ButtonRight));
+                PushEvent(this, std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::ButtonRight)));
                 break;
             case NSEventTypeMouseMoved:
-                PushEvent(this, std::make_shared<MouseMovedEvent>(nsEvent.locationInWindow.x, nsEvent.locationInWindow.y));
+                PushEvent(this, std::make_shared<EventVariant>(MouseMovedEvent(nsEvent.locationInWindow.x, nsEvent.locationInWindow.y)));
                 break;
             case NSEventTypeScrollWheel:
-                PushEvent(this, std::make_shared<MouseScrolledEvent>(nsEvent.scrollingDeltaX, nsEvent.scrollingDeltaY));
+                PushEvent(this, std::make_shared<EventVariant>(MouseScrolledEvent(nsEvent.scrollingDeltaX, nsEvent.scrollingDeltaY)));
                 break;
             default:
                 break;
@@ -110,19 +110,19 @@ void EventQueueMacOS::Update()
     }
 }
 
-std::shared_ptr<Event> EventQueueMacOS::Front()
+std::shared_ptr<EventVariant> EventQueueMacOS::Front()
 {
-    return m_Queue.front();
+    return _queue.front();
 }
 
 void EventQueueMacOS::Pop()
 {
-    m_Queue.pop();
+    _queue.pop();
 }
 
 bool EventQueueMacOS::Empty()
 {
-    return m_Queue.empty();
+    return _queue.empty();
 }
 
 std::unique_ptr<EventQueue> EventQueue::CreateEventQueue()
