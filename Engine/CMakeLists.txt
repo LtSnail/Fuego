@@ -15,7 +15,6 @@ set(PROJECT_HEADERS
     Fuego/Window.h
     Fuego/EventQueue.h
     Fuego/Events/Event.h
-    Fuego/Events/EventVisitor.h
     Fuego/Events/KeyEvent.h
     Fuego/Events/MouseEvent.h
     Fuego/Events/ApplicationEvent.h
@@ -28,7 +27,8 @@ set(PROJECT_HEADERS
     Fuego.h
     fupch.h
     Fuego/Renderer/GraphicsContext.h
-    Fuego/Renderer/Buffer.h)
+    Fuego/Renderer/Buffer.h
+    Fuego/Renderer/Shader.h)
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
             Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp)
 
@@ -40,7 +40,7 @@ else()
 endif()
 
 # Common setup
-list(APPEND ENGINE_DEPENDENCIES ImGui)
+set(ENGINE_DEPENDENCIES ImGui)
 
 set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
 
@@ -59,9 +59,40 @@ endif()
 if(WIN32)
   list(APPEND ENGINE_DEPENDENCIES WindowsDep)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
+
 elseif(APPLE)
-  list(APPEND ENGINE_DEPENDENCIES MacOSDep)
+
+  find_library(APPKIT AppKit)
+  find_library(METAL Metal)
+  find_library(METALKIT MetalKit)
+  find_library(MODELIO ModelIO)
+  find_library(QUARTZCORE QuartzCore)
+
+  list(
+    APPEND
+    ENGINE_DEPENDENCIES
+    MacOSDep
+    ${APPKIT}
+    ${METAL}
+    ${METALKIT}
+    ${MODELIO}
+    ${GAMECONTROLLER}
+    ${QUARTZCORE})
+  set(ENGINE_SHADERS
+      ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS/Metal/Triangle.metal
+      PARENT_SCOPE)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS)
+
+  list(APPEND ENGINE_INCLUDE_DIRECTORIES Fuego/MacOS)
+
+  set(PRIVATE_ENGINE_INCLUDE_DIRECTORIES External/metal-cpp)
+  list(APPEND PUBLIC_ENGINE_COMPILE_DEFS FUEGO_PLATFORM_MACOS)
+
+  list(APPEND PUBLIC_ENGINE_COMPILE_FEATURES)
+
+  set(PUBLIC_ENGINE_COMPILE_OPTIONS)
+  list(APPEND PRIVATE_ENGINE_COMPILE_OPTIONS -fobjc-arc)
+
 endif()
 # End Project set up
 
@@ -86,9 +117,8 @@ target_compile_definitions(
   FuegoInterface INTERFACE ${PUBLIC_ENGINE_COMPILE_DEFS} FUEGO_BUILD_LIB)
 target_compile_options(FuegoInterface
                        INTERFACE ${PUBLIC_ENGINE_COMPILE_OPTIONS})
-# Uncomment the line bellow after CoreLib refactor
-# target_compile_options(FuegoInterface INTERFACE
-# ${PRIVATE_ENGINE_COMPILE_OPTIONS})
+target_compile_options(FuegoInterface
+                       INTERFACE ${PRIVATE_ENGINE_COMPILE_OPTIONS})
 
 # An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
@@ -99,6 +129,12 @@ target_include_directories(FuegoEngine
 
 target_precompile_headers(FuegoEngine PUBLIC
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
+
+if(UNIX AND APPLE)
+  message(STATUS "The target platform is MacOS")
+  target_compile_definitions(FuegoEngine PUBLIC FUEGO_PLATFORM_MACOS)
+  target_compile_options(FuegoEngine PRIVATE -fobjc-arc)
+endif()
 
 target_compile_definitions(FuegoEngine PUBLIC ${PUBLIC_ENGINE_COMPILE_DEFS})
 target_compile_definitions(FuegoEngine PRIVATE ${PPIVATE_ENGINE_COMPILE_DEFS})
