@@ -53,6 +53,7 @@ private:
     HINSTANCE m_HInstance;  // Relates to the Application
     HWND m_Hwnd;            // Relates to Actual Window instance
     WindowProps m_Props;
+    HDC _hdc;
 
     // Renderer
     std::unique_ptr<VertexBuffer> VBO;
@@ -61,7 +62,7 @@ private:
     // Threads
     HANDLE _winThread;
     LPDWORD _winThreadID;
-    static DWORD WINAPI WinThreadMain(_In_ LPVOID lpParameter);
+    static DWORD WinThreadMain(_In_ LPVOID lpParameter);
 };
     
 }  // namespace Fuego

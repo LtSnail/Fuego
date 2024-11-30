@@ -6,7 +6,7 @@
 namespace Fuego
 {
 
-DWORD __stdcall WindowWin::WinThreadMain(LPVOID lpParameter)
+DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 {
     WindowWin* _wnd = reinterpret_cast<WindowWin*>(lpParameter);
 
@@ -44,7 +44,7 @@ DWORD __stdcall WindowWin::WinThreadMain(LPVOID lpParameter)
     FU_CORE_ASSERT(_wnd->_context->Init(), "[GraphicsContext] hasn't been initialized!");
 
     ShowWindow(_wnd->m_Hwnd, SW_SHOW);
-
+    _wnd->_hdc = GetDC(_wnd->m_Hwnd);
     FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
 
     float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
@@ -61,8 +61,16 @@ DWORD __stdcall WindowWin::WinThreadMain(LPVOID lpParameter)
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+    // Cleanup
+    ReleaseDC(_wnd->m_Hwnd, _wnd->_hdc);
+    DestroyWindow(_wnd->m_Hwnd);
+    DestroyIcon(wndClass.hIcon);
+    DestroyCursor(wndClass.hCursor);
+    _wnd->VBO.reset();
+    _wnd->EBO.reset();
+    UnregisterClass(_wnd->m_Props.APP_WINDOW_CLASS_NAME, _wnd->m_HInstance);
 
-    return 0;
+    return S_OK;
 }
 
 std::unordered_map<HWND, WindowWin*> WindowWin::hwndMap;
@@ -93,8 +101,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         glClearColor(0.2f, 0.3f, 0.1f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
-        HDC hdc = GetDC(hwnd);
-        SwapBuffers(hdc);
+        SwapBuffers(_hdc);
         return 0;
     }
     case WM_ACTIVATE:
@@ -197,6 +204,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , VBO(nullptr)
     , EBO(nullptr)
     , _context(nullptr)
+    , _hdc(nullptr)
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
 }
