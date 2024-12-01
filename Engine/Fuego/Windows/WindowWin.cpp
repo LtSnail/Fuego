@@ -1,7 +1,10 @@
 ﻿#include "WindowWin.h"
 
+#include <fstream>
+
 #include "InputWin.h"
 #include "Log.h"
+#include "filesystem"
 
 namespace Fuego
 {
@@ -47,13 +50,37 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
     _wnd->_hdc = GetDC(_wnd->m_Hwnd);
     FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
 
-    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
+    float vertices[] = {
+        // Positions       // Colors
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // Bottom-left, red
+        0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-right, green
+        0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f   // Top, blue
+    };
     uint32_t indices[3] = {0, 1, 2};
 
     _wnd->VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
     FU_CORE_ASSERT(_wnd->VBO, "[Vertex Buffer] hasn't been initialized!");
     _wnd->EBO.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
     FU_CORE_ASSERT(_wnd->VBO, "[Element Buffer] hasn't been initialized!");
+
+    // IO
+    const std::string filePathVertex = "C:/Dev/Fuego/Engine/Fuego/Windows/OpenGL/Shaders/VertexShader.vert";
+    const std::string filePathFragment = "C:/Dev/Fuego/Engine/Fuego/Windows/OpenGL/Shaders/FragmentShader.frag";
+
+    if (!std::filesystem::exists(filePathVertex))
+        FU_CORE_ERROR("Shader path does not exist");
+
+    std::ifstream file(filePathVertex);
+    std::string fileContentVertex((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    file.close();
+
+    file.open(filePathFragment);
+    if (!std::filesystem::exists(filePathFragment))
+        FU_CORE_ERROR("Shader path does not exist");
+    std::string fileContentFragment((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+    _wnd->_shader.reset(new ShaderOpenGL(fileContentVertex, fileContentFragment));
+    _wnd->_shader.get()->Bind();
 
     MSG msg{};
     while (GetMessage(&msg, nullptr, 0u, 0u))

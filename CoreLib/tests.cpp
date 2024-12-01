@@ -445,6 +445,7 @@ class EmptyDeleter
 public:
     void operator()(void* ptr)
     {
+        UNUSED(ptr);
     }
 };
 
