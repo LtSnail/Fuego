@@ -31,19 +31,26 @@ public:
     std::remove_extent_t<T> const& operator*() const noexcept;
     std::remove_extent_t<T>& operator*() noexcept;
 
+    /// <summary>
+    /// Cleans up after the old pointer and set up on the new one.
+    /// </summary>
+    /// <param name="ptr">New pointer to be tracked. Will be managed by the previous allocator (the same allocator as previous poiner).</param>
     void Reset(std::remove_extent_t<T>* ptr = nullptr) noexcept;
+
+    /// <summary>
+    /// Stops controlling the pointer and gives it to the user
+    /// </summary>
+    /// <returns>Raw pointer</returns>
     std::remove_extent_t<T>* Release() noexcept;
 
     void Swap(Uptr<T, Allocator>& other);
 
     explicit operator bool() const noexcept;
 
-    Allocator& GetAllocator() noexcept;
+    template <NotArrayType U, FuegoAllocator AllocatorU, class... Args>
+    friend Uptr<U, AllocatorU> MakeUnique(Args&&... args);
 
-    template <class... Args>
-    friend Uptr<T, Allocator> MakeUnique(Args&&... args);
-
-private:
+protected:
     std::remove_extent_t<T>* _ptr = nullptr;
     Allocator _alloc{};
 };
@@ -57,7 +64,6 @@ inline Uptr<T, Allocator>::Uptr(std::remove_extent_t<T>* ptr) noexcept
 template <class T, FuegoAllocator Allocator>
 inline Uptr<T, Allocator>::Uptr(Uptr<T, Allocator>&& other) noexcept
     : _ptr(other._ptr)
-    , _alloc(std::move_if_noexcept(other._alloc))
 {
     other._ptr = nullptr;
 }
@@ -69,7 +75,6 @@ inline Uptr<T, Allocator>& Uptr<T, Allocator>::operator=(Uptr<T, Allocator>&& ot
         return *this;
 
     Reset(other.Release());
-    _alloc = std::move_if_noexcept(other._alloc);
 
     other._ptr = nullptr;
 
@@ -129,7 +134,10 @@ inline void Uptr<T, Allocator>::Reset(std::remove_extent_t<T>* ptr) noexcept
     _ptr = ptr;
 
     if (OldPtr)
-        _alloc.deallocate(reinterpret_cast<uint8_t*>(OldPtr), sizeof(sizeof(std::remove_extent_t<T>)));
+    {
+        std::destroy_at(OldPtr);
+        _alloc.deallocate(reinterpret_cast<uint8_t*>(OldPtr), sizeof(std::remove_extent_t<T>));
+    }
 }
 
 template <class T, FuegoAllocator Allocator>
@@ -145,19 +153,12 @@ template <class T, FuegoAllocator Allocator>
 inline void Uptr<T, Allocator>::Swap(Uptr<T, Allocator>& other)
 {
     std::swap(_ptr, other._ptr);
-    std::swap(_alloc, other._alloc);
 }
 
 template <class T, FuegoAllocator Allocator>
 inline Uptr<T, Allocator>::operator bool() const noexcept
 {
     return _ptr != nullptr;
-}
-
-template <class T, FuegoAllocator Allocator>
-inline Allocator& Uptr<T, Allocator>::GetAllocator() noexcept
-{
-    return _alloc;
 }
 
 template <class T, FuegoAllocator AllocatorT, class U, FuegoAllocator AllocatorU>
@@ -268,11 +269,12 @@ std::remove_extent_t<T>* operator-(Uptr<T, Allocator>& ptr, ptrdiff_t n)
     return ptr.Get() - n;
 }
 
-template <class T, FuegoAllocator Allocator = DefaultAllocator, class... Args>
+template <NotArrayType T, FuegoAllocator Allocator = DefaultAllocator, class... Args>
 Uptr<T, Allocator> MakeUnique(Args&&... args)
 {
-    Allocator alloc{};
-    uint8_t* MemBlock = alloc.allocate(sizeof(std::remove_extent_t<T>));
+    Uptr<T, Allocator> Up;
+
+    uint8_t* MemBlock = Up._alloc.allocate(sizeof(std::remove_extent_t<T>));
 
     std::remove_extent_t<T>* Ptr = nullptr;
     try
@@ -281,11 +283,13 @@ Uptr<T, Allocator> MakeUnique(Args&&... args)
     }
     catch (...)
     {
-        alloc.deallocate(MemBlock, sizeof(std::remove_extent_t<T>));
+        Up._alloc.deallocate(MemBlock, sizeof(std::remove_extent_t<T>));
         throw;
     }
 
-    return Uptr<T, Allocator>(Ptr);
+    Up._ptr = Ptr;
+
+    return Up;
 }
 
 template <ArrayType T, FuegoAllocator Allocator>
@@ -295,7 +299,7 @@ public:
     FUEGO_NON_COPYABLE(Uptr);
 
     Uptr() noexcept = default;
-    explicit Uptr(std::remove_extent_t<T>* ptr, size_t size) noexcept;
+    explicit Uptr(size_t size, std::remove_extent_t<T>* ptr) noexcept;
     Uptr(Uptr<T, Allocator>&& other) noexcept;
     Uptr<T, Allocator>& operator=(Uptr<T, Allocator>&& other) noexcept;
     ~Uptr();
@@ -306,15 +310,26 @@ public:
     std::remove_extent_t<T> const& operator[](size_t Idx) const noexcept;
     std::remove_extent_t<T>& operator[](size_t Idx) noexcept;
 
-    void Reset(std::remove_extent_t<T>* ptr = nullptr, size_t size = 0) noexcept;
+    /// <summary>
+    /// Cleans up after the old pointer and set up on the new one.
+    /// </summary>
+    /// <param name="ptr">New pointer to be tracked. Will be managed by the previous allocator (the same allocator as previous poiner).</param>
+    void Reset(size_t size = 0, std::remove_extent_t<T>* ptr = nullptr) noexcept;
+
+    /// <summary>
+    /// Stops controlling the pointer and gives it to the user
+    /// </summary>
+    /// <returns>Raw pointer</returns>
     std::remove_extent_t<T>* Release() noexcept;
 
     void Swap(Uptr<T, Allocator>& other);
 
     explicit operator bool() const noexcept;
 
-    Allocator& GetAllocator() noexcept;
     size_t Size() const noexcept;
+
+    template <ArrayType U, FuegoAllocator AllocatorU, class... Args>
+    friend Uptr<U, AllocatorU> MakeUnique(size_t size, Args&&... args);
 
 private:
     std::remove_extent_t<T>* _ptr = nullptr;
@@ -323,7 +338,7 @@ private:
 };
 
 template <ArrayType T, FuegoAllocator Allocator>
-inline Fuego::Uptr<T, Allocator>::Uptr(std::remove_extent_t<T>* ptr, size_t size) noexcept
+inline Fuego::Uptr<T, Allocator>::Uptr(size_t size, std::remove_extent_t<T>* ptr) noexcept
     : _ptr(ptr)
     , _size(size)
 {
@@ -332,7 +347,6 @@ inline Fuego::Uptr<T, Allocator>::Uptr(std::remove_extent_t<T>* ptr, size_t size
 template <ArrayType T, FuegoAllocator Allocator>
 inline Uptr<T, Allocator>::Uptr(Uptr<T, Allocator>&& other) noexcept
     : _ptr(other._ptr)
-    , _alloc(std::move_if_noexcept(other._alloc))
     , _size(other._size)
 {
     other._ptr = nullptr;
@@ -345,8 +359,7 @@ inline Uptr<T, Allocator>& Uptr<T, Allocator>::operator=(Uptr<T, Allocator>&& ot
     if (this == &other)
         return *this;
 
-    Reset(other.Release(), other._size);
-    _alloc = std::move_if_noexcept(other._alloc);
+    Reset(other._size, other.Release());
     _size = other._size;
 
     other._ptr = nullptr;
@@ -390,13 +403,16 @@ inline std::remove_extent_t<T>& Uptr<T, Allocator>::operator[](size_t Idx) noexc
 }
 
 template <ArrayType T, FuegoAllocator Allocator>
-inline void Uptr<T, Allocator>::Reset(std::remove_extent_t<T>* ptr, size_t size) noexcept
+inline void Uptr<T, Allocator>::Reset(size_t size, std::remove_extent_t<T>* ptr) noexcept
 {
     auto* OldPtr = _ptr;
     _ptr = ptr;
 
     if (OldPtr)
+    {
+        for (size_t Idx = 0; Idx < _size; ++Idx) std::destroy_at(OldPtr + Idx);  // std::destroy_at is noexept, unlike std::destroy
         _alloc.deallocate(reinterpret_cast<uint8_t*>(OldPtr), _size * sizeof(std::remove_extent_t<T>));
+    }
 
     _size = size;
 }
@@ -421,7 +437,6 @@ template <ArrayType T, FuegoAllocator Allocator>
 inline void Uptr<T, Allocator>::Swap(Uptr<T, Allocator>& other)
 {
     std::swap(_ptr, other._ptr);
-    std::swap(_alloc, other._alloc);
     std::swap(_size, other._size);
 }
 
@@ -429,12 +444,6 @@ template <ArrayType T, FuegoAllocator Allocator>
 inline Uptr<T, Allocator>::operator bool() const noexcept
 {
     return _ptr != nullptr;
-}
-
-template <ArrayType T, FuegoAllocator Allocator>
-inline Allocator& Uptr<T, Allocator>::GetAllocator() noexcept
-{
-    return _alloc;
 }
 
 template <ArrayType T, FuegoAllocator AllocatorT, ArrayType U, FuegoAllocator AllocatorU>
@@ -548,9 +557,9 @@ std::remove_extent_t<T>* operator-(Uptr<T, Allocator>& ptr, ptrdiff_t n)
 template <ArrayType T, FuegoAllocator Allocator = DefaultAllocator, class... Args>
 Uptr<T, Allocator> MakeUnique(size_t size, Args&&... args)
 {
-    Allocator alloc{};
+    Uptr<T, Allocator> Up(size, nullptr);
 
-    uint8_t* MemBlock = alloc.allocate(size * sizeof(std::remove_extent_t<T>));
+    uint8_t* MemBlock = Up._alloc.allocate(size * sizeof(std::remove_extent_t<T>));
 
     std::remove_extent_t<T>* Instance = nullptr;
     size_t Idx = 0;
@@ -563,11 +572,14 @@ Uptr<T, Allocator> MakeUnique(size_t size, Args&&... args)
     {
         for (; Idx > 0; --Idx) std::destroy_at(Instance + (Idx - 1));
 
-        alloc.deallocate(MemBlock, size * sizeof(std::remove_extent_t<T>));
+        Up._alloc.deallocate(MemBlock, size * sizeof(std::remove_extent_t<T>));
         throw;
     }
 
-    return Uptr<T, Allocator>(Instance, size);
+    Up._ptr = Instance;
+    Up._size = size;
+
+    return Up;
 }
 
 }  // namespace Fuego
