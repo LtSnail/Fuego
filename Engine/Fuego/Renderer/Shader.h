@@ -6,12 +6,8 @@ namespace Fuego
 class Shader
 {
 public:
-    Shader() = default;
-    virtual ~Shader();
+    virtual ~Shader() = default;
 
-    virtual void Bind() const;
-
-private:
-    uint32_t _shaderID;
+    virtual void Bind() const = 0;
 };
 }  // namespace Fuego
