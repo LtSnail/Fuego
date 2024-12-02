@@ -1,7 +1,15 @@
 #pragma once
 
-#include "fupch.h"
+namespace Fuego::Renderer
+{
+class Buffer
+{
+public:
+    virtual ~Buffer() = default;
+};
+}  // namespace Fuego::Renderer
 
+// Deprecate the declarations bellow
 namespace Fuego
 {
 class VertexBuffer

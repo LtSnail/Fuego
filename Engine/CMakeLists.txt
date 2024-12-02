@@ -28,7 +28,18 @@ set(PROJECT_HEADERS
     Fuego.h
     fupch.h
     Fuego/Renderer/GraphicsContext.h
-    Fuego/Renderer/Buffer.h)
+    Fuego/Renderer/Buffer.h
+    Fuego/Renderer/Device.h
+    Fuego/Renderer/CommandQueue.h
+    Fuego/Renderer/CommandPool.h
+    Fuego/Renderer/DescriptorBuffer.h
+    Fuego/Renderer/Shader.h
+    Fuego/Renderer/Swapchain.h
+    Fuego/Renderer/Texture.h
+    Fuego/Renderer/Sampler.h
+    Fuego/Renderer/Surface.h
+    Fuego/Renderer/CommandBuffer.h
+    Fuego/Renderer/Shader.h)
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
             Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp)
 
