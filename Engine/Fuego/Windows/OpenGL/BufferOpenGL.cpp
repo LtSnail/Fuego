@@ -1,5 +1,7 @@
 #include "BufferOpenGL.h"
 
+#include "glad/glad.h"
+
 namespace Fuego
 {
 bool VertexBufferOpenGL::_isVAO = false;

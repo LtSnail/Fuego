@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Renderer/Buffer.h"
-#include "glad/glad.h"
 
 namespace Fuego
 {
