@@ -143,6 +143,11 @@ void WindowMacOS::Update()
     }
 }
 
+void* WindowMacOS::GetNativeWindow() const
+{
+    return m_Window;
+}
+
 void WindowMacOS::Shutdown()
 {
     // Return ownership to ARC

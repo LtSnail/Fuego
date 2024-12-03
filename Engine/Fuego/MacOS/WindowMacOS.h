@@ -31,6 +31,8 @@ public:
     {
         return true;
     }
+    
+    virtual void* GetNativeWindow() const override;
 
 private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
