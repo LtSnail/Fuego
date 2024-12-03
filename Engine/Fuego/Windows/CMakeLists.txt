@@ -7,11 +7,17 @@ set(PROJECT_HEADERS
     WindowWin.h
     OpenGL/BufferOpenGL.h
     OpenGL/OpenGLContext.h
-    OpenGL/DeviceOpenGL.h)
+    OpenGL/DeviceOpenGL.h
+    OpenGL/CommandBufferOpenGL.h)
 
 set(PROJECT_SOURCES
-    EventQueueWin.cpp InputWin.cpp WindowWin.cpp OpenGL/BufferOpenGL.cpp
-    OpenGL/OpenGLContext.cpp OpenGL/DeviceOpenGL.cpp)
+    EventQueueWin.cpp
+    InputWin.cpp
+    WindowWin.cpp
+    OpenGL/BufferOpenGL.cpp
+    OpenGL/OpenGLContext.cpp
+    OpenGL/DeviceOpenGL.cpp
+    OpenGL/CommandBufferOpenGL.cpp)
 
 set(GLAD_BUILD_DIR ${CMAKE_BINARY_DIR}/Glad)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/../../build/win/output)

@@ -221,6 +221,10 @@ void WindowWin::SetVSync(bool enabled)
 bool WindowWin::IsVSync() const
 {
     return true;
+}
+void* WindowWin::GetNativeWindow() const
+{
+    return m_Hwnd;
 };
 
 Input::KeyState WindowWin::GetKeyState(KeyCode keyCode) const
