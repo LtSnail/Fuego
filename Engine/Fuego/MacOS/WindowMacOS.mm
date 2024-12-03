@@ -123,11 +123,11 @@ WindowMacOS::WindowMacOS(const WindowProps& props, EventQueue& eventQueue)
     [w setContentView:v];
     [w makeKeyAndOrderFront:NSApp];
 
-    m_Props = props;
-    m_Window = (__bridge_retained void*)w;
-    m_View = (__bridge_retained void*)v;
+    _props = props;
+    _window = (__bridge_retained void*)w;
+    _view = (__bridge_retained void*)v;
     
-    _context = std::make_unique<Fuego::MetalContext>(m_Window);
+    _context = std::make_unique<Fuego::MetalContext>(_window);
     FU_CORE_ASSERT(_context->Init(), "[GraphicsContext] hasn't been initialized!");
 }
 
@@ -147,13 +147,13 @@ void WindowMacOS::Update()
 
 void* WindowMacOS::GetNativeWindow() const
 {
-    return m_Window;
+    return _window;
 }
 
 void WindowMacOS::Shutdown()
 {
-    __unused id windowObj = (__bridge_transfer id)m_Window;
-    __unused id viewObj = (__bridge_transfer id)m_View;
+    __unused id windowObj = (__bridge_transfer id)_window;
+    __unused id viewObj = (__bridge_transfer id)_view;
 }
 
 std::unique_ptr<Window> Window::CreateAppWindow(const WindowProps& props, EventQueue& eventQueue)

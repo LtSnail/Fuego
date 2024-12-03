@@ -16,11 +16,11 @@ public:
 
     inline virtual unsigned int GetWidth() const override
     {
-        return m_Props.Width;
+        return _props.Width;
     }
     inline virtual unsigned int GetHeight() const override
     {
-        return m_Props.Height;
+        return _props.Height;
     }
 
     inline virtual void SetVSync(bool enabled) override
@@ -38,11 +38,11 @@ private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();
 
-    void* m_Window;
-    void* m_View;
+    void* _window;
+    void* _view;
 
     std::unique_ptr<MetalContext> _context;
 
-    WindowProps m_Props;
+    WindowProps _props;
 };
 }  // namespace Fuego
