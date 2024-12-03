@@ -38,13 +38,10 @@ private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();
 
-    // FuegoWindow*
     void* m_Window;
-
-    // FuegoView*
     void* m_View;
 
-    MetalContext* _context;
+    std::unique_ptr<MetalContext> _context;
 
     WindowProps m_Props;
 };

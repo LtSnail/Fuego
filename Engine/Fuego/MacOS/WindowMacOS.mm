@@ -56,6 +56,11 @@
     return YES;
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 @end
 
 namespace Fuego
@@ -64,69 +69,66 @@ WindowMacOS::WindowMacOS(const WindowProps& props, EventQueue& eventQueue)
 {
     UNUSED(eventQueue);
 
-    @autoreleasepool
+    NSRect rect = NSMakeRect(props.x, props.y, props.Width, props.Height);
+    NSWindowStyleMask styleMask = NSWindowStyleMaskTitled;
+    if (props.Closable)
     {
-        NSRect rect = NSMakeRect(props.x, props.y, props.Width, props.Height);
-        NSWindowStyleMask styleMask = NSWindowStyleMaskTitled;
-        if (props.Closable)
-        {
-            styleMask |= NSWindowStyleMaskClosable;
-        }
-        if (props.Resizable)
-        {
-            styleMask |= NSWindowStyleMaskResizable;
-        }
-        if (props.Minimizable)
-        {
-            styleMask |= NSWindowStyleMaskMiniaturizable;
-        }
-        if (!props.Frame)
-        {
-            styleMask |= NSWindowStyleMaskFullSizeContentView;
-        }
-
-        // Setup NSWindow
-        m_Window = (__bridge_retained void*)[[FuegoWindow alloc] initWithContentRect:rect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
-        FuegoWindow* w = (__bridge FuegoWindow*)m_Window;
-
-        NSString* title = [NSString stringWithCString:props.Title.c_str() encoding:[NSString defaultCStringEncoding]];
-
-        if (!props.Title.empty())
-        {
-            [w setTitle:(NSString*)title];
-        }
-
-        if (props.Centered)
-        {
-            [w center];
-        }
-        else
-        {
-            NSPoint point = NSMakePoint(props.x, props.y);
-            point = [w convertPointToScreen:point];
-            [w setFrameOrigin:point];
-        }
-
-        [w setHasShadow:props.HasShadow];
-        [w setTitlebarAppearsTransparent:!props.Frame];
-
-        // Setup NSView
-        rect = [w backingAlignedRect:rect options:NSAlignAllEdgesOutward];
-        m_View = (__bridge_retained void*)[[FuegoView alloc] initWithFrame:rect];
-        FuegoView* v = (__bridge FuegoView*)m_View;
-
-        [v setHidden:NO];
-        [v setNeedsDisplay:YES];
-        [v setWantsLayer:YES];
-
-        [w setContentView:v];
-        [w makeKeyAndOrderFront:NSApp];
-
-        _context = new Fuego::MetalContext(m_Window);
-        FU_CORE_ASSERT(_context->Init(), "[GraphicsContext] hasn't been initialized!");
-
-        m_Props = props;
+        styleMask |= NSWindowStyleMaskClosable;
     }
+    if (props.Resizable)
+    {
+        styleMask |= NSWindowStyleMaskResizable;
+    }
+    if (props.Minimizable)
+    {
+        styleMask |= NSWindowStyleMaskMiniaturizable;
+    }
+    if (!props.Frame)
+    {
+        styleMask |= NSWindowStyleMaskFullSizeContentView;
+    }
+
+    // Setup NSWindow
+    FuegoWindow* w = [[FuegoWindow alloc] initWithContentRect:rect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];;
+
+    NSString* title = [NSString stringWithCString:props.Title.c_str() encoding:[NSString defaultCStringEncoding]];
+
+    if (!props.Title.empty())
+    {
+        [w setTitle:(NSString*)title];
+    }
+
+    if (props.Centered)
+    {
+        [w center];
+    }
+    else
+    {
+        NSPoint point = NSMakePoint(props.x, props.y);
+        point = [w convertPointToScreen:point];
+        [w setFrameOrigin:point];
+    }
+
+    [w setHasShadow:props.HasShadow];
+    [w setTitlebarAppearsTransparent:!props.Frame];
+
+    // Setup NSView
+    rect = [w backingAlignedRect:rect options:NSAlignAllEdgesOutward];
+    FuegoView* v = [[FuegoView alloc] initWithFrame:rect];
+
+    [v setHidden:NO];
+    [v setNeedsDisplay:YES];
+    [v setWantsLayer:YES];
+
+    [w setContentView:v];
+    [w makeKeyAndOrderFront:NSApp];
+
+    m_Props = props;
+    m_Window = (__bridge_retained void*)w;
+    m_View = (__bridge_retained void*)v;
+    
+    _context = std::make_unique<Fuego::MetalContext>(m_Window);
+    FU_CORE_ASSERT(_context->Init(), "[GraphicsContext] hasn't been initialized!");
 }
 
 WindowMacOS::~WindowMacOS()
@@ -150,9 +152,7 @@ void* WindowMacOS::GetNativeWindow() const
 
 void WindowMacOS::Shutdown()
 {
-    // Return ownership to ARC
-    // Returning window to ARC causes EXC_BAD_ACCESS on autorealease
-    //__unused id windowObj = (__bridge_transfer id)m_Window;
+    __unused id windowObj = (__bridge_transfer id)m_Window;
     __unused id viewObj = (__bridge_transfer id)m_View;
 }
 

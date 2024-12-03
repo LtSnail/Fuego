@@ -2,7 +2,6 @@
 
 // Compiled in a client application
 #if defined(FUEGO_PLATFORM_MACOS)
-#include "fupch.h"
 
 @interface FuegoApplication : NSApplication
 
@@ -27,22 +26,19 @@
 
 int main(int argc, const char* argv[])
 {
-    @autoreleasepool
+    Fuego::Log::Init();
+
+    FuegoApplication* applicationObject = [FuegoApplication alloc];
+
+    Fuego::Application* app = Fuego::CreateApplication();
+    applicationObject.application = app;
+
+    if ([applicationObject respondsToSelector:@selector(run)])
     {
-        Fuego::Log::Init();
-
-        FuegoApplication* applicationObject = [FuegoApplication alloc];
-
-        Fuego::Application* app = Fuego::CreateApplication();
-        applicationObject.application = app;
-
-        if ([applicationObject respondsToSelector:@selector(run)])
-        {
-            [applicationObject performSelectorOnMainThread:@selector(run) withObject:nil waitUntilDone:YES];
-        }
-
-        delete app;
+        [applicationObject performSelectorOnMainThread:@selector(run) withObject:nil waitUntilDone:YES];
     }
+
+    delete app;
 
     return 0;
 }
