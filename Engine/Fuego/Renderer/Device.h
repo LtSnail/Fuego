@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace Fuego::Renderer
 {
@@ -7,6 +7,7 @@ class CommandQueue;
 class CommandPool;
 class Swapchain;
 class Surface;
+class Shader;
 
 class Device
 {
@@ -17,6 +18,7 @@ public:
     virtual std::unique_ptr<CommandQueue> CreateQueue() = 0;
     virtual std::unique_ptr<CommandPool> CreateCommandPool(std::shared_ptr<CommandQueue> queue) = 0;
     virtual std::unique_ptr<Swapchain> CreateSwapchain(std::shared_ptr<Surface> surface) = 0;
+    virtual std::unique_ptr<Shader> CreateShader(std::string_view shaderName) = 0;
 
     static std::unique_ptr<Device> CreateDevice();
 };
