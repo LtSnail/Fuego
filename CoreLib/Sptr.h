@@ -851,7 +851,7 @@ inline void Wptr<T, Allocator>::Release() noexcept
     if (_cb->_weak == 0 && _cb->_strong == 0)
     {
         std::destroy_at(_cb);
-        _alloc.deallocate(reinterpret_cast<uint8_t*>(_cb), sizeof(Sptr<T, Allocator>::_ControlBlock));
+        _alloc.deallocate(reinterpret_cast<uint8_t*>(_cb), sizeof(typename Sptr<T, Allocator>::_ControlBlock));
     }
 
     _cb = nullptr;
@@ -995,7 +995,7 @@ inline void Wptr<T, Allocator>::Release() noexcept
     if (_cb->_weak == 0 && _cb->_strong == 0)
     {
         std::destroy_at(_cb);
-        _alloc.deallocate(reinterpret_cast<uint8_t*>(_cb), sizeof(Sptr<T, Allocator>::_ControlBlock));
+        _alloc->deallocate(reinterpret_cast<uint8_t*>(_cb), sizeof(typename Sptr<T, Allocator>::_ControlBlock));
     }
 
     _cb = nullptr;
