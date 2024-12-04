@@ -31,6 +31,7 @@ elseif(WIN32)
 endif()
 
 add_subdirectory(Engine)
+add_subdirectory(ShaderTranslator)
 add_subdirectory(Sandbox)
 add_subdirectory(CoreLib)
 
