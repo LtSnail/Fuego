@@ -6,7 +6,7 @@ namespace Fuego::Renderer
 {
 
 BufferOpenGL::BufferOpenGL(size_t size, uint32_t flags)
-    : _vbo(0)
+    : _vbo(UINT32_MAX)
 {
     UNUSED(flags);
 
@@ -22,6 +22,6 @@ BufferOpenGL::~BufferOpenGL()
 
 uint32_t BufferOpenGL::GetBufferID() const
 {
-    _vbo;
+    return _vbo;
 }
 }  // namespace Fuego::Renderer

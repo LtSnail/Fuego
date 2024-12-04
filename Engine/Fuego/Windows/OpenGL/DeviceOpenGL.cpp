@@ -1,6 +1,7 @@
 ﻿#include "OpenGL/DeviceOpenGL.h"
 
 #include "Application.h"
+#include "BufferOpenGL.h"
 #include "Core.h"
 #include "glad/glad.h"
 
@@ -60,7 +61,7 @@ std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
     UNUSED(size);
     UNUSED(flags);
 
-    return nullptr;
+    return std::make_unique<BufferOpenGL>();
 }
 
 std::unique_ptr<CommandQueue> DeviceOpenGL::CreateQueue()

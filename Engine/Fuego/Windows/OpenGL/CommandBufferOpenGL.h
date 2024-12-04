@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "Renderer/CommandBuffer.h"
 
 namespace Fuego::Renderer
@@ -18,5 +20,8 @@ public:
 
 protected:
     CommandBufferOpenGL();
+
+private:
+    std::vector<std::function<void(void*)> > _cmdBuf;
 };
 }  // namespace Fuego::Renderer
