@@ -36,14 +36,14 @@ std::unique_ptr<CommandQueue> DeviceMetal::CreateQueue()
     return std::make_unique<CommandQueueMetal>(_device->newCommandQueue());
 }
 
-std::unique_ptr<CommandPool> DeviceMetal::CreateCommandPool(std::shared_ptr<CommandQueue> queue)
+std::unique_ptr<CommandPool> DeviceMetal::CreateCommandPool(const CommandQueue& queue)
 {
     UNUSED(queue);
 
     return nullptr;
 }
 
-std::unique_ptr<Swapchain> DeviceMetal::CreateSwapchain(std::shared_ptr<Surface> surface)
+std::unique_ptr<Swapchain> DeviceMetal::CreateSwapchain(const Surface& surface)
 {
     UNUSED(surface);
 
@@ -58,7 +58,7 @@ std::unique_ptr<Shader> DeviceMetal::CreateShader(std::string_view shaderName)
     return std::make_unique<ShaderMetal>(shader);
 }
 
-std::unique_ptr<Device> Device::CreateDevice(Surface* surface)
+std::unique_ptr<Device> Device::CreateDevice(const Surface& surface)
 {
     UNUSED(surface);
     

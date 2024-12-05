@@ -16,10 +16,10 @@ public:
 
     virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) = 0;
     virtual std::unique_ptr<CommandQueue> CreateQueue() = 0;
-    virtual std::unique_ptr<CommandPool> CreateCommandPool(std::shared_ptr<CommandQueue> queue) = 0;
-    virtual std::unique_ptr<Swapchain> CreateSwapchain(std::shared_ptr<Surface> surface) = 0;
+    virtual std::unique_ptr<CommandPool> CreateCommandPool(const CommandQueue& queue) = 0;
+    virtual std::unique_ptr<Swapchain> CreateSwapchain(const Surface& surface) = 0;
     virtual std::unique_ptr<Shader> CreateShader(std::string_view shaderName) = 0;
 
-    static std::unique_ptr<Device> CreateDevice(Surface* surface);
+    static std::unique_ptr<Device> CreateDevice(const Surface& surface);
 };
 }  // namespace Fuego::Renderer

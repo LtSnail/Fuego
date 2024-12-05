@@ -11,33 +11,33 @@ CommandBufferMetal::CommandBufferMetal()
     _renderPipelineDescriptor->setLabel(NS::String::string("Default Rendering Pipeline", NS::ASCIIStringEncoding));
 }
 
-void CommandBufferMetal::BindRenderTarget(std::unique_ptr<Texture> texture)
+void CommandBufferMetal::BindRenderTarget(const Texture& texture)
 {
-    const auto* metalTexture = static_cast<TextureMetal*>(texture.get());
+    const auto* metalTexture = static_cast<const TextureMetal*>(&texture);
     MTL::PixelFormat pixelFormat = (MTL::PixelFormat)metalTexture->GetTextureFormat();
     _renderPipelineDescriptor->colorAttachments()->object(0)->setPixelFormat(pixelFormat);
     FU_CORE_ASSERT(_renderPipelineDescriptor, "Failed to bind Render Target");
 }
 
-void CommandBufferMetal::BindVertexShader(std::unique_ptr<Shader> vertexShader)
+void CommandBufferMetal::BindVertexShader(const Shader& vertexShader)
 {
-    const auto* metalShader = static_cast<ShaderMetal*>(vertexShader.get());
+    const auto* metalShader = static_cast<const ShaderMetal*>(&vertexShader);
     _renderPipelineDescriptor->setVertexFunction(metalShader->_function);
     FU_CORE_ASSERT(_renderPipelineDescriptor, "Failed to bind Vertex Shader");
 }
 
-void CommandBufferMetal::BindPixelShader(std::unique_ptr<Shader> pixelShader)
+void CommandBufferMetal::BindPixelShader(const Shader& pixelShader)
 {
-    const auto* metalShader = static_cast<ShaderMetal*>(pixelShader.get());
+    const auto* metalShader = static_cast<const ShaderMetal*>(&pixelShader);
     _renderPipelineDescriptor->setFragmentFunction(metalShader->_function);
     FU_CORE_ASSERT(_renderPipelineDescriptor, "Failed to bind Pixel Shader");
 }
 
-void CommandBufferMetal::BindDescriptorSet(std::unique_ptr<DescriptorBuffer> descriptorSet, int setIndex)
+void CommandBufferMetal::BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex)
 {
 }
 
-void CommandBufferMetal::BindVertexBuffer(std::unique_ptr<Buffer> vertexBuffer)
+void CommandBufferMetal::BindVertexBuffer(const Buffer& vertexBuffer)
 {
 }
 
