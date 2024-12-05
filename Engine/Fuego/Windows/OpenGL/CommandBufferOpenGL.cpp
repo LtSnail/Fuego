@@ -8,39 +8,43 @@ namespace Fuego::Renderer
 {
 
 CommandBufferOpenGL::CommandBufferOpenGL()
-    : _cmdBuf()
+    : _programID(0)
 {
-    _cmdBuf.reserve(10);
+    _programID = glCreateProgram();
 }
 
 CommandBufferOpenGL::~CommandBufferOpenGL()
 {
+    glDeleteProgram(_programID);
+}
+
+void CommandBufferOpenGL::BindRenderTarget(std::unique_ptr<Texture> texture)
+{
+    UNUSED(texture);
+}
+
+void CommandBufferOpenGL::BindVertexShader(std::unique_ptr<Shader> vertexShader)
+{
+    ShaderOpenGL* shaderGL = static_cast<ShaderOpenGL*>(vertexShader.get());
+    glAttachShader(_programID, shaderGL->GetID());
 }
 
 void CommandBufferOpenGL::BindPixelShader(std::unique_ptr<Shader> pixelShader)
 {
-    ShaderOpenGL* shader = static_cast<ShaderOpenGL*>(pixelShader.get());
-    auto func = &ShaderOpenGL::BindPixelShader;
-    _cmdBuf.push_back(
-        [shader, func, ]()
-        {
-
-        });
+    ShaderOpenGL* shaderGL = static_cast<ShaderOpenGL*>(pixelShader.get());
+    glAttachShader(_programID, shaderGL->GetID());
 }
 
 void CommandBufferOpenGL::BindVertexBuffer(std::unique_ptr<Buffer> vertexBuffer)
 {
-    _cmdBuf.push_back(
-        [_vb = vertexBuffer.get()](void*)
-        {
-            const BufferOpenGL* buff = static_cast<const BufferOpenGL*>(_vb);
-            glBindBuffer(GL_ARRAY_BUFFER, buff->GetBufferID());
-        });
+    const BufferOpenGL* buff = static_cast<const BufferOpenGL*>(vertexBuffer.get());
+    glBindBuffer(GL_ARRAY_BUFFER, buff->GetBufferID());
 }
 
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
-    _cmdBuf.push_back([vertexCount](void*) { glDrawArrays(GL_TRIANGLES, 0, vertexCount); });
+    glLinkProgram(_programID);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
 void CommandBufferOpenGL::BindDescriptorSet(std::unique_ptr<DescriptorBuffer> descriptorSet, int setIndex)

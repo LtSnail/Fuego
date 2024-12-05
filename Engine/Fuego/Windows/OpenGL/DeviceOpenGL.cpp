@@ -2,17 +2,20 @@
 
 #include "Application.h"
 #include "BufferOpenGL.h"
+#include "CommandQueueOpenGL.h"
 #include "Core.h"
 #include "glad/glad.h"
 
 
 namespace Fuego::Renderer
 {
-DeviceOpenGL::DeviceOpenGL()
+DeviceOpenGL::DeviceOpenGL(Surface* surface)
     : _hwnd(nullptr)
     , _ctx(nullptr)
     , _hdc(nullptr)
 {
+    UNUSED(surface);
+
     _hwnd = static_cast<HWND*>(Application().GetWindow().GetNativeWindow());
 
     // clang-format off
@@ -58,15 +61,12 @@ DeviceOpenGL::~DeviceOpenGL()
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
 {
-    UNUSED(size);
-    UNUSED(flags);
-
-    return std::make_unique<BufferOpenGL>();
+    return std::make_unique<BufferOpenGL>(size, flags);
 }
 
 std::unique_ptr<CommandQueue> DeviceOpenGL::CreateQueue()
 {
-    return nullptr;
+    return std::make_unique<CommandQueueOpenGL>();
 }
 
 std::unique_ptr<CommandPool> DeviceOpenGL::CreateCommandPool(std::shared_ptr<CommandQueue> queue)

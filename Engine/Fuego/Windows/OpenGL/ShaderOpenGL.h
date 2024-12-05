@@ -10,21 +10,23 @@ namespace Fuego::Renderer
 class ShaderOpenGL : public Shader
 {
 public:
-    virtual ~ShaderOpenGL() = default;
-    virtual void Use(uint32_t ID) const;
+    static std::unique_ptr<Shader> CreateShader(const char* shaderCode, ShaderType type);
 
-
-protected:
-    virtual uint32_t CompileShader(GLenum shaderType, const char* shaderCode);
+    virtual ~ShaderOpenGL() override;
+    inline ShaderType GetType() const
+    {
+        return _type;
+    }
+    inline uint32_t GetID() const
+    {
+        return _shaderID;
+    }
 
 private:
-    uint32_t _programID;
-    uint32_t _pixelID;
-    uint32_t _vertexID;
-    ShaderOpenGL();
+    uint32_t _shaderID;
+    ShaderType _type;
 
-    friend class CommandBufferOpenGL;
-    virtual void BindPixelShader(const char* shaderCode);
-    virtual void BindVertexShader(const char* shaderCode);
+    ShaderOpenGL(const char* shaderCode, ShaderType type);
+    GLint GetShaderType(ShaderType type) const;
 };
 }  // namespace Fuego::Renderer

@@ -2,69 +2,47 @@
 
 namespace Fuego::Renderer
 {
-ShaderOpenGL::ShaderOpenGL()
-    : _programID(0)
-    , _vertexID(0)
-    , _pixelID(0)
+ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
+    : _shaderID(0)
+    , _type(ShaderType::None)
 {
-    _programID = glCreateProgram();
-}
-
-uint32_t ShaderOpenGL::CompileShader(GLenum shaderType, const char* shaderCode)
-{
-    uint32_t shader = glCreateShader(shaderType);
-    glShaderSource(shader, 1, &shaderCode, nullptr);
-    glCompileShader(shader);
+    _shaderID = glCreateShader(GetShaderType(type));
+    glShaderSource(_shaderID, 1, &shaderCode, nullptr);
+    glCompileShader(_shaderID);
 
     GLint success;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(_shaderID, GL_COMPILE_STATUS, &success);
     if (!success)
     {
         char infoLog[512];
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        glGetShaderInfoLog(_shaderID, 512, nullptr, infoLog);
         FU_CORE_ERROR("[Shader] compilation error: ", infoLog);
     }
-
-    return shader;
 }
 
-void ShaderOpenGL::Use(uint32_t ID) const
+std::unique_ptr<Shader> ShaderOpenGL::CreateShader(const char* shaderCode, ShaderType type)
 {
-    glUseProgram(ID);
+    return std::make_unique<ShaderOpenGL>(shaderCode, type);
 }
 
-void ShaderOpenGL::BindPixelShader(const char* shaderCode)
+ShaderOpenGL::~ShaderOpenGL()
 {
-    _pixelID = CompileShader(GL_FRAGMENT_SHADER, shaderCode);
-    glAttachShader(_programID, _pixelID);
+    glDeleteShader(_shaderID);
+}
 
-    GLint success;
-    glGetProgramiv(_programID, GL_LINK_STATUS, &success);
-    if (!success)
+GLint ShaderOpenGL::GetShaderType(ShaderType type) const
+{
+    switch (type)
     {
-        char infoLog[512];
-        glGetProgramInfoLog(_programID, 512, nullptr, infoLog);
-        FU_CORE_ERROR("[Shader] linking error: ", infoLog);
+    case ShaderType::Pixel:
+        return GL_FRAGMENT_SHADER;
+    case ShaderType::Vertex:
+        return GL_FRAGMENT_SHADER;
+
+    case ShaderType::None:
+    default:
+        return 0;
     }
-
-    glDeleteShader(_pixelID);
-}
-
-void ShaderOpenGL::BindVertexShader(const char* shaderCode)
-{
-    _vertexID = CompileShader(GL_VERTEX_SHADER, shaderCode);
-    glAttachShader(_programID, _vertexID);
-
-    GLint success;
-    glGetProgramiv(_programID, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        char infoLog[512];
-        glGetProgramInfoLog(_programID, 512, nullptr, infoLog);
-        FU_CORE_ERROR("[Shader] linking error: ", infoLog);
-    }
-
-    glDeleteShader(_vertexID);
 }
 
 }  // namespace Fuego::Renderer

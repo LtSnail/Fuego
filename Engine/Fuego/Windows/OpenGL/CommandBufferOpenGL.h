@@ -22,6 +22,6 @@ protected:
     CommandBufferOpenGL();
 
 private:
-    std::vector<std::function<void(void*)> > _cmdBuf;
+    uint32_t _programID;
 };
 }  // namespace Fuego::Renderer

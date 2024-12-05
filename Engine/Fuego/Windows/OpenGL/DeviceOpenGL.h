@@ -18,7 +18,7 @@ public:
     static std::unique_ptr<Device> CreateDevice(Surface* surface);
 
 protected:
-    DeviceOpenGL();
+    DeviceOpenGL(Surface* surface);
 
 private:
     HWND* _hwnd;                 // WIN32: Window descriptor
