@@ -11,6 +11,7 @@ class CommandBufferMetal : public CommandBuffer
 {
 public:
     CommandBufferMetal();
+    ~CommandBufferMetal();
 
     virtual void BindRenderTarget(std::unique_ptr<Texture> texture) override;
     virtual void BindVertexShader(std::unique_ptr<Shader> vertexShader) override;

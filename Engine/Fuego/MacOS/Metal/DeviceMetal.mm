@@ -58,8 +58,10 @@ std::unique_ptr<Shader> DeviceMetal::CreateShader(std::string_view shaderName)
     return std::make_unique<ShaderMetal>(shader);
 }
 
-std::unique_ptr<Device> Device::CreateDevice()
+std::unique_ptr<Device> Device::CreateDevice(Surface* surface)
 {
+    UNUSED(surface);
+    
     return std::make_unique<DeviceMetal>();
 }
 }  // namespace Fuego::Renderer
