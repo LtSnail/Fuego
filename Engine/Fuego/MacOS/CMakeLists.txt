@@ -17,6 +17,7 @@ set(PROJECT_SOURCES
     InputMacOS.cpp
     EventQueueMacOS.mm
     WindowMacOS.mm
+    EntryPointMacOS.mm
     Metal/MetalContext.mm
     Metal/MetalImplementation.cpp
     Metal/DeviceMetal.mm

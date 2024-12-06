@@ -16,6 +16,7 @@ set(PROJECT_SOURCES
     EventQueueWin.cpp
     InputWin.cpp
     WindowWin.cpp
+    EntryPoint.cpp
     OpenGL/BufferOpenGL.cpp
     OpenGL/OpenGLContext.cpp
     OpenGL/DeviceOpenGL.cpp
