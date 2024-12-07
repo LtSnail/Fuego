@@ -42,13 +42,13 @@ jobs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        pwsh ${{ github.workspace }}/GenerateVisualStudioProject.ps1
+        pwsh ${{ github.workspace }}/Scripts/generate_visual_studio_project.ps1
 
     - name: Run CMake configuration script for macOS
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        bash ${{ github.workspace }}/GenerateXcodeProject.sh
+        bash ${{ github.workspace }}/Scripts/generate_xcode_project.sh
 
     - name: Build
       shell: bash
