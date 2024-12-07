@@ -7,7 +7,7 @@ CommandQueueOpenGL::CommandQueueOpenGL()
 {
 }
 
-void CommandQueueOpenGL::Submit(std::shared_ptr<CommandBuffer> commandBuffer)
+void CommandQueueOpenGL::Submit(const CommandBuffer& commandBuffer)
 {
     UNUSED(commandBuffer);
 }

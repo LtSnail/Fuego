@@ -12,6 +12,8 @@ class Buffer;
 class CommandBuffer
 {
 public:
+    static std::unique_ptr<CommandBuffer> CreateCommandBuffer();
+
     virtual ~CommandBuffer() = default;
 
     virtual void BindRenderTarget(const Texture& texture) = 0;

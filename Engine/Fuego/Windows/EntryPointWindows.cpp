@@ -20,4 +20,6 @@ int APIENTRY FuegoMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int c
 
     FreeConsole();
     delete app;
+
+    return 0;
 }

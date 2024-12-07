@@ -47,13 +47,6 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
     _wnd->_hdc = GetDC(_wnd->m_Hwnd);
     FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
 
-    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
-    uint32_t indices[3] = {0, 1, 2};
-
-    _wnd->VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-    FU_CORE_ASSERT(_wnd->VBO, "[Vertex Buffer] hasn't been initialized!");
-    _wnd->EBO.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-    FU_CORE_ASSERT(_wnd->VBO, "[Element Buffer] hasn't been initialized!");
 
     MSG msg{};
     while (GetMessage(&msg, nullptr, 0u, 0u))
@@ -66,8 +59,6 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
     DestroyWindow(_wnd->m_Hwnd);
     DestroyIcon(wndClass.hIcon);
     DestroyCursor(wndClass.hCursor);
-    _wnd->VBO.reset();
-    _wnd->EBO.reset();
     UnregisterClass(_wnd->m_Props.APP_WINDOW_CLASS_NAME, _wnd->m_HInstance);
 
     return S_OK;
@@ -201,8 +192,6 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , _cursorPos{0.f, 0.f}
     , _winThread{}
     , _winThreadID(nullptr)
-    , VBO(nullptr)
-    , EBO(nullptr)
     , _context(nullptr)
     , _hdc(nullptr)
 {

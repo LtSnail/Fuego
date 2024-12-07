@@ -4,6 +4,8 @@
 #include "BufferOpenGL.h"
 #include "CommandQueueOpenGL.h"
 #include "Core.h"
+#include "SwapchainOpenGL.h"
+#include "CommandPoolOpenGl.h"
 #include "glad/glad.h"
 
 
@@ -60,31 +62,27 @@ DeviceOpenGL::~DeviceOpenGL()
 }
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
-{
-    return std::make_unique<BufferOpenGL>(size, flags);
-}
+{return Buffer::Create(size, flags);}
 
 std::unique_ptr<CommandQueue> DeviceOpenGL::CreateQueue()
-{
-    return std::make_unique<CommandQueueOpenGL>();
-}
+{return CommandQueue::CreateQueue();}
 
-std::unique_ptr<CommandPool> DeviceOpenGL::CreateCommandPool(std::shared_ptr<CommandQueue> queue)
+std::unique_ptr<CommandPool> DeviceOpenGL::CreateCommandPool(const CommandQueue& queue)
 {
     UNUSED(queue);
 
-    return nullptr;
+    return CommandPoolOpenGl::CreateCommandPool();
 }
 
-std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(std::shared_ptr<Surface> surface)
+std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(const Surface& surface)
 {
     UNUSED(surface);
 
-    return nullptr;
+    return SwapchainOpenGL::CreateSwapChain();
 }
 
 std::unique_ptr<Device> DeviceOpenGL::CreateDevice(Surface* surface)
 {
-    return std::make_unique<DeviceOpenGL>(surface);
+    return Device::CreateDevice(*surface);
 }
 }  // namespace Fuego::Renderer

@@ -13,32 +13,37 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     _programID = glCreateProgram();
 }
 
+std::unique_ptr<CommandBuffer> CommandBufferOpenGL::CreateCommandBuffer()
+{
+    return std::unique_ptr<CommandBufferOpenGL>();
+}
+
 CommandBufferOpenGL::~CommandBufferOpenGL()
 {
     glDeleteProgram(_programID);
 }
 
-void CommandBufferOpenGL::BindRenderTarget(std::unique_ptr<Texture> texture)
+void CommandBufferOpenGL::BindRenderTarget(const Texture& texture)
 {
     UNUSED(texture);
 }
 
-void CommandBufferOpenGL::BindVertexShader(std::unique_ptr<Shader> vertexShader)
+void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)
 {
-    ShaderOpenGL* shaderGL = static_cast<ShaderOpenGL*>(vertexShader.get());
-    glAttachShader(_programID, shaderGL->GetID());
+    const ShaderOpenGL& shaderGL = static_cast<const ShaderOpenGL&>(vertexShader);
+    glAttachShader(_programID, shaderGL.GetID());
 }
 
-void CommandBufferOpenGL::BindPixelShader(std::unique_ptr<Shader> pixelShader)
+void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
 {
-    ShaderOpenGL* shaderGL = static_cast<ShaderOpenGL*>(pixelShader.get());
-    glAttachShader(_programID, shaderGL->GetID());
+    const ShaderOpenGL& shaderGL = static_cast<const ShaderOpenGL&>(pixelShader);
+    glAttachShader(_programID, shaderGL.GetID());
 }
 
-void CommandBufferOpenGL::BindVertexBuffer(std::unique_ptr<Buffer> vertexBuffer)
+void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
 {
-    const BufferOpenGL* buff = static_cast<const BufferOpenGL*>(vertexBuffer.get());
-    glBindBuffer(GL_ARRAY_BUFFER, buff->GetBufferID());
+    const BufferOpenGL& buff = static_cast<const BufferOpenGL&>(vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
 }
 
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
@@ -47,7 +52,7 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
-void CommandBufferOpenGL::BindDescriptorSet(std::unique_ptr<DescriptorBuffer> descriptorSet, int setIndex)
+void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex)
 {
     UNUSED(descriptorSet);
     UNUSED(setIndex);

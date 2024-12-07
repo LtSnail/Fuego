@@ -9,7 +9,7 @@ class CommandQueueOpenGL : public CommandQueue
 public:
     virtual ~CommandQueueOpenGL() = default;
 
-    virtual void Submit(std::shared_ptr<CommandBuffer> commandBuffer) override;
+    virtual void Submit(const CommandBuffer& commandBuffer) override;
     virtual void Wait() override;
 
     static std::unique_ptr<CommandQueue> CreateQueue();

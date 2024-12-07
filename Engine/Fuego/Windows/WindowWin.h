@@ -57,10 +57,6 @@ private:
     WindowProps m_Props;
     HDC _hdc;
 
-    // Renderer
-    std::unique_ptr<VertexBuffer> VBO;
-    std::unique_ptr<IndexBuffer> EBO;
-
     // Threads
     HANDLE _winThread;
     LPDWORD _winThreadID;
