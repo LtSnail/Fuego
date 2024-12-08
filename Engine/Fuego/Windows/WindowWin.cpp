@@ -37,13 +37,14 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 
     AdjustWindowRect(&rect, style, true);
 
-     _wnd->_surface = new Renderer::SurfaceWindows(CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-                                  nullptr, nullptr, _wnd->m_HInstance, nullptr));
-    
+    _wnd->_surface = new Renderer::SurfaceWindows(CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top,
+                                                                 rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _wnd->m_HInstance, nullptr));
+
     FU_CORE_ASSERT(_wnd->_surface, "[AppWindow] hasn't been initialized!");
     hwndMap.emplace(_wnd->_surface->GetWindowsHandle(), _wnd);
 
-    //ShowWindow(*_wnd->_surface->GetWindowsHandle(), SW_SHOW);
+    ShowWindow(_wnd->_surface->GetWindowsHandle(), SW_SHOW);
+
     FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
     SetEvent(_wnd->_onThreadCreated);
 
@@ -54,8 +55,8 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
         DispatchMessage(&msg);
     }
     // Cleanup
-    ReleaseDC(*_wnd->_surface->GetWindowsHandle(), *_wnd->_surface->GetHDC());
-    DestroyWindow(*_wnd->_surface->GetWindowsHandle());
+    ReleaseDC(_wnd->_surface->GetWindowsHandle(), _wnd->_surface->GetHDC());
+    DestroyWindow(_wnd->_surface->GetWindowsHandle());
     DestroyIcon(wndClass.hIcon);
     DestroyCursor(wndClass.hCursor);
     UnregisterClass(_wnd->m_Props.APP_WINDOW_CLASS_NAME, _wnd->m_HInstance);
@@ -63,11 +64,11 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
     return S_OK;
 }
 
-std::unordered_map<const HWND*, WindowWin*> WindowWin::hwndMap;
+std::unordered_map<HWND, WindowWin*> WindowWin::hwndMap;
 
 LRESULT CALLBACK WindowWin::WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    auto _this = WindowWin::hwndMap.find(&hWnd);
+    auto _this = WindowWin::hwndMap.find(hWnd);
 
     if (_this != WindowWin::hwndMap.end() && _this->second)
     {
@@ -91,7 +92,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         glClearColor(0.2f, 0.3f, 0.1f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
-        SwapBuffers(*_surface->GetHDC());
+        SwapBuffers(_surface->GetHDC());
         return 0;
     }
     case WM_ACTIVATE:
@@ -236,7 +237,7 @@ void WindowWin::Shutdown()
 {
     if (_surface->GetNativeHandle() != nullptr)
     {
-        DestroyWindow(*_surface->GetWindowsHandle());
+        DestroyWindow(_surface->GetWindowsHandle());
         delete _surface;
         _surface = nullptr;
     }

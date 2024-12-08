@@ -1,9 +1,10 @@
 #pragma once
 
+#include <OpenGL/SurfaceWindows.h>
+
 #include "EventQueueWin.h"
 #include "OpenGL/BufferOpenGL.h"
 #include "Window.h"
-#include <OpenGL/SurfaceWindows.h>
 
 namespace Fuego
 {
@@ -35,7 +36,7 @@ public:
     virtual const Renderer::Surface* GetSurface() const override;
 
     LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-    static std::unordered_map<const HWND*, WindowWin*> hwndMap;
+    static std::unordered_map<HWND, WindowWin*> hwndMap;
 
     Input::KeyState GetKeyState(KeyCode keyCode) const;
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
@@ -55,7 +56,7 @@ private:
     HINSTANCE m_HInstance;  // Relates to the Application
     WindowProps m_Props;
     Renderer::SurfaceWindows* _surface;
-   
+
     // Threads
     HANDLE _winThread;
     LPDWORD _winThreadID;

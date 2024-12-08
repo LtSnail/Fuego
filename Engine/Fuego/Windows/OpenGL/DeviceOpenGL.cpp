@@ -17,11 +17,11 @@ DeviceOpenGL::DeviceOpenGL(const Surface& surface)
     : _ctx(nullptr)
 {
     const SurfaceWindows& surfaceWin = dynamic_cast<const SurfaceWindows&>(surface);
-    const HDC* hdc = surfaceWin.GetHDC();
-    int pixelFormat = ChoosePixelFormat(*hdc, surfaceWin.GetPFD());
-    SetPixelFormat(*hdc, pixelFormat, surfaceWin.GetPFD());
-    _ctx = wglCreateContext(*hdc);
-    wglMakeCurrent(*hdc, _ctx);
+    const HDC hdc = surfaceWin.GetHDC();
+    int pixelFormat = ChoosePixelFormat(hdc, surfaceWin.GetPFD());
+    SetPixelFormat(hdc, pixelFormat, surfaceWin.GetPFD());
+    _ctx = wglCreateContext(hdc);
+    wglMakeCurrent(hdc, _ctx);
     if (!gladLoadGL())
         FU_CORE_ASSERT(_ctx, "[OpenGL] hasn't been initialized!");
 

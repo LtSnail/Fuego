@@ -13,8 +13,8 @@ SurfaceWindows::SurfaceWindows(void* handle)
     , _hdc(nullptr)
     , _pfd{}
 {
-    _handle = handle;
-    _hdc = GetDC(static_cast<HWND>(handle));
+    _handle = static_cast<HWND>(handle);
+    _hdc = GetDC(_handle);
     _pfd = {sizeof(PIXELFORMATDESCRIPTOR),
             1,
             PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
@@ -48,15 +48,14 @@ const void* SurfaceWindows::GetNativeHandle() const
     return static_cast<const void*>(_handle);
 }
 
-const HWND* SurfaceWindows::GetWindowsHandle() const
+const HWND SurfaceWindows::GetWindowsHandle() const
 {
-    const HWND* ptr = reinterpret_cast<const HWND*>(_handle);
-    return ptr;
+    return _handle;
 }
 
-const HDC* SurfaceWindows::GetHDC() const
+const HDC SurfaceWindows::GetHDC() const
 {
-    return &_hdc;
+    return _hdc;
 }
 
 const PIXELFORMATDESCRIPTOR* SurfaceWindows::GetPFD() const
