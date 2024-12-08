@@ -55,16 +55,12 @@ std::unique_ptr<CommandQueue> DeviceOpenGL::CreateQueue()
 
 std::unique_ptr<CommandPool> DeviceOpenGL::CreateCommandPool(const CommandQueue& queue)
 {
-    UNUSED(queue);
-
-    return CommandPoolOpenGl::CreateCommandPool();
+    return CommandPoolOpenGl::CreateCommandPool(queue);
 }
 
 std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(const Surface& surface)
 {
-    UNUSED(surface);
-
-    return SwapchainOpenGL::CreateSwapChain();
+    return SwapchainOpenGL::CreateSwapChain(surface);
 }
 
 std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName)

@@ -85,16 +85,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     switch (msg)
     {
     case WM_PAINT:
-    {
-        static PAINTSTRUCT ps;
-        BeginPaint(hwnd, &ps);
-        EndPaint(hwnd, &ps);
-        glClearColor(0.2f, 0.3f, 0.1f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
-        SwapBuffers(_surface->GetHDC());
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
         return 0;
-    }
     case WM_ACTIVATE:
         break;
 

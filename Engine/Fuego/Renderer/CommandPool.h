@@ -4,11 +4,12 @@
 namespace Fuego::Renderer
 {
 class CommandBuffer;
+class CommandQueue;
 
 class CommandPool
 {
 public:
-    static std::unique_ptr<CommandPool> CreateCommandPool();
+    static std::unique_ptr<CommandPool> CreateCommandPool(const CommandQueue& queue);
 
     virtual ~CommandPool() = default;
 

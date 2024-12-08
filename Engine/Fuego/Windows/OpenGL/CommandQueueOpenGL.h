@@ -7,7 +7,7 @@ namespace Fuego::Renderer
 class CommandQueueOpenGL : public CommandQueue
 {
 public:
-    CommandQueueOpenGL();
+    CommandQueueOpenGL(const CommandQueue& queue);
     virtual ~CommandQueueOpenGL() = default;
 
     virtual void Submit(const CommandBuffer& commandBuffer) override;

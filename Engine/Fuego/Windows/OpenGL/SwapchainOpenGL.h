@@ -5,16 +5,14 @@
 
 namespace Fuego::Renderer
 {
+class Surface;
+
 class SwapchainOpenGL : public Swapchain
 {
 public:
-    virtual ~SwapchainOpenGL() = default;
+    SwapchainOpenGL(const Surface& surface);
+    virtual ~SwapchainOpenGL() override = default;
 
     virtual std::shared_ptr<Texture> GetTexture() override;
-
-    static std::unique_ptr<Swapchain> CreateSwapChain(); 
-
-    protected:
-    SwapchainOpenGL();
 };
-}
+}  // namespace Fuego::Renderer
