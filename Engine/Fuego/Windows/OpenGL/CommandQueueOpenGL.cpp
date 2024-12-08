@@ -16,7 +16,7 @@ void CommandQueueOpenGL::Wait()
 {
 }
 
-std::unique_ptr<CommandQueue> CommandQueueOpenGL::CreateQueue()
+std::unique_ptr<CommandQueue> CommandQueue::CreateQueue()
 {
     return std::unique_ptr<CommandQueueOpenGL>();
 }

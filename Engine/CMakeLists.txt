@@ -27,7 +27,6 @@ set(PROJECT_HEADERS
     Fuego/ImGui/ImGuiLayer.h
     Fuego.h
     fupch.h
-    Fuego/Renderer/GraphicsContext.h
     Fuego/Renderer/Buffer.h
     Fuego/Renderer/Device.h
     Fuego/Renderer/CommandQueue.h

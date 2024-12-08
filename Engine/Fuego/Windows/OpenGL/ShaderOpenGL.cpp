@@ -20,7 +20,7 @@ ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
     }
 }
 
-std::unique_ptr<Shader> ShaderOpenGL::CreateShader(const char* shaderCode, ShaderType type){return Shader::CreateShader(shaderCode, type);}
+std::unique_ptr<Shader> Shader::CreateShader(const char* shaderCode, ShaderType type){return Shader::CreateShader(shaderCode, type);}
 
 ShaderOpenGL::~ShaderOpenGL()
 {

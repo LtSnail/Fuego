@@ -6,14 +6,14 @@ set(PROJECT_HEADERS
     KeyCodesWin.h
     WindowWin.h
     OpenGL/BufferOpenGL.h
-    OpenGL/OpenGLContext.h
     OpenGL/DeviceOpenGL.h
     OpenGL/CommandBufferOpenGL.h
     OpenGL/ShaderOpenGL.h
     OpenGL/CommandQueueOpenGL.h
     OpenGL/SwapchainOpenGL.h
     OpenGL/CommandPoolOpenGl.h
-    OpenGL/TextureStab.h)
+    OpenGL/TextureStab.h
+    OpenGL/SurfaceWindows.h)
 
 set(PROJECT_SOURCES
     EventQueueWin.cpp
@@ -21,14 +21,14 @@ set(PROJECT_SOURCES
     WindowWin.cpp
     EntryPointWindows.cpp
     OpenGL/BufferOpenGL.cpp
-    OpenGL/OpenGLContext.cpp
     OpenGL/DeviceOpenGL.cpp
     OpenGL/CommandBufferOpenGL.cpp
     OpenGL/ShaderOpenGL.cpp
     OpenGL/CommandQueueOpenGL.cpp
     OpenGL/SwapchainOpenGL.cpp
     OpenGL/CommandPoolOpenGl.cpp
-    OpenGL/TextureStab.cpp)
+    OpenGL/TextureStab.cpp
+    OpenGL/SurfaceWindows.cpp)
 
 set(GLAD_BUILD_DIR ${CMAKE_BINARY_DIR}/Glad)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/../../build/win/output)

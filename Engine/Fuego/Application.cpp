@@ -2,6 +2,8 @@
 
 #include "Events/EventVisitor.h"
 #include "Input.h"
+#include "Renderer/Device.h"
+#include "Renderer/Surface.h"
 #include "Renderer/Buffer.h"
 
 namespace Fuego
@@ -12,6 +14,7 @@ class Application::ApplicationImpl
 
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
+    std::unique_ptr<Renderer::Device> _device;
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
@@ -24,6 +27,7 @@ Application::Application()
     ApplicationImpl::m_Instance = this;
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+    d->_device = Renderer::Device::CreateDevice(*d->m_Window->GetSurface());
     d->m_Running = true;
 }
 

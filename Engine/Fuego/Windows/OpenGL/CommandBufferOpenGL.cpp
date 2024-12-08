@@ -13,7 +13,7 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     _programID = glCreateProgram();
 }
 
-std::unique_ptr<CommandBuffer> CommandBufferOpenGL::CreateCommandBuffer()
+std::unique_ptr<CommandBuffer> CommandBuffer::CreateCommandBuffer()
 {
     return std::unique_ptr<CommandBufferOpenGL>();
 }

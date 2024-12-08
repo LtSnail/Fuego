@@ -12,8 +12,8 @@ public:
         Pixel = 2
     };
 
+    static std::unique_ptr<Shader> CreateShader(const char* shaderCode, ShaderType type);
     virtual ~Shader() = default;
 
-    static std::unique_ptr<Shader> CreateShader(const char* shaderCode, ShaderType type);
 };
 }  // namespace Fuego::Renderer

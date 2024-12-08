@@ -9,8 +9,8 @@ namespace Fuego::Renderer
 class CommandBufferOpenGL : public CommandBuffer
 {
 public:
-    static std::unique_ptr<CommandBuffer> CreateCommandBuffer();
 
+    CommandBufferOpenGL();
     virtual ~CommandBufferOpenGL() override;
 
     virtual void BindRenderTarget(const Texture& texture) override;
@@ -20,7 +20,6 @@ public:
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) override;
     virtual void Draw(uint32_t vertexCount) override;
 protected :
-    CommandBufferOpenGL();
 
 private:
     uint32_t _programID;

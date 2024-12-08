@@ -8,22 +8,20 @@ namespace Fuego::Renderer
 class DeviceOpenGL : public Device
 {
 public:
+    DeviceOpenGL(const Surface& surface);
     virtual ~DeviceOpenGL() override;
 
     virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) override;
     virtual std::unique_ptr<CommandQueue> CreateQueue() override;
     virtual std::unique_ptr<CommandPool> CreateCommandPool(const CommandQueue& queue) override;
     virtual std::unique_ptr<Swapchain> CreateSwapchain(const Surface& surface) override;
-
-    static std::unique_ptr<Device> CreateDevice(Surface* surface);
+    virtual std::unique_ptr<Shader> CreateShader(std::string_view shaderName) override;
 
 protected:
-    DeviceOpenGL(Surface* surface);
+    friend class Device;
+
 
 private:
-    HWND* _hwnd;                 // WIN32: Window descriptor
     HGLRC _ctx;                  // OpenGL: context
-    HDC _hdc;                    // WIN32: Handle to Device Context
-    PIXELFORMATDESCRIPTOR _pfd;  // WIN32: Pixel format descriptor
 };
 }  // namespace Fuego::Renderer

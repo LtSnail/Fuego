@@ -3,6 +3,7 @@
 #include "EventQueue.h"
 #include "Events/Event.h"
 #include "Input.h"
+#include "Renderer/Surface.h"
 #include "fupch.h"
 
 namespace Fuego
@@ -33,6 +34,8 @@ struct WindowProps
 #endif
 };
 
+class Surface;
+
 class Window
 {
 public:
@@ -46,7 +49,7 @@ public:
     virtual void SetVSync(bool enabled) = 0;
     virtual bool IsVSync() const = 0;
 
-    virtual void* GetNativeWindow() const = 0;
+    virtual const Renderer::Surface* GetSurface() const = 0;
 
     static std::unique_ptr<Window> CreateAppWindow(const WindowProps& props, EventQueue& eventQueue);
 };
