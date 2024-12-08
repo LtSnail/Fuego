@@ -1,40 +1,19 @@
 #pragma once
 
 #include "Renderer/Buffer.h"
-#include "glad/glad.h"
 
-namespace Fuego
+namespace Fuego::Renderer
 {
-class VertexBufferOpenGL : public VertexBuffer
-{
-public:
-    VertexBufferOpenGL(float* vertices, uint32_t size);
-    virtual ~VertexBufferOpenGL() override;
-
-    virtual void Bind() const override;
-    virtual void Unbind() const override;
-
-private:
-    static bool _isVAO;
-    uint32_t _VBO, _VAO;
-};
-
-class IndexBufferOpenGL : public IndexBuffer
+class BufferOpenGL : public Buffer
 {
 public:
-    IndexBufferOpenGL(uint32_t* indices, uint32_t count);
-    virtual ~IndexBufferOpenGL();
+    BufferOpenGL(size_t size, uint32_t flags);
+    virtual ~BufferOpenGL();
+    uint32_t GetBufferID() const;
 
-    virtual void Bind() const override;
-    virtual void Unbind() const override;
-
-    virtual uint32_t GetCount() const override
-    {
-        return _count;
-    };
+protected:
 
 private:
-    uint32_t _EBO;
-    uint32_t _count;
+    uint32_t _vbo;
 };
-}  // namespace Fuego
+}  // namespace Fuego::Renderer

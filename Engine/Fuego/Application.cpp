@@ -3,6 +3,12 @@
 #include "Events/EventVisitor.h"
 #include "Input.h"
 #include "Renderer/Buffer.h"
+#include "Renderer/CommandBuffer.h"
+#include "Renderer/CommandPool.h"
+#include "Renderer/CommandQueue.h"
+#include "Renderer/Device.h"
+#include "Renderer/Surface.h"
+#include "Renderer/Swapchain.h"
 
 namespace Fuego
 {
@@ -12,6 +18,7 @@ class Application::ApplicationImpl
 
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
+    std::unique_ptr<Renderer::Device> _device;
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
@@ -24,6 +31,7 @@ Application::Application()
     ApplicationImpl::m_Instance = this;
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+    d->_device = Renderer::Device::CreateDevice(*d->m_Window->GetSurface());
     d->m_Running = true;
 }
 
@@ -44,8 +52,12 @@ void Application::PushOverlay(Layer* overlay)
 
 void Application::OnEvent(EventVariant& event)
 {
-    auto ApplicationEventVisitor =
-        EventVisitor{[this](WindowCloseEvent& ev) { OnWindowClose(ev); }, [this](WindowResizeEvent& ev) { OnWindowResize(ev); }, [](Event&) {}};
+    // clang-format off
+    auto ApplicationEventVisitor = EventVisitor{[this](WindowCloseEvent&    ev) { OnWindowClose(ev); },
+                                                [this](WindowResizeEvent&   ev) { OnWindowResize(ev); },
+                                                [this](AppRenderEvent&      ev) { OnRenderEvent(ev); },
+                                                [](Event&){}};
+    // clang-format on
 
     std::visit(ApplicationEventVisitor, event);
 
@@ -68,15 +80,30 @@ void Application::OnEvent(EventVariant& event)
 
 bool Application::OnWindowClose(WindowCloseEvent& event)
 {
-    UNUSED(event);
-
     d->m_Running = false;
+    event.SetHandled();
     return true;
 }
 
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    FU_CORE_TRACE("{0}", event.ToString());
+    std::unique_ptr<Renderer::CommandQueue> queue = d->_device->CreateQueue();
+    std::unique_ptr<Renderer::CommandPool> pool = d->_device->CreateCommandPool(*queue.get());
+    std::unique_ptr<Renderer::CommandBuffer> buffer = pool->CreateCommandBuffer();
+    buffer->Draw(0);
+    std::unique_ptr<Renderer::Swapchain> swapchain = d->_device->CreateSwapchain(*d->m_Window->GetSurface());
+    event.SetHandled();
+    return true;
+}
+
+bool Application::OnRenderEvent(AppRenderEvent& event)
+{
+    std::unique_ptr<Renderer::CommandQueue> queue = d->_device->CreateQueue();
+    std::unique_ptr<Renderer::CommandPool> pool = d->_device->CreateCommandPool(*queue.get());
+    std::unique_ptr<Renderer::CommandBuffer> buffer = pool->CreateCommandBuffer();
+    buffer->Draw(0);
+    std::unique_ptr<Renderer::Swapchain> swapchain = d->_device->CreateSwapchain(*d->m_Window->GetSurface());
+    event.SetHandled();
     return true;
 }
 

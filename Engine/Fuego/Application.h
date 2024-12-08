@@ -26,6 +26,7 @@ public:
     void OnEvent(EventVariant& event);
     bool OnWindowClose(WindowCloseEvent& event);
     bool OnWindowResize(WindowResizeEvent& event);
+    bool OnRenderEvent(AppRenderEvent& event);
 
     static Application& Get();
     Window& GetWindow();

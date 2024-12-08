@@ -1,32 +1,11 @@
 #pragma once
 
-#include "fupch.h"
-
-namespace Fuego
+namespace Fuego::Renderer
 {
-class VertexBuffer
+class Buffer
 {
 public:
-    VertexBuffer() = default;
-    virtual ~VertexBuffer() {};
-
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-
-    static VertexBuffer* Create(float* vertices, uint32_t size);
+    static std::unique_ptr<Buffer> Create(size_t size, uint32_t flags);
+    virtual ~Buffer() = default;
 };
-
-class IndexBuffer
-{
-public:
-    IndexBuffer() = default;
-    virtual ~IndexBuffer() {};
-
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-
-    virtual uint32_t GetCount() const = 0;
-
-    static IndexBuffer* Create(uint32_t* indices, uint32_t count);
-};
-}  // namespace Fuego
+}  // namespace Fuego::Renderer

@@ -2,6 +2,8 @@
 
 #include "InputWin.h"
 #include "Log.h"
+#include "OpenGL/SurfaceWindows.h"
+#include "glad/glad.h"
 
 namespace Fuego
 {
@@ -35,25 +37,16 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 
     AdjustWindowRect(&rect, style, true);
 
-    _wnd->m_Hwnd = CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-                                  nullptr, nullptr, _wnd->m_HInstance, nullptr);
-    FU_CORE_ASSERT(_wnd->m_Hwnd, "[AppWindow] hasn't been initialized!");
-    hwndMap.emplace(_wnd->m_Hwnd, _wnd);
+    _wnd->_surface = new Renderer::SurfaceWindows(CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top,
+                                                                 rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _wnd->m_HInstance, nullptr));
 
-    _wnd->_context = new OpenGLContext(&_wnd->m_Hwnd);
-    FU_CORE_ASSERT(_wnd->_context->Init(), "[GraphicsContext] hasn't been initialized!");
+    FU_CORE_ASSERT(_wnd->_surface, "[AppWindow] hasn't been initialized!");
+    hwndMap.emplace(_wnd->_surface->GetWindowsHandle(), _wnd);
 
-    ShowWindow(_wnd->m_Hwnd, SW_SHOW);
-    _wnd->_hdc = GetDC(_wnd->m_Hwnd);
+    ShowWindow(_wnd->_surface->GetWindowsHandle(), SW_SHOW);
+
     FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
-
-    float vertices[3 * 3] = {-0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.0f, 0.5f, 0.0f};
-    uint32_t indices[3] = {0, 1, 2};
-
-    _wnd->VBO.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-    FU_CORE_ASSERT(_wnd->VBO, "[Vertex Buffer] hasn't been initialized!");
-    _wnd->EBO.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-    FU_CORE_ASSERT(_wnd->VBO, "[Element Buffer] hasn't been initialized!");
+    SetEvent(_wnd->_onThreadCreated);
 
     MSG msg{};
     while (GetMessage(&msg, nullptr, 0u, 0u))
@@ -62,12 +55,10 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
         DispatchMessage(&msg);
     }
     // Cleanup
-    ReleaseDC(_wnd->m_Hwnd, _wnd->_hdc);
-    DestroyWindow(_wnd->m_Hwnd);
+    ReleaseDC(_wnd->_surface->GetWindowsHandle(), _wnd->_surface->GetHDC());
+    DestroyWindow(_wnd->_surface->GetWindowsHandle());
     DestroyIcon(wndClass.hIcon);
     DestroyCursor(wndClass.hCursor);
-    _wnd->VBO.reset();
-    _wnd->EBO.reset();
     UnregisterClass(_wnd->m_Props.APP_WINDOW_CLASS_NAME, _wnd->m_HInstance);
 
     return S_OK;
@@ -94,16 +85,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     switch (msg)
     {
     case WM_PAINT:
-    {
-        static PAINTSTRUCT ps;
-        BeginPaint(hwnd, &ps);
-        EndPaint(hwnd, &ps);
-        glClearColor(0.2f, 0.3f, 0.1f, 1);
-        glClear(GL_COLOR_BUFFER_BIT);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
-        SwapBuffers(_hdc);
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
         return 0;
-    }
     case WM_ACTIVATE:
         break;
 
@@ -194,19 +177,17 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     ,  // do not transfer ownership
     m_Window(nullptr)
     , m_HInstance(GetModuleHandle(nullptr))
-    , m_Hwnd(nullptr)
     , m_Props(props)
+    , _surface(nullptr)
     , _lastKey{Input::KEY_NONE, LAST_CODE}
     , _lastMouse{Input::MOUSE_NONE, LAST_CODE}
     , _cursorPos{0.f, 0.f}
     , _winThread{}
     , _winThreadID(nullptr)
-    , VBO(nullptr)
-    , EBO(nullptr)
-    , _context(nullptr)
-    , _hdc(nullptr)
+    , _onThreadCreated(CreateEvent(nullptr, FALSE, FALSE, nullptr))
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
+    WaitForSingleObject(_onThreadCreated, INFINITE);
 }
 
 void WindowWin::Update()
@@ -221,7 +202,12 @@ void WindowWin::SetVSync(bool enabled)
 bool WindowWin::IsVSync() const
 {
     return true;
-};
+}
+
+const Renderer::Surface* WindowWin::GetSurface() const
+{
+    return reinterpret_cast<const Renderer::Surface*>(_surface);
+}
 
 Input::KeyState WindowWin::GetKeyState(KeyCode keyCode) const
 {
@@ -241,10 +227,11 @@ void WindowWin::GetCursorPos(OUT float& xPos, OUT float& yPos) const
 
 void WindowWin::Shutdown()
 {
-    if (m_Hwnd != nullptr)
+    if (_surface->GetNativeHandle() != nullptr)
     {
-        DestroyWindow(m_Hwnd);
-        m_Hwnd = nullptr;
+        DestroyWindow(_surface->GetWindowsHandle());
+        delete _surface;
+        _surface = nullptr;
     }
 }
 
