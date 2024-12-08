@@ -16,31 +16,31 @@ SurfaceWindows::SurfaceWindows(void* handle)
     _handle = handle;
     _hdc = GetDC(static_cast<HWND>(handle));
     _pfd = {sizeof(PIXELFORMATDESCRIPTOR),
-              1,
-              PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-              PFD_TYPE_RGBA,
-              32,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              0,
-              24,
-              8,
-              0,
-              PFD_MAIN_PLANE,
-              0,
-              0,
-              0,
-              0};
+            1,
+            PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+            PFD_TYPE_RGBA,
+            32,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            24,
+            8,
+            0,
+            PFD_MAIN_PLANE,
+            0,
+            0,
+            0,
+            0};
 }
 
 const void* SurfaceWindows::GetNativeHandle() const
@@ -54,7 +54,7 @@ const HWND* SurfaceWindows::GetWindowsHandle() const
     return ptr;
 }
 
-const HDC* SurfaceWindows::GetHDC()
+const HDC* SurfaceWindows::GetHDC() const
 {
     return &_hdc;
 }
@@ -64,4 +64,4 @@ const PIXELFORMATDESCRIPTOR* SurfaceWindows::GetPFD() const
     return &_pfd;
 }
 
-}
+}  // namespace Fuego::Renderer

@@ -2,13 +2,13 @@
 
 #include "Application.h"
 #include "BufferOpenGL.h"
+#include "CommandPoolOpenGl.h"
 #include "CommandQueueOpenGL.h"
 #include "Core.h"
-#include "SwapchainOpenGL.h"
-#include "CommandPoolOpenGl.h"
 #include "ShaderOpenGL.h"
-#include "glad/glad.h"
 #include "SurfaceWindows.h"
+#include "SwapchainOpenGL.h"
+#include "glad/glad.h"
 
 
 namespace Fuego::Renderer
@@ -17,11 +17,11 @@ DeviceOpenGL::DeviceOpenGL(const Surface& surface)
     : _ctx(nullptr)
 {
     const SurfaceWindows& surfaceWin = dynamic_cast<const SurfaceWindows&>(surface);
-    HDC hdc = GetDC(*surfaceWin.GetWindowsHandle());
-    int pixelFormat = ChoosePixelFormat(hdc, surfaceWin.GetPFD());
-    SetPixelFormat(hdc, pixelFormat, surfaceWin.GetPFD());
-    _ctx = wglCreateContext(hdc);
-    wglMakeCurrent(hdc, _ctx);
+    const HDC* hdc = surfaceWin.GetHDC();
+    int pixelFormat = ChoosePixelFormat(*hdc, surfaceWin.GetPFD());
+    SetPixelFormat(*hdc, pixelFormat, surfaceWin.GetPFD());
+    _ctx = wglCreateContext(*hdc);
+    wglMakeCurrent(*hdc, _ctx);
     if (!gladLoadGL())
         FU_CORE_ASSERT(_ctx, "[OpenGL] hasn't been initialized!");
 
@@ -44,10 +44,14 @@ DeviceOpenGL::~DeviceOpenGL()
 }
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
-{return Buffer::Create(size, flags);}
+{
+    return Buffer::Create(size, flags);
+}
 
 std::unique_ptr<CommandQueue> DeviceOpenGL::CreateQueue()
-{return CommandQueue::CreateQueue();}
+{
+    return CommandQueue::CreateQueue();
+}
 
 std::unique_ptr<CommandPool> DeviceOpenGL::CreateCommandPool(const CommandQueue& queue)
 {

@@ -12,14 +12,13 @@ public:
 
     virtual const void* GetNativeHandle() const override;
     const HWND* GetWindowsHandle() const;
-    const HDC* GetHDC();
+    const HDC* GetHDC() const;
     const PIXELFORMATDESCRIPTOR* GetPFD() const;
 
 protected:
-
 private:
-    void* _handle;                  // WIN32: Window descriptor
-    HDC _hdc;                       // WIN32: Handle to Device Context
-    PIXELFORMATDESCRIPTOR _pfd;     // WIN32: Pixel format descriptor
+    void* _handle;               // WIN32: Window descriptor
+    HDC _hdc;                    // WIN32: Handle to Device Context
+    PIXELFORMATDESCRIPTOR _pfd;  // WIN32: Pixel format descriptor
 };
-}
+}  // namespace Fuego::Renderer
