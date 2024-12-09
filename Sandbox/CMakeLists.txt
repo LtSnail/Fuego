@@ -1,11 +1,12 @@
 # Client Application
 
+set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/SandboxApp.h)
 set(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/SandboxApp.cpp)
 
 set(DEPENDENCIES FuegoEngine)
 
 if(APPLE)
-  set(SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/MacOS/SandboxApp.mm)
+  set(SOURCES ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/MacOS/main.mm)
 
   set(GLOBAL_RESOURCES Resources/MacOS/Assets.xcassets)
 
@@ -35,7 +36,8 @@ if(APPLE)
                ${CMAKE_CURRENT_SOURCE_DIR}/Resources/MacOS/Sandbox-Info.plist.in
   )
 elseif(WIN32)
-  add_executable(Sandbox WIN32 ${SOURCES})
+  set(SOURCES ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/Windows/main.cpp)
+  add_executable(Sandbox WIN32 ${SOURCES} ${PROJECT_HEADERS})
 endif()
 
 target_link_libraries(Sandbox ${DEPENDENCIES})
