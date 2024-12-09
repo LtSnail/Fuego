@@ -10,9 +10,8 @@ namespace Fuego::Renderer
 class ShaderOpenGL : public Shader
 {
 public:
-
     ShaderOpenGL(const char* shaderCode, ShaderType type);
-    virtual ~ShaderOpenGL() override;
+    ~ShaderOpenGL();
     inline ShaderType GetType() const
     {
         return _type;

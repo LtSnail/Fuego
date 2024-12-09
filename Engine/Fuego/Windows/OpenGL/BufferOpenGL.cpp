@@ -11,21 +11,21 @@ BufferOpenGL::BufferOpenGL(size_t size, uint32_t flags)
     UNUSED(flags);
 
     glGenBuffers(1, &_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW);
 }
 
 BufferOpenGL::~BufferOpenGL()
 {
-    glDeleteBuffers(1, &_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 uint32_t BufferOpenGL::GetBufferID() const
 {
     return _vbo;
 }
-std::unique_ptr<Buffer> Buffer::Create(size_t size, uint32_t flags)
+
+void BufferOpenGL::BindDataImpl(const void* data, size_t size, size_t offset)
 {
-    return std::unique_ptr<BufferOpenGL>();
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+    glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 }  // namespace Fuego::Renderer

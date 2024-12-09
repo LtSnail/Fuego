@@ -9,19 +9,19 @@ namespace Fuego::Renderer
 {
 
 SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
+    : _surface(dynamic_cast<const SurfaceWindows&>(surface))
 {
-    const SurfaceWindows& surfWin = static_cast<const SurfaceWindows&>(surface);
-    static PAINTSTRUCT ps;
-    BeginPaint(surfWin.GetWindowsHandle(), &ps);
-    EndPaint(surfWin.GetWindowsHandle(), &ps);
-    glClearColor(0.2f, 0.3f, 0.1f, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    SwapBuffers(surfWin.GetHDC());
 }
 
-std::unique_ptr<Swapchain> Swapchain::CreateSwapChain(const Surface& surface)
+void SwapchainOpenGL::Present()
 {
-    return std::make_unique<SwapchainOpenGL>(surface);
+    static PAINTSTRUCT ps;
+    BeginPaint(_surface.GetWindowsHandle(), &ps);
+    EndPaint(_surface.GetWindowsHandle(), &ps);
+    glClearColor(0.2f, 0.3f, 0.1f, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);  // TODO: move from here
+    SwapBuffers(_surface.GetHDC());
 }
 
 std::shared_ptr<Texture> SwapchainOpenGL::GetTexture()

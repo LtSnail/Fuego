@@ -3,8 +3,7 @@
 namespace Fuego::Renderer
 {
 ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
-    : _shaderID(0)
-    , _type(ShaderType::None)
+    : _type(type)
 {
     _shaderID = glCreateShader(GetShaderType(type));
     glShaderSource(_shaderID, 1, &shaderCode, nullptr);
@@ -20,8 +19,6 @@ ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
     }
 }
 
-std::unique_ptr<Shader> Shader::CreateShader(const char* shaderCode, ShaderType type){return Shader::CreateShader(shaderCode, type);}
-
 ShaderOpenGL::~ShaderOpenGL()
 {
     glDeleteShader(_shaderID);
@@ -31,14 +28,10 @@ GLint ShaderOpenGL::GetShaderType(ShaderType type) const
 {
     switch (type)
     {
-    case ShaderType::Pixel:
+    case Pixel:
         return GL_FRAGMENT_SHADER;
-    case ShaderType::Vertex:
-        return GL_FRAGMENT_SHADER;
-
-    case ShaderType::None:
-    default:
-        return 0;
+    case Vertex:
+        return GL_VERTEX_SHADER;
     }
 }
 

@@ -11,8 +11,8 @@ class Swapchain
 public:
     virtual ~Swapchain() = default;
 
-    virtual std::shared_ptr<Texture> GetTexture() = 0;
+    virtual void Present() = 0;
 
-    static std::unique_ptr<Swapchain> CreateSwapChain(const Surface& surface);
+    virtual std::shared_ptr<Texture> GetTexture() = 0;
 };
 }  // namespace Fuego::Renderer

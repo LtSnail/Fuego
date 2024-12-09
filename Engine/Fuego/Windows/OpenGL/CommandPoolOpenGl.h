@@ -6,11 +6,12 @@ namespace Fuego::Renderer
 {
 class CommandQueue;
 
-class CommandPoolOpenGl : public CommandPool
+class CommandPoolOpenGL : public CommandPool
 {
 public:
-    CommandPoolOpenGl(const CommandQueue& queue);
-    virtual ~CommandPoolOpenGl() override;
+    CommandPoolOpenGL(const CommandQueue& queue);
+    ~CommandPoolOpenGL();
+
     virtual std::unique_ptr<CommandBuffer> CreateCommandBuffer() override;
 };
 }  // namespace Fuego::Renderer

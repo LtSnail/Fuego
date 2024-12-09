@@ -5,21 +5,16 @@
 namespace Fuego::Renderer
 {
 
-CommandPoolOpenGl::CommandPoolOpenGl(const CommandQueue& queue)
+CommandPoolOpenGL::CommandPoolOpenGL(const CommandQueue& queue)
 {
     UNUSED(queue);
 }
 
-std::unique_ptr<CommandPool> CommandPool::CreateCommandPool(const CommandQueue& queue)
-{
-    return std::make_unique<CommandPoolOpenGl>(queue);
-}
-
-CommandPoolOpenGl::~CommandPoolOpenGl()
+CommandPoolOpenGL::~CommandPoolOpenGL()
 {
 }
 
-std::unique_ptr<CommandBuffer> CommandPoolOpenGl::CreateCommandBuffer()
+std::unique_ptr<CommandBuffer> CommandPoolOpenGL::CreateCommandBuffer()
 {
     return CommandBuffer::CreateCommandBuffer();
 }

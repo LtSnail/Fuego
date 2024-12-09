@@ -7,7 +7,7 @@
 #include "Renderer/CommandPool.h"
 #include "Renderer/CommandQueue.h"
 #include "Renderer/Device.h"
-#include "Renderer/Surface.h"
+#include "Renderer/Shader.h"
 #include "Renderer/Swapchain.h"
 
 namespace Fuego
@@ -19,6 +19,11 @@ class Application::ApplicationImpl
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
     std::unique_ptr<Renderer::Device> _device;
+    std::unique_ptr<Renderer::CommandQueue> _commandQueue;
+    std::unique_ptr<Renderer::CommandPool> _commandPool;
+    std::unique_ptr<Renderer::Swapchain> _swapchain;
+    std::unique_ptr<Renderer::Shader> _vertexShader;
+    std::unique_ptr<Renderer::Shader> _pixelShader;
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
@@ -31,8 +36,16 @@ Application::Application()
     ApplicationImpl::m_Instance = this;
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-    d->_device = Renderer::Device::CreateDevice(*d->m_Window->GetSurface());
     d->m_Running = true;
+
+    // Temporarily here.
+    d->_device = Renderer::Device::CreateDevice(*d->m_Window->GetSurface());
+    d->_commandQueue = d->_device->CreateQueue();
+    d->_commandPool = d->_device->CreateCommandPool(*d->_commandQueue);
+    d->_swapchain = d->_device->CreateSwapchain(*d->m_Window->GetSurface());
+
+    d->_vertexShader = d->_device->CreateShader("vs_triangle");
+    d->_pixelShader = d->_device->CreateShader("ps_triangle");
 }
 
 Application::~Application()
@@ -87,22 +100,34 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    std::unique_ptr<Renderer::CommandQueue> queue = d->_device->CreateQueue();
-    std::unique_ptr<Renderer::CommandPool> pool = d->_device->CreateCommandPool(*queue.get());
-    std::unique_ptr<Renderer::CommandBuffer> buffer = pool->CreateCommandBuffer();
-    buffer->Draw(0);
-    std::unique_ptr<Renderer::Swapchain> swapchain = d->_device->CreateSwapchain(*d->m_Window->GetSurface());
-    event.SetHandled();
+    UNUSED(event);
+
+    // TODO: Recreate swapchain?
+
     return true;
 }
 
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    std::unique_ptr<Renderer::CommandQueue> queue = d->_device->CreateQueue();
-    std::unique_ptr<Renderer::CommandPool> pool = d->_device->CreateCommandPool(*queue.get());
-    std::unique_ptr<Renderer::CommandBuffer> buffer = pool->CreateCommandBuffer();
-    buffer->Draw(0);
-    std::unique_ptr<Renderer::Swapchain> swapchain = d->_device->CreateSwapchain(*d->m_Window->GetSurface());
+    static constexpr float vertices[] = {
+        // Positions        // Colors
+        0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
+        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
+        0.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
+    };
+
+    static std::unique_ptr<Renderer::Buffer> vertexBuffer = d->_device->CreateBuffer(sizeof(vertices), 0);
+    vertexBuffer->BindData<float>(std::span(vertices));
+
+    std::unique_ptr<Renderer::CommandBuffer> cmd = d->_commandPool->CreateCommandBuffer();
+
+    cmd->BindVertexBuffer(*vertexBuffer);
+    cmd->BindVertexShader(*d->_vertexShader);
+    cmd->BindPixelShader(*d->_pixelShader);
+    cmd->Draw(3);
+
+    d->_swapchain->Present();
+
     event.SetHandled();
     return true;
 }

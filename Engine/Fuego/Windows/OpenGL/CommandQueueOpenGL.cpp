@@ -3,9 +3,8 @@
 namespace Fuego::Renderer
 {
 
-CommandQueueOpenGL::CommandQueueOpenGL(const CommandQueue& queue)
+CommandQueueOpenGL::CommandQueueOpenGL()
 {
-    UNUSED(queue);
 }
 
 void CommandQueueOpenGL::Submit(const CommandBuffer& commandBuffer)
@@ -15,11 +14,6 @@ void CommandQueueOpenGL::Submit(const CommandBuffer& commandBuffer)
 
 void CommandQueueOpenGL::Wait()
 {
-}
-
-std::unique_ptr<CommandQueue> CommandQueue::CreateQueue()
-{
-    return std::unique_ptr<CommandQueueOpenGL>();
 }
 
 }  // namespace Fuego::Renderer
