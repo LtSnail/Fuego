@@ -39,7 +39,7 @@ Application::Application()
     d->m_Running = true;
 
     // Temporarily here.
-    d->_device = Renderer::Device::CreateDevice(*d->m_Window->GetSurface());
+    d->_device = Renderer::Device::CreateDevice();
     d->_commandQueue = d->_device->CreateQueue();
     d->_commandPool = d->_device->CreateCommandPool(*d->_commandQueue);
     d->_swapchain = d->_device->CreateSwapchain(*d->m_Window->GetSurface());

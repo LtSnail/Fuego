@@ -5,12 +5,32 @@
 #include "glad/glad.h"
 
 namespace Fuego::Renderer
-
 {
-
 SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     : _surface(dynamic_cast<const SurfaceWindows&>(surface))
 {
+    const auto hdc = _surface.GetHDC();
+    int pixelFormat = ChoosePixelFormat(hdc, _surface.GetPFD());
+    SetPixelFormat(hdc, pixelFormat, _surface.GetPFD());
+    _ctx = wglCreateContext(hdc);
+    wglMakeCurrent(hdc, _ctx);
+
+    if (!gladLoadGL())
+    {
+        FU_CORE_CRITICAL("[OpenGL] GLAD failed to load!");
+    }
+
+    FU_CORE_INFO("OpenGL info:");
+    FU_CORE_INFO("  Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    FU_CORE_INFO("  GLSL Version: {0}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    FU_CORE_INFO("  GPU Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+    FU_CORE_INFO("  Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+}
+
+SwapchainOpenGL::~SwapchainOpenGL()
+{
+    wglMakeCurrent(nullptr, nullptr);
+    wglDeleteContext(_ctx);
 }
 
 void SwapchainOpenGL::Present()
@@ -28,5 +48,4 @@ std::shared_ptr<Texture> SwapchainOpenGL::GetTexture()
 {
     return std::make_shared<TextureStab>();
 }
-
 }  // namespace Fuego::Renderer

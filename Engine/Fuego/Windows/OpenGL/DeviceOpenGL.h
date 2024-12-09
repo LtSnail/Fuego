@@ -8,7 +8,7 @@ namespace Fuego::Renderer
 class DeviceOpenGL : public Device
 {
 public:
-    DeviceOpenGL(const Surface& surface);
+    DeviceOpenGL();
     virtual ~DeviceOpenGL() override;
 
     virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) override;
@@ -19,9 +19,5 @@ public:
 
 protected:
     friend class Device;
-
-
-private:
-    HGLRC _ctx;                  // OpenGL: context
 };
 }  // namespace Fuego::Renderer
