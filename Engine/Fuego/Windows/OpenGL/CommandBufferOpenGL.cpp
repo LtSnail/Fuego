@@ -1,6 +1,7 @@
 #include "CommandBufferOpenGL.h"
 
 #include "BufferOpenGL.h"
+#include "Renderer/Surface.h"
 #include "ShaderOpenGL.h"
 #include "glad/glad.h"
 
@@ -25,13 +26,21 @@ CommandBufferOpenGL::~CommandBufferOpenGL()
 
 void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
 {
-    UNUSED(texture);
-
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    glViewport(0, 0, viewport[2], viewport[3]);
+    auto handle = (HWND)texture.GetNativeHandle();
+    RECT clientRect;
+    if (GetClientRect(handle, &clientRect))
+    {
+        int width = clientRect.right - clientRect.left;
+        int height = clientRect.bottom - clientRect.top;
+
+        glViewport(0, 0, width, height);
+    }
+    else
+    {
+        FU_CORE_ERROR("[CommandBufferOpenGL] Failed to get client rect for HWND");
+    }
 }
 
 void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)
