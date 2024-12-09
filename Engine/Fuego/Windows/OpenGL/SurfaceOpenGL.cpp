@@ -1,19 +1,13 @@
-#include "SurfaceWindows.h"
+#include "SurfaceOpenGL.h"
 
 namespace Fuego::Renderer
 {
-
-std::unique_ptr<Surface> Surface::CreateSurface(void* handle)
-{
-    return std::make_unique<SurfaceWindows>(handle);
-}
-
-SurfaceWindows::SurfaceWindows(void* handle)
+SurfaceOpenGL::SurfaceOpenGL(HWND handle)
     : _handle(nullptr)
     , _hdc(nullptr)
     , _pfd{}
 {
-    _handle = static_cast<HWND>(handle);
+    _handle = handle;
     _hdc = GetDC(_handle);
     _pfd = {sizeof(PIXELFORMATDESCRIPTOR),
             1,
@@ -43,22 +37,22 @@ SurfaceWindows::SurfaceWindows(void* handle)
             0};
 }
 
-const void* SurfaceWindows::GetNativeHandle() const
-{
-    return static_cast<const void*>(_handle);
-}
-
-const HWND SurfaceWindows::GetWindowsHandle() const
+const void* SurfaceOpenGL::GetNativeHandle() const
 {
     return _handle;
 }
 
-const HDC SurfaceWindows::GetHDC() const
+HWND SurfaceOpenGL::GetWindowsHandle() const
+{
+    return _handle;
+}
+
+HDC SurfaceOpenGL::GetHDC() const
 {
     return _hdc;
 }
 
-const PIXELFORMATDESCRIPTOR* SurfaceWindows::GetPFD() const
+const PIXELFORMATDESCRIPTOR* SurfaceOpenGL::GetPFD() const
 {
     return &_pfd;
 }

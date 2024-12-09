@@ -2,7 +2,7 @@
 
 #include "InputWin.h"
 #include "Log.h"
-#include "OpenGL/SurfaceWindows.h"
+#include "OpenGL/SurfaceOpenGL.h"
 #include "glad/glad.h"
 
 namespace Fuego
@@ -37,8 +37,8 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 
     AdjustWindowRect(&rect, style, true);
 
-    _wnd->_surface = new Renderer::SurfaceWindows(CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top,
-                                                                 rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _wnd->m_HInstance, nullptr));
+    _wnd->_surface = new Renderer::SurfaceOpenGL(CreateWindowEx(0, _wnd->m_Props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top,
+                                                                rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _wnd->m_HInstance, nullptr));
 
     FU_CORE_ASSERT(_wnd->_surface, "[AppWindow] hasn't been initialized!");
     hwndMap.emplace(_wnd->_surface->GetWindowsHandle(), _wnd);

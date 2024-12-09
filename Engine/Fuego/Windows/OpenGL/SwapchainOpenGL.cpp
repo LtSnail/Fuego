@@ -1,13 +1,13 @@
 #include "SwapchainOpenGL.h"
 
-#include "OpenGL/SurfaceWindows.h"
-#include "TextureStab.h"
+#include "OpenGL/SurfaceOpenGL.h"
+#include "TextureOpenGL.h"
 #include "glad/glad.h"
 
 namespace Fuego::Renderer
 {
 SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
-    : _surface(dynamic_cast<const SurfaceWindows&>(surface))
+    : _surface(dynamic_cast<const SurfaceOpenGL&>(surface))
 {
     const auto hdc = _surface.GetHDC();
     int pixelFormat = ChoosePixelFormat(hdc, _surface.GetPFD());
@@ -44,8 +44,8 @@ void SwapchainOpenGL::Present()
     SwapBuffers(_surface.GetHDC());
 }
 
-std::shared_ptr<Texture> SwapchainOpenGL::GetTexture()
+Surface& SwapchainOpenGL::GetScreenTexture()
 {
-    return std::make_shared<TextureStab>();
+    return _surface;
 }
 }  // namespace Fuego::Renderer

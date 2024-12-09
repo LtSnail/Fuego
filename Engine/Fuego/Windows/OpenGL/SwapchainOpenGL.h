@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Renderer/Swapchain.h"
-#include "Renderer/Texture.h"
-#include "SurfaceWindows.h"
+#include "SurfaceOpenGL.h"
 
 namespace Fuego::Renderer
 {
@@ -16,10 +15,10 @@ public:
 
     virtual void Present() override;
 
-    virtual std::shared_ptr<Texture> GetTexture() override;
+    virtual Surface& GetScreenTexture() override;
 
 private:
-    SurfaceWindows _surface;
+    SurfaceOpenGL _surface;
     HGLRC _ctx;
 };
 }  // namespace Fuego::Renderer

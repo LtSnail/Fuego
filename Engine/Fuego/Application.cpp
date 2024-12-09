@@ -121,6 +121,7 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
 
     std::unique_ptr<Renderer::CommandBuffer> cmd = d->_commandPool->CreateCommandBuffer();
 
+    cmd->BindRenderTarget(d->_swapchain->GetScreenTexture());
     cmd->BindVertexBuffer(*vertexBuffer);
     cmd->BindVertexShader(*d->_vertexShader);
     cmd->BindPixelShader(*d->_pixelShader);

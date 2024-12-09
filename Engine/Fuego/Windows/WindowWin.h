@@ -1,6 +1,6 @@
 #pragma once
 
-#include <OpenGL/SurfaceWindows.h>
+#include <OpenGL/SurfaceOpenGL.h>
 
 #include "EventQueueWin.h"
 #include "OpenGL/BufferOpenGL.h"
@@ -55,7 +55,7 @@ private:
     HANDLE m_Window;
     HINSTANCE m_HInstance;  // Relates to the Application
     WindowProps m_Props;
-    Renderer::SurfaceWindows* _surface;
+    Renderer::SurfaceOpenGL* _surface;
 
     // Threads
     HANDLE _winThread;

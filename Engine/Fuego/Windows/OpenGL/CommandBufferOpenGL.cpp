@@ -23,9 +23,15 @@ CommandBufferOpenGL::~CommandBufferOpenGL()
     glDeleteProgram(_programID);
 }
 
-void CommandBufferOpenGL::BindRenderTarget(const Texture& texture)
+void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
 {
     UNUSED(texture);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    glViewport(0, 0, viewport[2], viewport[3]);
 }
 
 void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)

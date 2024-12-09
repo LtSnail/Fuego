@@ -3,7 +3,6 @@
 
 namespace Fuego::Renderer
 {
-class Texture;
 class Surface;
 
 class Swapchain
@@ -13,6 +12,6 @@ public:
 
     virtual void Present() = 0;
 
-    virtual std::shared_ptr<Texture> GetTexture() = 0;
+    virtual Surface& GetScreenTexture() = 0;  // TODO: not sure if we should return a surface
 };
 }  // namespace Fuego::Renderer
