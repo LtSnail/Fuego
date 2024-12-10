@@ -10,14 +10,9 @@
 
 namespace Fuego::Renderer
 {
-
 std::unique_ptr<Device> Device::CreateDevice()
 {
     return std::unique_ptr<Device>(new DeviceOpenGL());
-}
-
-DeviceOpenGL::~DeviceOpenGL()
-{
 }
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
@@ -80,5 +75,6 @@ std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName)
 
     return nullptr;
 }
+
 
 }  // namespace Fuego::Renderer

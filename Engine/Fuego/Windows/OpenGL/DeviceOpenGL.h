@@ -18,6 +18,6 @@ public:
 
 protected:
     friend class Device;
-    DeviceOpenGL();
+    DeviceOpenGL() = default;
 };
 }  // namespace Fuego::Renderer
