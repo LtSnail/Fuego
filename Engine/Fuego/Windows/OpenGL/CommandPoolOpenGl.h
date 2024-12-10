@@ -9,9 +9,12 @@ class CommandQueue;
 class CommandPoolOpenGL : public CommandPool
 {
 public:
-    CommandPoolOpenGL(const CommandQueue& queue);
-    ~CommandPoolOpenGL();
+    virtual ~CommandPoolOpenGL() = default;
 
     virtual std::unique_ptr<CommandBuffer> CreateCommandBuffer() override;
+
+protected:
+    friend class DeviceOpenGL;
+    CommandPoolOpenGL(const CommandQueue& queue);
 };
 }  // namespace Fuego::Renderer

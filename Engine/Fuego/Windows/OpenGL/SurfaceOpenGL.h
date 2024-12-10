@@ -8,7 +8,7 @@ class SurfaceOpenGL : public Surface
 {
 public:
     SurfaceOpenGL(HWND handle);
-    ~SurfaceOpenGL() override = default;
+    virtual ~SurfaceOpenGL() = default;
 
     virtual const void* GetNativeHandle() const override;
     HWND GetWindowsHandle() const;

@@ -10,13 +10,10 @@
 
 namespace Fuego::Renderer
 {
-DeviceOpenGL::DeviceOpenGL()
-{
-}
 
 std::unique_ptr<Device> Device::CreateDevice()
 {
-    return std::make_unique<DeviceOpenGL>();
+    return std::unique_ptr<Device>(new DeviceOpenGL());
 }
 
 DeviceOpenGL::~DeviceOpenGL()
@@ -25,22 +22,22 @@ DeviceOpenGL::~DeviceOpenGL()
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
 {
-    return std::make_unique<BufferOpenGL>(size, flags);
+    return std::unique_ptr<Buffer>(new BufferOpenGL(size, flags));
 }
 
 std::unique_ptr<CommandQueue> DeviceOpenGL::CreateQueue()
 {
-    return std::make_unique<CommandQueueOpenGL>();
+    return std::unique_ptr<CommandQueue>(new CommandQueueOpenGL());
 }
 
 std::unique_ptr<CommandPool> DeviceOpenGL::CreateCommandPool(const CommandQueue& queue)
 {
-    return std::make_unique<CommandPoolOpenGL>(queue);
+    return std::unique_ptr<CommandPoolOpenGL>(new CommandPoolOpenGL(queue));
 }
 
 std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(const Surface& surface)
 {
-    return std::make_unique<SwapchainOpenGL>(surface);
+    return std::unique_ptr<Swapchain>(new SwapchainOpenGL(surface));
 }
 
 std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName)
@@ -73,12 +70,12 @@ std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName)
     // Temporary code:
     if (shaderName == "vs_triangle")
     {
-        return std::make_unique<ShaderOpenGL>(vertexShaderSource, Shader::ShaderType::Vertex);
+        return std::unique_ptr<Shader>(new ShaderOpenGL(vertexShaderSource, Shader::ShaderType::Vertex));
     }
 
     if (shaderName == "ps_triangle")
     {
-        return std::make_unique<ShaderOpenGL>(fragmentShaderSource, Shader::ShaderType::Pixel);
+        return std::unique_ptr<Shader>(new ShaderOpenGL(fragmentShaderSource, Shader::ShaderType::Pixel));
     }
 
     return nullptr;

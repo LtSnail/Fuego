@@ -9,7 +9,6 @@ class Surface;
 class CommandBufferOpenGL : public CommandBuffer
 {
 public:
-    CommandBufferOpenGL();
     virtual ~CommandBufferOpenGL() override;
 
     virtual void BindRenderTarget(const Surface& texture) override;
@@ -19,8 +18,11 @@ public:
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) override;
     virtual void Draw(uint32_t vertexCount) override;
 
-protected:
 private:
     uint32_t _programID;
+
+protected:
+    friend class CommandBuffer;
+    CommandBufferOpenGL();
 };
 }  // namespace Fuego::Renderer

@@ -10,8 +10,7 @@ class Surface;
 class SwapchainOpenGL : public Swapchain
 {
 public:
-    SwapchainOpenGL(const Surface& surface);
-    ~SwapchainOpenGL() override;
+    virtual ~SwapchainOpenGL() override;
 
     virtual void Present() override;
 
@@ -20,5 +19,9 @@ public:
 private:
     SurfaceOpenGL _surface;
     HGLRC _ctx;
+
+protected:
+    friend class DeviceOpenGL;
+    SwapchainOpenGL(const Surface& surface);
 };
 }  // namespace Fuego::Renderer

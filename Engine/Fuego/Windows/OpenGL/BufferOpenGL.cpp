@@ -25,6 +25,7 @@ uint32_t BufferOpenGL::GetBufferID() const
 
 void BufferOpenGL::BindDataImpl(const void* data, size_t size, size_t offset)
 {
+    UNUSED(offset);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }

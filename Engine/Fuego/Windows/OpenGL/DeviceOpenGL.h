@@ -8,8 +8,7 @@ namespace Fuego::Renderer
 class DeviceOpenGL : public Device
 {
 public:
-    DeviceOpenGL();
-    virtual ~DeviceOpenGL() override;
+    virtual ~DeviceOpenGL() = default;
 
     virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) override;
     virtual std::unique_ptr<CommandQueue> CreateQueue() override;
@@ -19,5 +18,6 @@ public:
 
 protected:
     friend class Device;
+    DeviceOpenGL();
 };
 }  // namespace Fuego::Renderer

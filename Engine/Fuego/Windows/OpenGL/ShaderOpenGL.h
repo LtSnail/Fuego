@@ -10,12 +10,13 @@ namespace Fuego::Renderer
 class ShaderOpenGL : public Shader
 {
 public:
-    ShaderOpenGL(const char* shaderCode, ShaderType type);
-    ~ShaderOpenGL();
+    virtual ~ShaderOpenGL() override;
+
     inline ShaderType GetType() const
     {
         return _type;
     }
+
     inline uint32_t GetID() const
     {
         return _shaderID;
@@ -26,5 +27,9 @@ private:
     ShaderType _type;
 
     GLint GetShaderType(ShaderType type) const;
+
+protected:
+    friend class DeviceOpenGL;
+    ShaderOpenGL(const char* shaderCode, ShaderType type);
 };
 }  // namespace Fuego::Renderer

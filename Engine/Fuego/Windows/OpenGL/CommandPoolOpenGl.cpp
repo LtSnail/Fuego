@@ -10,10 +10,6 @@ CommandPoolOpenGL::CommandPoolOpenGL(const CommandQueue& queue)
     UNUSED(queue);
 }
 
-CommandPoolOpenGL::~CommandPoolOpenGL()
-{
-}
-
 std::unique_ptr<CommandBuffer> CommandPoolOpenGL::CreateCommandBuffer()
 {
     return CommandBuffer::CreateCommandBuffer();

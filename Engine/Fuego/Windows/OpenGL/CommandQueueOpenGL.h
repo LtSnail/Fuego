@@ -7,13 +7,14 @@ namespace Fuego::Renderer
 class CommandQueueOpenGL : public CommandQueue
 {
 public:
-    CommandQueueOpenGL();
-    ~CommandQueueOpenGL() = default;
+    virtual ~CommandQueueOpenGL() = default;
 
     virtual void Submit(const CommandBuffer& commandBuffer) override;
     virtual void Wait() override;
 
 
 protected:
+    friend class DeviceOpenGL;
+    CommandQueueOpenGL();
 };
 }  // namespace Fuego::Renderer

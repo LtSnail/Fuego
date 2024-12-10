@@ -7,13 +7,16 @@ namespace Fuego::Renderer
 class BufferOpenGL : public Buffer
 {
 public:
-    BufferOpenGL(size_t size, uint32_t flags);
-    ~BufferOpenGL();
+    virtual ~BufferOpenGL() override;
 
     uint32_t GetBufferID() const;
     virtual void BindDataImpl(const void* data, size_t size, size_t offset) override;
 
 private:
     uint32_t _vbo;
+
+protected:
+    friend class DeviceOpenGL;
+    BufferOpenGL(size_t size, uint32_t flags);
 };
 }  // namespace Fuego::Renderer

@@ -16,7 +16,7 @@ CommandBufferOpenGL::CommandBufferOpenGL()
 
 std::unique_ptr<CommandBuffer> CommandBuffer::CreateCommandBuffer()
 {
-    return std::make_unique<CommandBufferOpenGL>();
+    return std::unique_ptr<CommandBuffer>(new CommandBufferOpenGL());
 }
 
 CommandBufferOpenGL::~CommandBufferOpenGL()
