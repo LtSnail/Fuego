@@ -12,8 +12,8 @@ set(PROJECT_HEADERS
     OpenGL/CommandQueueOpenGL.h
     OpenGL/SwapchainOpenGL.h
     OpenGL/CommandPoolOpenGl.h
-    OpenGL/TextureStab.h
-    OpenGL/SurfaceWindows.h)
+    OpenGL/TextureOpenGL.h
+    OpenGL/SurfaceOpenGL.h)
 
 set(PROJECT_SOURCES
     EventQueueWin.cpp
@@ -27,8 +27,8 @@ set(PROJECT_SOURCES
     OpenGL/CommandQueueOpenGL.cpp
     OpenGL/SwapchainOpenGL.cpp
     OpenGL/CommandPoolOpenGl.cpp
-    OpenGL/TextureStab.cpp
-    OpenGL/SurfaceWindows.cpp)
+    OpenGL/TextureOpenGL.cpp
+    OpenGL/SurfaceOpenGL.cpp)
 
 set(GLAD_BUILD_DIR ${CMAKE_BINARY_DIR}/Glad)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/../../build/win/output)
