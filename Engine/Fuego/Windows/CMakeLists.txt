@@ -1,10 +1,34 @@
 # Windows dependencies
 
-set(PROJECT_HEADERS EventQueueWin.h InputWin.h KeyCodesWin.h WindowWin.h
-                    OpenGL/BufferOpenGL.h OpenGL/OpenGLContext.h)
+set(PROJECT_HEADERS
+    EventQueueWin.h
+    InputWin.h
+    KeyCodesWin.h
+    WindowWin.h
+    OpenGL/BufferOpenGL.h
+    OpenGL/DeviceOpenGL.h
+    OpenGL/CommandBufferOpenGL.h
+    OpenGL/ShaderOpenGL.h
+    OpenGL/CommandQueueOpenGL.h
+    OpenGL/SwapchainOpenGL.h
+    OpenGL/CommandPoolOpenGl.h
+    OpenGL/TextureOpenGL.h
+    OpenGL/SurfaceOpenGL.h)
 
-set(PROJECT_SOURCES EventQueueWin.cpp InputWin.cpp WindowWin.cpp
-                    OpenGL/BufferOpenGL.cpp OpenGL/OpenGLContext.cpp)
+set(PROJECT_SOURCES
+    EventQueueWin.cpp
+    InputWin.cpp
+    WindowWin.cpp
+    EntryPointWindows.cpp
+    OpenGL/BufferOpenGL.cpp
+    OpenGL/DeviceOpenGL.cpp
+    OpenGL/CommandBufferOpenGL.cpp
+    OpenGL/ShaderOpenGL.cpp
+    OpenGL/CommandQueueOpenGL.cpp
+    OpenGL/SwapchainOpenGL.cpp
+    OpenGL/CommandPoolOpenGl.cpp
+    OpenGL/TextureOpenGL.cpp
+    OpenGL/SurfaceOpenGL.cpp)
 
 set(GLAD_BUILD_DIR ${CMAKE_BINARY_DIR}/Glad)
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/../../build/win/output)
@@ -21,7 +45,8 @@ set_target_properties(
 add_library(WindowsDep STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 
 target_include_directories(WindowsDep PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(WindowsDep PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../External/glad/include)
+target_include_directories(
+  WindowsDep PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../External/glad/include)
 
 target_link_libraries(WindowsDep PRIVATE Glad)
 target_link_libraries(WindowsDep PRIVATE FuegoInterface)

@@ -1,20 +1,31 @@
 # MacOS dependencies
 
 set(PROJECT_HEADERS
-    BufferMetal.h
     EventQueueMacOS.h
     InputMacOS.h
     KeyCodesMacOS.h
     WindowMacOS.h
-    Metal/MetalContext.h)
+    Metal/MetalContext.h
+    Metal/DeviceMetal.h
+    Metal/BufferMetal.h
+    Metal/CommandQueueMetal.h
+    Metal/ShaderMetal.h
+    Metal/CommandBufferMetal.h
+    Metal/TextureMetal.h)
 
 set(PROJECT_SOURCES
-    BufferMetal.cpp
     InputMacOS.cpp
     EventQueueMacOS.mm
     WindowMacOS.mm
+    EntryPointMacOS.mm
     Metal/MetalContext.mm
-    Metal/MetalImplementation.cpp)
+    Metal/MetalImplementation.cpp
+    Metal/DeviceMetal.mm
+    Metal/BufferMetal.mm
+    Metal/CommandQueueMetal.mm
+    Metal/ShaderMetal.mm
+    Metal/CommandBufferMetal.mm
+    Metal/TextureMetal.mm)
 
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/../../build/win/output)
 

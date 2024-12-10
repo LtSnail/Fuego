@@ -1,32 +1,21 @@
 #pragma once
 
-#include "fupch.h"
+#include <span>
 
-namespace Fuego
+namespace Fuego::Renderer
 {
-class VertexBuffer
-{
-public:
-    VertexBuffer() = default;
-    virtual ~VertexBuffer() {};
-
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
-
-    static VertexBuffer* Create(float* vertices, uint32_t size);
-};
-
-class IndexBuffer
+class Buffer
 {
 public:
-    IndexBuffer() = default;
-    virtual ~IndexBuffer() {};
+    virtual ~Buffer() = default;
 
-    virtual void Bind() const = 0;
-    virtual void Unbind() const = 0;
+    template <typename T>
+    void BindData(std::span<const T> data, size_t offset = 0)
+    {
+        BindDataImpl(data.data(), data.size_bytes(), offset);
+    }
 
-    virtual uint32_t GetCount() const = 0;
-
-    static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+protected:
+    virtual void BindDataImpl(const void* data, size_t size, size_t offset) = 0;
 };
-}  // namespace Fuego
+}  // namespace Fuego::Renderer

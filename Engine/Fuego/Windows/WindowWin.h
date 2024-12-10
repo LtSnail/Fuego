@@ -1,8 +1,9 @@
 #pragma once
 
+#include <OpenGL/SurfaceOpenGL.h>
+
 #include "EventQueueWin.h"
 #include "OpenGL/BufferOpenGL.h"
-#include "OpenGL/OpenGLContext.h"
 #include "Window.h"
 
 namespace Fuego
@@ -10,6 +11,8 @@ namespace Fuego
 #define LAST_CODE UINT16_MAX
 
 LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+class SurfaceWindows;
 
 class WindowWin : public Window
 {
@@ -30,6 +33,8 @@ public:
     virtual void SetVSync(bool enabled) override;
     virtual bool IsVSync() const override;
 
+    virtual const Renderer::Surface* GetSurface() const override;
+
     LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
     static std::unordered_map<HWND, WindowWin*> hwndMap;
 
@@ -41,8 +46,6 @@ private:
     void Shutdown();
     static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-    GraphicsContext* _context;
-
     EventQueueWin* _eventQueue;
     Input::KeyInfo _lastKey;
     Input::MouseInfo _lastMouse;
@@ -51,17 +54,13 @@ private:
     // Window handle
     HANDLE m_Window;
     HINSTANCE m_HInstance;  // Relates to the Application
-    HWND m_Hwnd;            // Relates to Actual Window instance
     WindowProps m_Props;
-    HDC _hdc;
-
-    // Renderer
-    std::unique_ptr<VertexBuffer> VBO;
-    std::unique_ptr<IndexBuffer> EBO;
+    Renderer::SurfaceOpenGL* _surface;
 
     // Threads
     HANDLE _winThread;
     LPDWORD _winThreadID;
+    HANDLE _onThreadCreated;
     static DWORD WinThreadMain(_In_ LPVOID lpParameter);
 };
 

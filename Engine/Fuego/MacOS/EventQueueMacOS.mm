@@ -53,14 +53,12 @@ namespace Fuego
 {
 EventQueueMacOS::EventQueueMacOS()
 {
-    WindowEventsObserver* observerObj = [[WindowEventsObserver alloc] initWithEventQueue:this];
-    _windowEventsObserver = ((__bridge_retained void*)observerObj);
+    _windowEventsObserver = (__bridge_retained void*)[[WindowEventsObserver alloc] initWithEventQueue:this];
 }
 
 EventQueueMacOS::~EventQueueMacOS()
 {
-    // Return ownership to ARC
-    __unused id observerObj = (__bridge_transfer id)_windowEventsObserver;
+    __unused id obj = (__bridge_transfer WindowEventsObserver*)_windowEventsObserver;
 }
 
 void EventQueueMacOS::Update()
@@ -78,7 +76,7 @@ void EventQueueMacOS::Update()
             case NSEventTypeSystemDefined:
                 break;
             case NSEventTypeKeyDown:
-                    PushEvent(this, std::make_shared<EventVariant>(KeyPressedEvent(nsEvent.keyCode, 0)));
+                PushEvent(this, std::make_shared<EventVariant>(KeyPressedEvent(nsEvent.keyCode, 0)));
                 break;
             case NSEventTypeKeyUp:
                 PushEvent(this, std::make_shared<EventVariant>(KeyReleasedEvent(nsEvent.keyCode)));
