@@ -25,6 +25,9 @@ SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     FU_CORE_INFO("  GLSL Version: {0}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
     FU_CORE_INFO("  GPU Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
     FU_CORE_INFO("  Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+    // TODO: if debuf then enable OpenGL debug callback:
+    glEnable(GL_DEBUG_OUTPUT);
+    glDebugMessageCallback(SwapchainOpenGL::OpenGLDebugCallbackFunc, nullptr);
 }
 
 SwapchainOpenGL::~SwapchainOpenGL()
@@ -47,5 +50,11 @@ void SwapchainOpenGL::Present()
 Surface& SwapchainOpenGL::GetScreenTexture()
 {
     return _surface;
+}
+
+void APIENTRY SwapchainOpenGL::OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
+                                                       const void* userParam)
+{
+    FU_CORE_ERROR("[OpenGL] \nMessage: {0}\nSource: {1}\nType: {2}\nID: {3}\nSeverity: {4}", (const char*)message, source, type, id, severity);
 }
 }  // namespace Fuego::Renderer

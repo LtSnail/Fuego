@@ -2,6 +2,7 @@
 
 #include "Renderer/Swapchain.h"
 #include "SurfaceOpenGL.h"
+#include "glad/glad.h"
 
 namespace Fuego::Renderer
 {
@@ -17,6 +18,8 @@ public:
     virtual Surface& GetScreenTexture() override;
 
 private:
+    static void APIENTRY OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
+                                                 const void* userParam);
     SurfaceOpenGL _surface;
     HGLRC _ctx;
 
