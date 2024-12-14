@@ -2,7 +2,7 @@
 
 #include "Renderer/Swapchain.h"
 #include "SurfaceOpenGL.h"
-#include "glad/glad.h"
+#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
@@ -20,6 +20,7 @@ public:
 private:
     static void APIENTRY OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
                                                  const void* userParam);
+    void InitOpenGLExtension();
     SurfaceOpenGL _surface;
     HGLRC _ctx;
 

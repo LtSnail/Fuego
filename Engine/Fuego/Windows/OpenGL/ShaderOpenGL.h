@@ -3,7 +3,7 @@
 #include <cstdint>
 
 #include "Renderer/Shader.h"
-#include "glad/glad.h"
+#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {

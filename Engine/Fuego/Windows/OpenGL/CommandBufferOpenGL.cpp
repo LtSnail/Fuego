@@ -3,7 +3,7 @@
 #include "BufferOpenGL.h"
 #include "Renderer/Surface.h"
 #include "ShaderOpenGL.h"
-#include "glad/glad.h"
+#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
