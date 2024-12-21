@@ -26,21 +26,12 @@ set(PROJECT_HEADERS
     Fuego/LayerStack.h
     Fuego/ImGui/ImGuiLayer.h
     Fuego.h
-    fupch.h
-    Fuego/Renderer/Buffer.h
-    Fuego/Renderer/Device.h
-    Fuego/Renderer/CommandQueue.h
-    Fuego/Renderer/CommandPool.h
-    Fuego/Renderer/DescriptorBuffer.h
-    Fuego/Renderer/Shader.h
-    Fuego/Renderer/Swapchain.h
-    Fuego/Renderer/Texture.h
-    Fuego/Renderer/Sampler.h
-    Fuego/Renderer/Surface.h
-    Fuego/Renderer/CommandBuffer.h
-    Fuego/Renderer/Shader.h)
+    fupch.h)
+
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
             Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp)
+
+set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
 
 if(FUEGO_DYNAMIC_LIB)
   set(LIB_TYPE SHARED)
@@ -51,6 +42,7 @@ endif()
 
 # Common setup
 list(APPEND ENGINE_DEPENDENCIES ImGui)
+list(APPEND ENGINE_DEPENDENCIES Renderer)
 
 set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
 
@@ -75,14 +67,16 @@ elseif(APPLE)
 endif()
 # End Project set up
 
-add_subdirectory(${PLATFORM_SUBDIRECTORIES})
+add_subdirectory( ${PLATFORM_SUBDIRECTORIES} )
+add_subdirectory( ${RENDERER_PATH} )
 
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
     ${CMAKE_CURRENT_SOURCE_DIR}/External/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/External/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include)
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include
+    ${RENDERER_PATH} )
 
 # An interface library to propagate headers to platform implementations
 add_library(FuegoInterface INTERFACE)
@@ -103,7 +97,7 @@ target_compile_options(FuegoInterface
 # An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
 
-target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES})
+target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
 target_include_directories(FuegoEngine
                            PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
 
