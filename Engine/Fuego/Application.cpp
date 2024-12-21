@@ -2,13 +2,7 @@
 
 #include "Events/EventVisitor.h"
 #include "Input.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/CommandBuffer.h"
-#include "Renderer/CommandPool.h"
-#include "Renderer/CommandQueue.h"
-#include "Renderer/Device.h"
-#include "Renderer/Shader.h"
-#include "Renderer/Swapchain.h"
+#include "Renderer.h"
 
 namespace Fuego
 {
@@ -31,13 +25,8 @@ class Application::ApplicationImpl
     friend class Application;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
-    std::unique_ptr<Renderer::Device> _device;
-    std::unique_ptr<Renderer::CommandQueue> _commandQueue;
-    std::unique_ptr<Renderer::CommandPool> _commandPool;
-    std::unique_ptr<Renderer::Swapchain> _swapchain;
-    std::unique_ptr<Renderer::Shader> _vertexShader;
-    std::unique_ptr<Renderer::Shader> _pixelShader;
-    std::unique_ptr<Renderer::Surface> _surface;
+    std::unique_ptr<Renderer::Renderer> _renderer;
+    
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
@@ -50,17 +39,12 @@ Application::Application()
     ApplicationImpl::m_Instance = this;
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+    d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
-
-    // Temporarily here.
-    d->_device = Renderer::Device::CreateDevice();
-    d->_commandQueue = d->_device->CreateCommandQueue();
-    d->_commandPool = d->_device->CreateCommandPool(*d->_commandQueue);
-    d->_surface = d->_device->CreateSurface(d->m_Window->GetNativeHandle());
-    d->_swapchain = d->_device->CreateSwapchain(*d->_surface);
-
-    d->_vertexShader = d->_device->CreateShader("vs_shader", Renderer::Shader::ShaderType::Vertex);
-    d->_pixelShader = d->_device->CreateShader("ps_triangle", Renderer::Shader::ShaderType::Pixel);
+}
+Renderer::Renderer& Application::Renderer()
+{
+    return *d->_renderer.get();
 }
 
 Application::~Application()
@@ -124,25 +108,15 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    static constexpr float vertices[] = {
+    static float vertices[] = {
         // Positions        // Colors
         0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
-        0.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
+       -0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
+        0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
     };
 
-    static std::unique_ptr<Renderer::Buffer> vertexBuffer = d->_device->CreateBuffer(sizeof(vertices), 0);
-    vertexBuffer->BindData<float>(std::span(vertices));
-
-    std::unique_ptr<Renderer::CommandBuffer> cmd = d->_commandPool->CreateCommandBuffer();
-
-    cmd->BindRenderTarget(d->_swapchain->GetScreenTexture());
-    cmd->BindVertexBuffer(*vertexBuffer);
-    cmd->BindVertexShader(*d->_vertexShader);
-    cmd->BindPixelShader(*d->_pixelShader);
-    cmd->Draw(3);
-
-    d->_swapchain->Present();
+    d->_renderer->DrawMesh(vertices, 3);
+    d->_renderer->Present();
 
     event.SetHandled();
     return true;

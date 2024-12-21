@@ -10,8 +10,14 @@
 #include "Window.h"
 #include "fstream"
 
+namespace Fuego::Renderer
+{
+class Renderer;
+}
+
 namespace Fuego
 {
+
 class FUEGO_API Application
 {
     FUEGO_INTERFACE(Application);
@@ -32,6 +38,7 @@ public:
     bool OnRenderEvent(AppRenderEvent& event);
 
     static Application& Get();
+    Fuego::Renderer::Renderer& Renderer();
     Window& GetWindow();
 };
 

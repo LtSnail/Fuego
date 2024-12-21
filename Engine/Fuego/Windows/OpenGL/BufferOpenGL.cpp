@@ -9,6 +9,7 @@ BufferOpenGL::BufferOpenGL(size_t size, uint32_t flags)
     : _vbo(UINT32_MAX)
 {
     UNUSED(flags);
+    UNUSED(size);
 
     glGenBuffers(1, &_vbo);
 }
