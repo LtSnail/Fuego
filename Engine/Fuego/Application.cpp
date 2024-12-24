@@ -26,7 +26,7 @@ class Application::ApplicationImpl
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
     std::unique_ptr<Renderer::Renderer> _renderer;
-    
+
     bool m_Running;
     LayerStack m_LayerStack;
     static Application* m_Instance;
@@ -108,14 +108,15 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    static float vertices[] = {
+    static constexpr uint32_t stride = sizeof(float) * 6;
+    static float mesh[] = {
         // Positions        // Colors
         0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
-       -0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
-        0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
+        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
+        0.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
     };
-
-    d->_renderer->DrawMesh(vertices, 3);
+    d->_renderer->Clear();
+    d->_renderer->DrawMesh(mesh, sizeof(mesh) / stride, stride);
     d->_renderer->Present();
 
     event.SetHandled();
@@ -152,7 +153,6 @@ void Application::Run()
         }
     }
 }
-
 
 
 }  // namespace Fuego

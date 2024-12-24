@@ -17,6 +17,7 @@ public:
     virtual void BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex) override;
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) override;
     virtual void Draw(uint32_t vertexCount) override;
+    virtual void Clear() override;
 
 private:
     uint32_t _programID;

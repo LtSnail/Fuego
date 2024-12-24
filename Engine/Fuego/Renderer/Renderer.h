@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Application.h"
-#include "Shader.h"
-#include "Swapchain.h"
+#include "Buffer.h"
 #include "CommandPool.h"
 #include "CommandQueue.h"
 #include "Device.h"
-#include "Buffer.h"
+#include "Shader.h"
+#include "Swapchain.h"
 
 namespace Fuego::Renderer
 {
@@ -17,7 +17,8 @@ class Renderer
 public:
     ~Renderer() = default;
     // TODO replace array of floats to Mesh class
-    void DrawMesh(float vertices[], uint32_t vertexCount);
+    void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t stride);
+    void Clear();
     void Present();
 
     Renderer(const Renderer&&) = delete;
@@ -25,8 +26,8 @@ public:
     Renderer& operator=(const Renderer&) = delete;
 
 private:
-	std::unique_ptr<Buffer> _buffer;
-	std::unique_ptr<Device> _device;
+    std::unique_ptr<Buffer> _buffer;
+    std::unique_ptr<Device> _device;
     std::unique_ptr<CommandQueue> _commandQueue;
     std::unique_ptr<CommandPool> _commandPool;
     std::unique_ptr<Swapchain> _swapchain;
@@ -36,6 +37,5 @@ private:
 
     friend class Fuego::Application;
     Renderer();
-   
 };
-}
+}  // namespace Fuego::Renderer

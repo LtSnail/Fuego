@@ -20,6 +20,7 @@ public:
     virtual void BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex) = 0;
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) = 0;
     virtual void Draw(uint32_t vertexCount) = 0;
+    virtual void Clear() = 0;
 };
 
 }  // namespace Fuego::Renderer

@@ -14,14 +14,14 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     _programID = glCreateProgram();
 }
 
-std::unique_ptr<CommandBuffer> CommandBuffer::CreateCommandBuffer()
-{
-    return std::unique_ptr<CommandBuffer>(new CommandBufferOpenGL());
-}
-
 CommandBufferOpenGL::~CommandBufferOpenGL()
 {
     glDeleteProgram(_programID);
+}
+
+std::unique_ptr<CommandBuffer> CommandBuffer::CreateCommandBuffer()
+{
+    return std::unique_ptr<CommandBuffer>(new CommandBufferOpenGL());
 }
 
 void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
@@ -85,7 +85,13 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
 
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
-    // glDrawArrays(GL_TRIANGLES, 0, vertexCount); // TODO: Uncomment
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);  // TODO: Uncomment
+}
+
+void CommandBufferOpenGL::Clear()
+{
+    glClearColor(1.f, 1.f, 1.f, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex)

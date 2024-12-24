@@ -41,9 +41,6 @@ void SwapchainOpenGL::Present()
     static PAINTSTRUCT ps;
     BeginPaint((HWND)_surface.GetNativeHandle(), &ps);
     EndPaint((HWND)_surface.GetNativeHandle(), &ps);
-    glClearColor(0.2f, 0.3f, 0.1f, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDrawArrays(GL_TRIANGLES, 0, 3);  // TODO: move from here
     SwapBuffers(_surface.GetHdc());
 }
 

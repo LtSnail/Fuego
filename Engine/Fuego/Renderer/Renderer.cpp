@@ -1,7 +1,9 @@
 #include "Renderer.h"
-#include "Surface.h"
-#include "CommandBuffer.h"
+
 #include <span>
+
+#include "CommandBuffer.h"
+#include "Surface.h"
 
 namespace Fuego::Renderer
 {
@@ -20,10 +22,10 @@ Renderer::Renderer()
     _pixelShader = _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel);
 }
 
-void Renderer::DrawMesh(float vertices[], uint32_t vertexCount)
+void Renderer::DrawMesh(float mesh[], uint32_t vertexCount, uint32_t stride)
 {
-    static std::unique_ptr<Buffer> vertexBuffer = _device->CreateBuffer(vertexCount, 0);
-    vertexBuffer->BindData<float>(std::span(vertices, vertexCount));
+    static std::unique_ptr<Buffer> vertexBuffer = _device->CreateBuffer(vertexCount * stride, 0);
+    vertexBuffer->BindData<float>(std::span(mesh, vertexCount * (stride / sizeof(float))));
 
     std::unique_ptr<CommandBuffer> cmd = _commandPool->CreateCommandBuffer();
     cmd->BindRenderTarget(_swapchain->GetScreenTexture());
@@ -33,8 +35,15 @@ void Renderer::DrawMesh(float vertices[], uint32_t vertexCount)
     cmd->Draw(3);
 }
 
-void Renderer::Present()
+void Renderer::Clear()
 {
+    std::unique_ptr<CommandBuffer> cmd = _commandPool->CreateCommandBuffer();
+    cmd->Clear();
 }
 
+void Renderer::Present()
+{
+    _swapchain->Present();
 }
+
+}  // namespace Fuego::Renderer
