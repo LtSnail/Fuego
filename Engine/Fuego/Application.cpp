@@ -3,22 +3,10 @@
 #include "Events/EventVisitor.h"
 #include "Input.h"
 #include "Renderer.h"
+#include "FileSystem/FileSystem.h"
 
 namespace Fuego
 {
-
-std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode)
-{
-    std::string path = pathToResources + pathToShadersWindows + file;
-    std::fstream f(path, mode);
-    FU_CORE_ASSERT(f.is_open(), "[FS] failed open a file");
-
-    std::stringstream buffer;
-    buffer << f.rdbuf();
-    f.close();
-
-    return buffer.str();
-}
 
 class Application::ApplicationImpl
 {
@@ -26,6 +14,7 @@ class Application::ApplicationImpl
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
     std::unique_ptr<Renderer::Renderer> _renderer;
+    std::unique_ptr<Fuego::FS::FileSystem> _fs;
 
     bool m_Running;
     LayerStack m_LayerStack;
@@ -37,11 +26,13 @@ Application::Application()
     : d(new ApplicationImpl())
 {
     ApplicationImpl::m_Instance = this;
+    d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
 }
+
 Renderer::Renderer& Application::Renderer()
 {
     return *d->_renderer.get();
@@ -79,7 +70,7 @@ void Application::OnEvent(EventVariant& event)
 
         auto HandledEventVisitor = EventVisitor{[](const Event& ev) -> bool
                                                 {
-                                                    FU_CORE_TRACE("{0}", ev.ToString());
+                                                    //FU_CORE_TRACE("{0}", ev.ToString());
                                                     return ev.GetHandled();
                                                 }};
 
@@ -126,6 +117,10 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
 Application& Application::Get()
 {
     return *Application::ApplicationImpl::m_Instance;
+}
+Fuego::FS::FileSystem& Application::FileSystem()
+{
+    return *d->_fs.get();
 }
 
 Window& Application::GetWindow()

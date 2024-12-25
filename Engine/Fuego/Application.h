@@ -8,11 +8,13 @@
 #include "Layer.h"
 #include "LayerStack.h"
 #include "Window.h"
-#include "fstream"
+#include "FileSystem/FileSystem.h"
+
 
 namespace Fuego::Renderer
 {
 class Renderer;
+class FileSystem;
 }
 
 namespace Fuego
@@ -39,14 +41,11 @@ public:
 
     static Application& Get();
     Fuego::Renderer::Renderer& Renderer();
+    Fuego::FS::FileSystem& FileSystem();
     Window& GetWindow();
 };
 
 // Should be defined in a client.
 Application* CreateApplication();
-
-const std::string pathToResources = std::filesystem::current_path().string() + "\\..\\..\\..\\Sandbox\\Resources\\";
-const std::string pathToShadersWindows = "Windows\\Shaders\\";
-std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode = std::fstream::ios_base::in);
 
 }  // namespace Fuego
