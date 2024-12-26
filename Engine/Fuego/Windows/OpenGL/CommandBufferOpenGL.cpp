@@ -10,6 +10,10 @@ namespace Fuego::Renderer
 
 CommandBufferOpenGL::CommandBufferOpenGL()
     : _programID(0)
+    , _isFree(true)
+    , _vertexShader(-1)
+    , _pixelShader(-1)
+    , _isLinked(false)
 {
     _programID = glCreateProgram();
 }
@@ -19,9 +23,20 @@ CommandBufferOpenGL::~CommandBufferOpenGL()
     glDeleteProgram(_programID);
 }
 
-std::unique_ptr<CommandBuffer> CommandBuffer::CreateCommandBuffer()
+void CommandBufferOpenGL::BeginRecording()
 {
-    return std::unique_ptr<CommandBuffer>(new CommandBufferOpenGL());
+    _isFree = false;
+}
+
+void CommandBufferOpenGL::EndRecording()
+{
+    // TODO: add smth
+}
+
+void CommandBufferOpenGL::Submit()
+{
+    // TODO Execute gl commands from commands queue
+    _isFree = true;
 }
 
 void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
@@ -47,15 +62,46 @@ void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
 void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)
 {
     auto shaderGL = dynamic_cast<const ShaderOpenGL*>(&vertexShader);
-    glAttachShader(_programID, shaderGL->GetID());
+    if (!_isLinked)
+    {
+        glAttachShader(_programID, shaderGL->GetID());
+        _vertexShader = shaderGL->GetID();
+    }
+    else
+    {
+        if (_vertexShader != shaderGL->GetID())
+        {
+            glDetachShader(_programID, _vertexShader);
+            glAttachShader(_programID, shaderGL->GetID());
+            _vertexShader = shaderGL->GetID();
+        }
+    }
 }
 
 void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
 {
     auto shaderGL = dynamic_cast<const ShaderOpenGL*>(&pixelShader);
-    glAttachShader(_programID, shaderGL->GetID());
-
+    if (!_isLinked)
+    {
+        glAttachShader(_programID, shaderGL->GetID());
+        _pixelShader = shaderGL->GetID();
+    }
+    else
+    {
+        if (_pixelShader != shaderGL->GetID())
+        {
+            glDetachShader(_programID, _pixelShader);
+            glAttachShader(_programID, shaderGL->GetID());
+            _pixelShader = shaderGL->GetID();
+        }
+    }
     // TODO: think how to get rid of the order of binding
+    if (_isLinked)
+    {
+        glUseProgram(_programID);
+        return;
+    }
+
     glLinkProgram(_programID);
 
     GLint success;
@@ -67,7 +113,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         FU_CORE_ERROR("[CommandBufferOpenGL] shader linking error: ", infoLog);
         return;
     }
-
+    _isLinked = true;
     glUseProgram(_programID);
 }
 
@@ -85,7 +131,7 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
 
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
-    glDrawArrays(GL_TRIANGLES, 0, vertexCount);  // TODO: Uncomment
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
 void CommandBufferOpenGL::Clear()

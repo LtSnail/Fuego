@@ -11,7 +11,7 @@ set(PROJECT_HEADERS
     OpenGL/ShaderOpenGL.h
     OpenGL/CommandQueueOpenGL.h
     OpenGL/SwapchainOpenGL.h
-    OpenGL/CommandPoolOpenGl.h
+    OpenGL/CommandPoolOpenGL.h
     OpenGL/TextureOpenGL.h
     OpenGL/SurfaceOpenGL.h)
 
@@ -26,7 +26,7 @@ set(PROJECT_SOURCES
     OpenGL/ShaderOpenGL.cpp
     OpenGL/CommandQueueOpenGL.cpp
     OpenGL/SwapchainOpenGL.cpp
-    OpenGL/CommandPoolOpenGl.cpp
+    OpenGL/CommandPoolOpenGL.cpp
     OpenGL/TextureOpenGL.cpp
     OpenGL/SurfaceOpenGL.cpp)
 

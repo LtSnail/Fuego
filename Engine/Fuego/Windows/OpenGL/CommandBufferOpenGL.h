@@ -10,7 +10,9 @@ class CommandBufferOpenGL : public CommandBuffer
 {
 public:
     virtual ~CommandBufferOpenGL() override;
-
+    virtual void BeginRecording() override;
+    virtual void EndRecording() override;
+    virtual void Submit() override;
     virtual void BindRenderTarget(const Surface& texture) override;
     virtual void BindVertexShader(const Shader& vertexShader) override;
     virtual void BindPixelShader(const Shader& pixelShader) override;
@@ -21,9 +23,13 @@ public:
 
 private:
     uint32_t _programID;
+    uint32_t _vertexShader;
+    uint32_t _pixelShader;
+    bool _isLinked;
 
 protected:
-    friend class CommandBuffer;
+    friend class CommandPoolOpenGL;
+    bool _isFree;
     CommandBufferOpenGL();
 };
 }  // namespace Fuego::Renderer

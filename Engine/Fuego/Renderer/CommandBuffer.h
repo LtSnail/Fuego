@@ -14,6 +14,9 @@ public:
 
     virtual ~CommandBuffer() = default;
 
+    virtual void BeginRecording() = 0;
+    virtual void EndRecording() = 0;
+    virtual void Submit() = 0;
     virtual void BindRenderTarget(const Surface& texture) = 0;
     virtual void BindVertexShader(const Shader& vertexShader) = 0;
     virtual void BindPixelShader(const Shader& pixelShader) = 0;

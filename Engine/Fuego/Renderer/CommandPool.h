@@ -11,6 +11,6 @@ class CommandPool
 public:
     virtual ~CommandPool() = default;
 
-    virtual std::unique_ptr<CommandBuffer> CreateCommandBuffer() = 0;
+    virtual CommandBuffer& GetCommandBuffer() = 0;
 };
 }  // namespace Fuego::Renderer
