@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+
 #include "EventQueue.h"
 #include "Window.h"
 
@@ -19,5 +21,6 @@ private:
     virtual void PushEvent(std::shared_ptr<EventVariant>&& e);
 
     std::queue<std::shared_ptr<EventVariant>> _queue;
+    std::mutex _mutex;
 };
 }  // namespace Fuego
