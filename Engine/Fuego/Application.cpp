@@ -99,13 +99,21 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    static float mesh[] = {
-        // Positions        // Colors
-        0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
-        -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
-        0.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
+    // clang-format off
+    static float mesh[] = {                                       // Positions        // Colors
+                           0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
+                           0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
+                          -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f,  // Bottom-right vertex (Blue)
+                          -0.5f,  0.5f,  0.0f, 0.5f, 0.5f, 0.5f,
+                           0.5f,  0.5f,  0.0f, 0.5f, 0.5f, 0.5f
+
     };
-    static unsigned int indices[3]{0, 1, 2};
+    static unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0,
+        0, 4, 1
+    };
+    // clang-format on
     d->_renderer->Clear();
     d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
     d->_renderer->Present();
