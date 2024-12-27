@@ -17,7 +17,7 @@ class Renderer
 public:
     ~Renderer() = default;
     // TODO replace array of floats to Mesh class
-    void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t stride);
+    void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount, uint32_t stride);
     void Clear();
     void Present();
 

@@ -23,10 +23,9 @@ Renderer::Renderer()
     _buffer = _device->CreateBuffer(0, 0);
 }
 
-void Renderer::DrawMesh(float mesh[], uint32_t vertexCount, uint32_t stride)
+void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount, uint32_t stride)
 {
-    //_buffer.reset(_device->CreateBuffer(vertexCount * stride, 0).release());
-    _buffer->BindData<float>(std::span(mesh, vertexCount * (stride / sizeof(float))));
+    _buffer->BindData<float>(std::span(vertices, vertexCount * (stride / sizeof(float))));
 
     CommandBuffer& cmd = _commandPool->GetCommandBuffer();
     cmd.BeginRecording();
@@ -34,7 +33,8 @@ void Renderer::DrawMesh(float mesh[], uint32_t vertexCount, uint32_t stride)
     cmd.BindVertexBuffer(*_buffer);
     cmd.BindVertexShader(*_vertexShader);
     cmd.BindPixelShader(*_pixelShader);
-    cmd.Draw(3);
+    cmd.BindIndexBuffer(indices, sizeof(unsigned int) * indicesCount);
+    cmd.IndexedDraw(vertexCount, indices);
     cmd.EndRecording();
     cmd.Submit();
 }

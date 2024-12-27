@@ -15,8 +15,11 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     , _pixelShader(-1)
     , _isLinked(false)
     , _vao(0)
+    , _ebo(0)
 {
     _programID = glCreateProgram();
+    glGenBuffers(1, &_ebo);
+    glGenVertexArrays(1, &_vao);
 }
 
 CommandBufferOpenGL::~CommandBufferOpenGL()
@@ -141,10 +144,25 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+void CommandBufferOpenGL::BindIndexBuffer(uint32_t indices[], uint32_t size)
+{
+    glBindVertexArray(_vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+    glBindVertexArray(0);
+}
+
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
     glBindVertexArray(_vao);
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    glBindVertexArray(0);
+}
+
+void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount, uint32_t indices[])
+{
+    glBindVertexArray(_vao);
+    glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 

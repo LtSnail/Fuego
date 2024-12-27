@@ -1,9 +1,9 @@
 #include "Application.h"
 
 #include "Events/EventVisitor.h"
+#include "FileSystem/FileSystem.h"
 #include "Input.h"
 #include "Renderer.h"
-#include "FileSystem/FileSystem.h"
 
 namespace Fuego
 {
@@ -70,7 +70,7 @@ void Application::OnEvent(EventVariant& event)
 
         auto HandledEventVisitor = EventVisitor{[](const Event& ev) -> bool
                                                 {
-                                                    //FU_CORE_TRACE("{0}", ev.ToString());
+                                                    // FU_CORE_TRACE("{0}", ev.ToString());
                                                     return ev.GetHandled();
                                                 }};
 
@@ -106,8 +106,9 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
         -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
         0.5f,  -0.5f, 0.0f, 0.0f, 0.0f, 1.0f   // Bottom-right vertex (Blue)
     };
+    static unsigned int indices[3]{0, 1, 2};
     d->_renderer->Clear();
-    d->_renderer->DrawMesh(mesh, sizeof(mesh) / stride, stride);
+    d->_renderer->DrawMesh(mesh, sizeof(mesh) / stride, indices, 3, stride);
     d->_renderer->Present();
 
     event.SetHandled();
