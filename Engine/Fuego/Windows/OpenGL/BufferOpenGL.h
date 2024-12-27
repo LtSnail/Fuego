@@ -17,6 +17,6 @@ private:
 
 protected:
     friend class DeviceOpenGL;
-    BufferOpenGL(size_t size, uint32_t flags);
+    BufferOpenGL();
 };
 }  // namespace Fuego::Renderer

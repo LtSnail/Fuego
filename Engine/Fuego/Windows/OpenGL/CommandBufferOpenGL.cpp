@@ -14,6 +14,7 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     , _vertexShader(-1)
     , _pixelShader(-1)
     , _isLinked(false)
+    , _vao(0)
 {
     _programID = glCreateProgram();
 }
@@ -126,6 +127,8 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
 
 void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
 {
+    glBindVertexArray(_vao);
+
     const BufferOpenGL& buff = static_cast<const BufferOpenGL&>(vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
 
@@ -134,11 +137,15 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3 * sizeof(float)));  // Color attribute
     glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
+    glBindVertexArray(_vao);
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    glBindVertexArray(0);
 }
 
 void CommandBufferOpenGL::Clear()

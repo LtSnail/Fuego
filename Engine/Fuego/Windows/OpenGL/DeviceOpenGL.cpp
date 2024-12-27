@@ -22,7 +22,7 @@ std::unique_ptr<Surface> Device::CreateSurface(const void* window)
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
 {
-    return std::unique_ptr<Buffer>(new BufferOpenGL(size, flags));
+    return std::unique_ptr<Buffer>(new BufferOpenGL());
 }
 
 std::unique_ptr<CommandQueue> DeviceOpenGL::CreateCommandQueue()

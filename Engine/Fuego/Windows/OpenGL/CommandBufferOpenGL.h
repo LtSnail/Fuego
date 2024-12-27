@@ -22,6 +22,7 @@ public:
     virtual void Clear() override;
 
 private:
+    uint32_t _vao;
     uint32_t _programID;
     uint32_t _vertexShader;
     uint32_t _pixelShader;

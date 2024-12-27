@@ -20,17 +20,18 @@ Renderer::Renderer()
 
     _vertexShader = _device->CreateShader("vs_shader", Shader::ShaderType::Vertex);
     _pixelShader = _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel);
+    _buffer = _device->CreateBuffer(0, 0);
 }
 
 void Renderer::DrawMesh(float mesh[], uint32_t vertexCount, uint32_t stride)
 {
-    static std::unique_ptr<Buffer> vertexBuffer = _device->CreateBuffer(vertexCount * stride, 0);
-    vertexBuffer->BindData<float>(std::span(mesh, vertexCount * (stride / sizeof(float))));
+    //_buffer.reset(_device->CreateBuffer(vertexCount * stride, 0).release());
+    _buffer->BindData<float>(std::span(mesh, vertexCount * (stride / sizeof(float))));
 
     CommandBuffer& cmd = _commandPool->GetCommandBuffer();
     cmd.BeginRecording();
     cmd.BindRenderTarget(_swapchain->GetScreenTexture());
-    cmd.BindVertexBuffer(*vertexBuffer);
+    cmd.BindVertexBuffer(*_buffer);
     cmd.BindVertexShader(*_vertexShader);
     cmd.BindPixelShader(*_pixelShader);
     cmd.Draw(3);
