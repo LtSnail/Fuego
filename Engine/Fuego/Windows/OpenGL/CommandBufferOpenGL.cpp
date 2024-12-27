@@ -113,6 +113,13 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         FU_CORE_ERROR("[CommandBufferOpenGL] shader linking error: ", infoLog);
         return;
     }
+    else
+    {
+        GLuint* shaders = new GLuint[2];
+        glGetAttachedShaders(_programID, 2, nullptr, shaders);
+        glDeleteShader(shaders[0]);
+        glDeleteShader(shaders[1]);
+    }
     _isLinked = true;
     glUseProgram(_programID);
 }
