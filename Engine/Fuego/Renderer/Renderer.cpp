@@ -26,7 +26,6 @@ Renderer::Renderer()
 void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount)
 {
     _buffer->BindData<float>(std::span(vertices, vertexCount * sizeof(float)));
-
     CommandBuffer& cmd = _commandPool->GetCommandBuffer();
     cmd.BeginRecording();
     cmd.BindRenderTarget(_swapchain->GetScreenTexture());
@@ -48,6 +47,11 @@ void Renderer::Clear()
 void Renderer::Present()
 {
     _swapchain->Present();
+}
+
+void Renderer::ShowWireFrame(bool show)
+{
+    _swapchain->ShowWireFrame(show);
 }
 
 }  // namespace Fuego::Renderer

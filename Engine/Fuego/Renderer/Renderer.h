@@ -21,6 +21,8 @@ public:
     void Clear();
     void Present();
 
+    void ShowWireFrame(bool show = true);
+
     Renderer(const Renderer&&) = delete;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;

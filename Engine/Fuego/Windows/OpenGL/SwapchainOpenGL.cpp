@@ -54,4 +54,16 @@ void APIENTRY SwapchainOpenGL::OpenGLDebugCallbackFunc(GLenum source, GLenum typ
 {
     FU_CORE_ERROR("[OpenGL] \nMessage: {0}\nSource: {1}\nType: {2}\nID: {3}\nSeverity: {4}", (const char*)message, source, type, id, severity);
 }
+
+void SwapchainOpenGL::ShowWireFrame(bool show)
+{
+    if (show)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    else
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+}
 }  // namespace Fuego::Renderer

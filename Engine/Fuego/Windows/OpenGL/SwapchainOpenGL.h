@@ -17,6 +17,8 @@ public:
 
     virtual Surface& GetScreenTexture() override;
 
+    virtual void ShowWireFrame(bool show) override;
+
 private:
     static void APIENTRY OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
                                                  const void* userParam);

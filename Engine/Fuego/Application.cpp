@@ -114,6 +114,8 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
         0, 4, 1
     };
     // clang-format on
+
+    d->_renderer->ShowWireFrame(false);
     d->_renderer->Clear();
     d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
     d->_renderer->Present();
