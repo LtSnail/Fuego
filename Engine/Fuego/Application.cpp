@@ -99,7 +99,6 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    static constexpr uint32_t stride = sizeof(float) * 6;
     static float mesh[] = {
         // Positions        // Colors
         0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
@@ -108,7 +107,7 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
     };
     static unsigned int indices[3]{0, 1, 2};
     d->_renderer->Clear();
-    d->_renderer->DrawMesh(mesh, sizeof(mesh) / stride, indices, 3, stride);
+    d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
     d->_renderer->Present();
 
     event.SetHandled();
