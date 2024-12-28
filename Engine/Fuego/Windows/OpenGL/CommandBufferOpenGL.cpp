@@ -16,6 +16,7 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     , _isLinked(false)
     , _vao(0)
     , _ebo(0)
+    , _isDataAllocated(false)
 {
     _programID = glCreateProgram();
     glGenBuffers(1, &_ebo);
@@ -78,6 +79,7 @@ void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)
         if (_vertexShader != shaderGL->GetID())
         {
             glDetachShader(_programID, _vertexShader);
+            glDeleteShader(_vertexShader);
             glAttachShader(_programID, shaderGL->GetID());
             _vertexShader = shaderGL->GetID();
         }
@@ -97,6 +99,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         if (_pixelShader != shaderGL->GetID())
         {
             glDetachShader(_programID, _pixelShader);
+            glDeleteShader(_pixelShader);
             glAttachShader(_programID, shaderGL->GetID());
             _pixelShader = shaderGL->GetID();
         }
@@ -123,7 +126,9 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
     {
         GLuint shaders[2];
         glGetAttachedShaders(_programID, 2, nullptr, shaders);
+        glDetachShader(_programID, shaders[0]);
         glDeleteShader(shaders[0]);
+        glDetachShader(_programID, shaders[1]);
         glDeleteShader(shaders[1]);
     }
     _isLinked = true;
@@ -150,7 +155,15 @@ void CommandBufferOpenGL::BindIndexBuffer(uint32_t indices[], uint32_t size)
 {
     glBindVertexArray(_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+    if (!_isDataAllocated)
+    {
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+        _isDataAllocated = true;
+    }
+    else
+    {
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, size, indices);
+    }
     glBindVertexArray(0);
 }
 

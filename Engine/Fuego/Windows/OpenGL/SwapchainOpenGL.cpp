@@ -52,7 +52,17 @@ Surface& SwapchainOpenGL::GetScreenTexture()
 void APIENTRY SwapchainOpenGL::OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
                                                        const void* userParam)
 {
-    FU_CORE_ERROR("[OpenGL] \nMessage: {0}\nSource: {1}\nType: {2}\nID: {3}\nSeverity: {4}", (const char*)message, source, type, id, severity);
+    GLenum error = glGetError();
+    if (error == GL_NO_ERROR)
+    {
+        FU_CORE_INFO("[OpenGL] \nMessage: {0}\nSource: {1}\nType: {2}\nID: {3}\nSeverity: {4}",
+            (const char*)message, source, type, id, severity);
+    }
+    else
+    {
+        FU_CORE_ERROR("[OpenGL] \nMessage: {0}\nSource: {1}\nType: {2}\nID: {3}\nSeverity: {4}",
+            (const char*)message, source, type, id, severity);
+    }
 }
 
 void SwapchainOpenGL::ShowWireFrame(bool show)

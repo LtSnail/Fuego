@@ -17,6 +17,10 @@ ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
         glGetShaderInfoLog(_shaderID, 512, nullptr, infoLog);
         FU_CORE_ERROR("[Shader] compilation error: ", infoLog);
     }
+    else
+    {
+        FU_CORE_TRACE("[Shader] has compiled");
+    }
 }
 
 ShaderOpenGL::~ShaderOpenGL()

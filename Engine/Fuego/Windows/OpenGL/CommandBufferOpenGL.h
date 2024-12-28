@@ -30,6 +30,7 @@ private:
     uint32_t _vertexShader;
     uint32_t _pixelShader;
     bool _isLinked;
+    bool _isDataAllocated;
 
 protected:
     friend class CommandPoolOpenGL;
