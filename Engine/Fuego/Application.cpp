@@ -5,6 +5,7 @@
 #include "Input.h"
 #include "Renderer.h"
 
+
 namespace Fuego
 {
 
@@ -100,20 +101,39 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     // clang-format off
-    static float mesh[] = {                                       // Positions        // Colors
-                           0.0f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  // Top vertex (Red)
-                           0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  // Bottom-left vertex (Green)
-                          -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 1.0f,  // Bottom-right vertex (Blue)
-                          -0.5f,  0.5f,  0.0f, 0.5f, 0.5f, 0.5f,
-                           0.5f,  0.5f,  0.0f, 0.5f, 0.5f, 0.5f
-
-    };
+    static float mesh[] = {  
+    // Positions          // Colors
+    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  // Front-bottom-left (Red)
+    0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,  // Front-bottom-right (Green)
+    0.5f,  0.5f, -0.5f,   0.0f, 0.0f, 1.0f,  // Front-top-right (Blue)
+    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  // Front-top-left (Yellow)
+    -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,  // Back-bottom-left (Cyan)
+    0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,  // Back-bottom-right (Magenta)
+    0.5f,  0.5f,  0.5f,   0.5f, 0.5f, 0.5f,  // Back-top-right (Gray)
+    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f   // Back-top-left (White)
+};
     static unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0,
-        0, 4, 1
-    };
+    // Front face
+    0, 1, 2,
+    2, 3, 0,
+    // Back face
+    4, 5, 6,
+    6, 7, 4,
+    // Left face
+    4, 0, 3,
+    3, 7, 4,
+    // Right face
+    1, 5, 6,
+    6, 2, 1,
+    // Top face
+    3, 2, 6,
+    6, 7, 3,
+    // Bottom face
+    4, 5, 1,
+    1, 0, 4
+};
     // clang-format on
+
 
     d->_renderer->ShowWireFrame(false);
     d->_renderer->Clear();

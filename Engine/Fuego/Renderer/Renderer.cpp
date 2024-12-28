@@ -5,6 +5,7 @@
 #include "CommandBuffer.h"
 #include "Surface.h"
 
+
 namespace Fuego::Renderer
 {
 
@@ -21,6 +22,8 @@ Renderer::Renderer()
     _vertexShader = _device->CreateShader("vs_shader", Shader::ShaderType::Vertex);
     _pixelShader = _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel);
     _buffer = _device->CreateBuffer(0, 0);
+
+    
 }
 
 void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount)
