@@ -25,6 +25,8 @@ CommandBufferOpenGL::CommandBufferOpenGL()
 CommandBufferOpenGL::~CommandBufferOpenGL()
 {
     glDeleteProgram(_programID);
+    glDeleteBuffers(1, &_vao);
+    glDeleteBuffers(1, &_ebo);
 }
 
 void CommandBufferOpenGL::BeginRecording()
@@ -119,7 +121,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
     }
     else
     {
-        GLuint* shaders = new GLuint[2];
+        GLuint shaders[2];
         glGetAttachedShaders(_programID, 2, nullptr, shaders);
         glDeleteShader(shaders[0]);
         glDeleteShader(shaders[1]);
