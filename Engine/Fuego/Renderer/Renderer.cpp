@@ -36,7 +36,7 @@ void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices
     cmd.BindVertexShader(*_vertexShader);
     cmd.BindPixelShader(*_pixelShader);
     cmd.BindIndexBuffer(indices, sizeof(unsigned int) * indicesCount);
-    cmd.IndexedDraw(vertexCount, indices);
+    cmd.IndexedDraw(vertexCount);
     cmd.EndRecording();
     cmd.Submit();
 }

@@ -192,7 +192,7 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
     glBindVertexArray(0);
 }
 
-void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount, uint32_t indices[])
+void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount)
 {
     glBindVertexArray(_vao);
     glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);

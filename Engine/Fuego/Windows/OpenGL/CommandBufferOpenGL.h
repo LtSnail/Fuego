@@ -20,7 +20,7 @@ public:
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) override;
     virtual void BindIndexBuffer(uint32_t indices[], uint32_t size) override;
     virtual void Draw(uint32_t vertexCount) override;
-    virtual void IndexedDraw(uint32_t vertexCount, uint32_t indices[]) override;
+    virtual void IndexedDraw(uint32_t vertexCount) override;
     virtual void Clear() override;
 
 private:
