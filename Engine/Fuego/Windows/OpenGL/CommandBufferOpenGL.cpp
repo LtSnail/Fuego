@@ -133,10 +133,13 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
             glAttachShader(_programID, shaderGL->GetID());
             _pixelShader = shaderGL->GetID();
         }
+        else
+        {
+            model = glm::rotate(model, glm::radians(0.5f), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.1f), glm::vec3(0.0f, 1.0f, 0.0f));
+        }
     }
-    if (_isLinked)
-        return;
-    
+
 }
 
 void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
