@@ -28,6 +28,7 @@ SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     // TODO: if debuf then enable OpenGL debug callback:
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(SwapchainOpenGL::OpenGLDebugCallbackFunc, nullptr);
+    glEnable(GL_DEPTH_TEST);
 }
 
 SwapchainOpenGL::~SwapchainOpenGL()

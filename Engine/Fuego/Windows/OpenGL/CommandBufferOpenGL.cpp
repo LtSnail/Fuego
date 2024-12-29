@@ -135,8 +135,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         }
         else
         {
-            model = glm::rotate(model, glm::radians(0.5f), glm::vec3(1.0f, 0.0f, 0.0f));
-            model = glm::rotate(model, glm::radians(0.1f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::rotate(model, glm::radians(0.5f), glm::vec3(1.1f, 1.0f, 1.0f));
         }
     }
 
@@ -199,7 +198,7 @@ void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount)
 void CommandBufferOpenGL::Clear()
 {
     glClearColor(1.f, 1.f, 1.f, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex)
