@@ -9,6 +9,12 @@
 
 namespace Fuego::Renderer
 {
+glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
+int modelLoc;
+int viewLoc;
+int projLoc;
 
 CommandBufferOpenGL::CommandBufferOpenGL()
     : _programID(0)
@@ -109,6 +115,13 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
             return;
         }
         _isLinked = true;
+
+        glUseProgram(_programID);
+        modelLoc = glGetUniformLocation(_programID, "model");
+        viewLoc = glGetUniformLocation(_programID, "view");
+        projLoc = glGetUniformLocation(_programID, "projection");
+        glUseProgram(0);
+
         return;
     }
     else
@@ -170,6 +183,10 @@ void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount)
 {
     glUseProgram(_programID);
     glBindVertexArray(_vao);
+
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
 
