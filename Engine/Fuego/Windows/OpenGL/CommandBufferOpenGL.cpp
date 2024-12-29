@@ -96,12 +96,6 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
     {
         glAttachShader(_programID, shaderGL->GetID());
         _pixelShader = shaderGL->GetID();
-        glUseProgram(_programID);
-        GLuint transformationLoc = glGetUniformLocation(_programID, "transformationMatrix");
-
-        static glm::mat4 rotationMat4 = glm::rotate(glm::mat4(1.0f), glm::radians(40.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-       
-        glUniformMatrix4fv(transformationLoc, 1, GL_FALSE, glm::value_ptr(rotationMat4));
 
         glLinkProgram(_programID);
         GLint success;
@@ -127,28 +121,8 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
             _pixelShader = shaderGL->GetID();
         }
     }
-    // TODO: think how to get rid of the order of binding
     if (_isLinked)
-    {
-        //glUseProgram(_programID);
         return;
-    }
-
-    //glLinkProgram(_programID);
-
-   
-   /* else
-    {
-        GLuint shaders[2];
-        glGetAttachedShaders(_programID, 2, nullptr, shaders);
-        glDetachShader(_programID, shaders[0]);
-        glDeleteShader(shaders[0]);
-        glDetachShader(_programID, shaders[1]);
-        glDeleteShader(shaders[1]);
-    }*/
-    
-    
-   
     
 }
 
@@ -194,8 +168,11 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 
 void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount)
 {
+    glUseProgram(_programID);
     glBindVertexArray(_vao);
+
     glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+
     glBindVertexArray(0);
 }
 
