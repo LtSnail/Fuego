@@ -1,15 +1,34 @@
 ﻿#include "WindowWin.h"
 
+#include <glad/gl.h>
+#include <glad/wgl.h>
+
 #include "InputWin.h"
 #include "Log.h"
 
 #define LAST_CODE UINT16_MAX
+
+typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int* attribList);
+wglCreateContextAttribsARB_type* wglCreateContextAttribsARB;
+
+#define WGL_CONTEXT_MAJOR_VERSION_ARB 0x2091
+#define WGL_CONTEXT_MINOR_VERSION_ARB 0x2092
+#define WGL_CONTEXT_PROFILE_MASK_ARB 0x9126
+
+#define WGL_CONTEXT_CORE_PROFILE_BIT_ARB 0x00000001
+
+typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats,
+                                                 UINT* nNumFormats);
+wglChoosePixelFormatARB_type* wglChoosePixelFormatARB;
 
 namespace Fuego
 {
 
 DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 {
+    InitOpenGLExtensions();
+
+
     WindowWin* _wnd = static_cast<WindowWin*>(lpParameter);
 
     static TCHAR buffer[32] = TEXT("");
@@ -74,6 +93,72 @@ LRESULT CALLBACK WindowWin::WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam
     }
 
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+void WindowWin::InitOpenGLExtensions()
+{
+    WNDCLASSA window_class = {
+        .style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
+        .lpfnWndProc = DefWindowProcA,
+        .hInstance = GetModuleHandle(0),
+        .lpszClassName = "Dummy_Window",
+    };
+
+    if (!RegisterClassA(&window_class))
+        FU_CORE_ERROR("Failed to register dummy OpenGL window");
+
+    HWND dummy_window = CreateWindowExA(0, window_class.lpszClassName, "Dummy OpenGL Window", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0,
+                                        0, window_class.hInstance, 0);
+    if (!dummy_window)
+        FU_CORE_ERROR("Failed to create dummy OpenGL window.");
+
+    HDC dummy_dc = GetDC(dummy_window);
+
+    PIXELFORMATDESCRIPTOR pfd = {
+        sizeof(PIXELFORMATDESCRIPTOR),                               // nSize
+        1,                                                           // nVersion
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,  // dwFlags
+        PFD_TYPE_RGBA,                                               // iPixelType
+        32,                                                          // cColorBits
+        8,                                                           // cRedBits (если не используется, 0)
+        0,                                                           // cRedShift
+        8,                                                           // cAlphaBits
+        0,                                                           // cAlphaShift
+        0,                                                           // cAccumBits
+        0,                                                           // cAccumRedBits
+        0,                                                           // cAccumGreenBits
+        0,                                                           // cAccumBlueBits
+        0,                                                           // cAccumAlphaBits
+        24,                                                          // cDepthBits
+        8,                                                           // cStencilBits
+        0,                                                           // cAuxBuffers
+        PFD_MAIN_PLANE,                                              // iLayerType
+        0,                                                           // bReserved
+        0,                                                           // dwLayerMask
+        0,                                                           // dwVisibleMask
+        0                                                            // dwDamageMask
+    };
+
+    int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
+    if (!pixel_format)
+        FU_CORE_ERROR("Failed to find a suitable pixel format.");
+    if (!SetPixelFormat(dummy_dc, pixel_format, &pfd))
+        FU_CORE_ERROR("Failed to set the pixel format.");
+
+    HGLRC dummy_context = wglCreateContext(dummy_dc);
+    if (!dummy_context)
+        FU_CORE_ERROR("Failed to create a dummy OpenGL rendering context.");
+
+    if (!wglMakeCurrent(dummy_dc, dummy_context))
+        FU_CORE_ERROR("Failed to activate dummy OpenGL rendering context.");
+
+    wglCreateContextAttribsARB = (wglCreateContextAttribsARB_type*)wglGetProcAddress("wglCreateContextAttribsARB");
+    wglChoosePixelFormatARB = (wglChoosePixelFormatARB_type*)wglGetProcAddress("wglChoosePixelFormatARB");
+
+    wglMakeCurrent(dummy_dc, 0);
+    wglDeleteContext(dummy_context);
+    ReleaseDC(dummy_window, dummy_dc);
+    DestroyWindow(dummy_window);
 }
 
 LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)

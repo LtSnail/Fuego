@@ -2,7 +2,10 @@
 
 #include "OpenGL/SurfaceOpenGL.h"
 #include "TextureOpenGL.h"
-#include "glad/glad.h"
+// clang-format off
+#include "glad/wgl.h"
+#include "glad/gl.h"
+// clang-format on
 
 namespace Fuego::Renderer
 {
@@ -10,14 +13,47 @@ SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     : _surface(dynamic_cast<const SurfaceOpenGL&>(surface))
 {
     const auto hdc = _surface.GetHdc();
-    int pixelFormat = ChoosePixelFormat(hdc, _surface.GetPfd());
-    SetPixelFormat(hdc, pixelFormat, _surface.GetPfd());
-    _ctx = wglCreateContext(hdc);
-    wglMakeCurrent(hdc, _ctx);
+    int pixel_format_attribs[] = {WGL_DRAW_TO_WINDOW_ARB,
+                                  GL_TRUE,
+                                  WGL_SUPPORT_OPENGL_ARB,
+                                  GL_TRUE,
+                                  WGL_DOUBLE_BUFFER_ARB,
+                                  GL_TRUE,
+                                  WGL_ACCELERATION_ARB,
+                                  WGL_FULL_ACCELERATION_ARB,
+                                  WGL_PIXEL_TYPE_ARB,
+                                  WGL_TYPE_RGBA_ARB,
+                                  WGL_COLOR_BITS_ARB,
+                                  32,
+                                  WGL_DEPTH_BITS_ARB,
+                                  24,
+                                  WGL_STENCIL_BITS_ARB,
+                                  8,
+                                  0};
+    int pixel_format;
+    UINT num_formats;
+    wglChoosePixelFormatARB(hdc, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
+    if (!num_formats)
+        FU_CORE_ERROR("Failed to set the OpenGL 3.3 pixel format.");
 
-    if (!gladLoadGL())
+    PIXELFORMATDESCRIPTOR pfd;
+    DescribePixelFormat(hdc, pixel_format, sizeof(pfd), &pfd);
+    if (!SetPixelFormat(hdc, pixel_format, &pfd))
+        FU_CORE_ERROR("Failed to set the OpenGL 3.3 pixel format.");
+    int gl33_attribs[] = {
+        WGL_CONTEXT_MAJOR_VERSION_ARB, 4, WGL_CONTEXT_MINOR_VERSION_ARB, 6, WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB, 0,
+    };
+    HGLRC gl33_context = wglCreateContextAttribsARB(hdc, 0, gl33_attribs);
+    if (!gl33_context)
+        FU_CORE_ERROR("Failed to create OpenGL 3.3 context.");
+
+    if (!wglMakeCurrent(hdc, gl33_context))
+        FU_CORE_ERROR("Failed to activate OpenGL 3.3 rendering context.");
+
+    int res = gladLoaderLoadGL();
+    if (res == 0)
     {
-        FU_CORE_CRITICAL("[OpenGL] GLAD failed to load!");
+        FU_CORE_ERROR("XUE");
     }
 
     FU_CORE_INFO("OpenGL info:");
@@ -127,9 +163,8 @@ void APIENTRY SwapchainOpenGL::OpenGLDebugCallbackFunc(GLenum source, GLenum typ
         FU_CORE_ERROR("Severity: Notification");
         break;
     }
-   
-        FU_CORE_ERROR("Message: {0}, Source: {1}, Type: {2}, ID: {3}, Severity: {4}\n",
-            (const char*)message, source, type, id, severity);
+
+    FU_CORE_ERROR("Message: {0}, Source: {1}, Type: {2}, ID: {3}, Severity: {4}\n", (const char*)message, source, type, id, severity);
 }
 
 void SwapchainOpenGL::ShowWireFrame(bool show)

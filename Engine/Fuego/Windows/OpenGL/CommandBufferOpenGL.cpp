@@ -1,11 +1,12 @@
 #include "CommandBufferOpenGL.h"
 
+#include <glm/ext.hpp>
+#include <glm/glm.hpp>
+
 #include "BufferOpenGL.h"
 #include "Renderer/Surface.h"
 #include "ShaderOpenGL.h"
-#include "glad/glad.h"
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
@@ -29,7 +30,6 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     _programID = glCreateProgram();
     glGenBuffers(1, &_ebo);
     glGenVertexArrays(1, &_vao);
-    
 }
 
 CommandBufferOpenGL::~CommandBufferOpenGL()
@@ -138,7 +138,6 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
             model = glm::rotate(model, glm::radians(0.5f), glm::vec3(1.1f, 1.0f, 1.0f));
         }
     }
-
 }
 
 void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)

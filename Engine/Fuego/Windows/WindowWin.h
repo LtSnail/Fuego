@@ -37,6 +37,7 @@ public:
 private:
     static DWORD WinThreadMain(_In_ LPVOID lpParameter);
     static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static void InitOpenGLExtensions();
 
     EventQueueWin* _eventQueue;
     Input::KeyInfo _lastKey;

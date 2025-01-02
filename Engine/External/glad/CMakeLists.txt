@@ -1,8 +1,9 @@
 # Glad
 
-set(PROJECT_HEADERS include/glad/glad.h include/KHR/khrplatform.h)
+set(PROJECT_HEADERS include/glad/gl.h include/glad/wgl.h
+                    include/KHR/khrplatform.h)
 
-set(PROJECT_SOURCES src/glad.c)
+set(PROJECT_SOURCES src/gl.c src/wgl.c)
 
 add_library(Glad STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 
