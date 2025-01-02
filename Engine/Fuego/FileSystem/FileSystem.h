@@ -5,20 +5,25 @@
 
 namespace Fuego::FS
 {
-const std::string pathToResources = std::filesystem::current_path().string() + "\\..\\..\\..\\Sandbox\\Resources\\";
-const std::string pathToShadersWindows = "Windows\\Shaders\\";
+
 
 class Application;
 
 class FileSystem
 {
 public:
-    std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode = std::fstream::ios_base::in);
+    FUEGO_NON_COPYABLE_NON_MOVABLE(FileSystem)
 
-friend class Application;
+    std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode = std::fstream::ios_base::in);
+    const std::string GetExecutablePath() const;
+
+
+    friend class Application;
     FileSystem() = default;
     ~FileSystem() = default;
 
-    FUEGO_NON_COPYABLE_NON_MOVABLE(FileSystem)
+private:
+    const std::string pathToResources = GetExecutablePath() + "\\..\\..\\..\\..\\Sandbox\\Resources\\";
+    const std::string pathToShadersWindows = "Windows\\Shaders\\";
 };
 }

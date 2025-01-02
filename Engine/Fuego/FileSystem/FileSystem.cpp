@@ -16,4 +16,11 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
     return buffer.str();
 }
 
+const std::string FileSystem::GetExecutablePath() const
+{
+    char path[MAX_PATH];
+    GetModuleFileNameA(NULL, path, MAX_PATH);
+    return std::filesystem::path(path).parent_path().string();
+}
+
 }  // namespace Fuego::FS
