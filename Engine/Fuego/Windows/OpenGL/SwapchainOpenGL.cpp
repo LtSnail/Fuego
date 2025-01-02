@@ -43,11 +43,11 @@ SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     int gl33_attribs[] = {
         WGL_CONTEXT_MAJOR_VERSION_ARB, 4, WGL_CONTEXT_MINOR_VERSION_ARB, 6, WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB, 0,
     };
-    HGLRC gl33_context = wglCreateContextAttribsARB(hdc, 0, gl33_attribs);
-    if (!gl33_context)
+    HGLRC ctx = wglCreateContextAttribsARB(hdc, 0, gl33_attribs);
+    if (!ctx)
         FU_CORE_ERROR("Failed to create OpenGL 3.3 context.");
 
-    if (!wglMakeCurrent(hdc, gl33_context))
+    if (!wglMakeCurrent(hdc, ctx))
         FU_CORE_ERROR("Failed to activate OpenGL 3.3 rendering context.");
 
     if (!gladLoaderLoadGL())
