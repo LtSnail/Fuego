@@ -28,19 +28,18 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 {
     InitOpenGLExtensions();
 
-
-    WindowWin* _wnd = static_cast<WindowWin*>(lpParameter);
+    WindowWin* window = static_cast<WindowWin*>(lpParameter);
 
     static TCHAR buffer[32] = TEXT("");
 #ifdef UNICODE
     MultiByteToWideChar(CP_UTF8, 0, props.Title.c_str(), -1, buffer, _countof(buffer));
 #else
-    sprintf_s(buffer, _wnd->_props.Title.c_str());
+    sprintf_s(buffer, window->_props.Title.c_str());
 #endif
     WNDCLASSEX wndClass = {};
     wndClass.cbSize = sizeof(WNDCLASSEX);
-    wndClass.lpszClassName = _wnd->_props.APP_WINDOW_CLASS_NAME;
-    wndClass.hInstance = _wnd->_hinstance;
+    wndClass.lpszClassName = window->_props.APP_WINDOW_CLASS_NAME;
+    wndClass.hInstance = window->_hinstance;
     wndClass.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
     wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wndClass.lpfnWndProc = WindowProcStatic;
@@ -49,25 +48,25 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 
     DWORD style = WS_OVERLAPPEDWINDOW | WS_SYSMENU;
     RECT rect;
-    rect.left = _wnd->_props.x;
-    rect.top = _wnd->_props.y;
-    rect.right = rect.left + _wnd->_props.Width;
-    rect.bottom = rect.top + _wnd->_props.Height;
+    rect.left = window->_props.x;
+    rect.top = window->_props.y;
+    rect.right = rect.left + window->_props.Width;
+    rect.bottom = rect.top + window->_props.Height;
 
     AdjustWindowRect(&rect, style, true);
 
-    _wnd->_hwnd = CreateWindowEx(0, _wnd->_props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-                                 nullptr, nullptr, _wnd->_hinstance, nullptr);
+    window->_hwnd = CreateWindowEx(0, window->_props.APP_WINDOW_CLASS_NAME, buffer, style, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+                                   nullptr, nullptr, window->_hinstance, nullptr);
 
-    FU_CORE_ASSERT(_wnd->_hwnd, "[AppWindow] hasn't been initialized!");
+    FU_CORE_ASSERT(window->_hwnd, "[AppWindow] hasn't been initialized!");
 
     // Associate this instance with the HWND
-    SetWindowLongPtr(_wnd->_hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(_wnd));
+    SetWindowLongPtr(window->_hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
 
-    ShowWindow(_wnd->_hwnd, SW_SHOW);
+    ShowWindow(window->_hwnd, SW_SHOW);
 
     FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
-    SetEvent(_wnd->_onThreadCreated);
+    SetEvent(window->_onThreadCreated);
 
     MSG msg{};
     while (GetMessage(&msg, nullptr, 0u, 0u))
@@ -76,10 +75,10 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
         DispatchMessage(&msg);
     }
 
-    DestroyWindow(_wnd->_hwnd);
+    DestroyWindow(window->_hwnd);
     DestroyIcon(wndClass.hIcon);
     DestroyCursor(wndClass.hCursor);
-    UnregisterClass(_wnd->_props.APP_WINDOW_CLASS_NAME, _wnd->_hinstance);
+    UnregisterClass(window->_props.APP_WINDOW_CLASS_NAME, window->_hinstance);
 
     return S_OK;
 }
@@ -114,30 +113,16 @@ void WindowWin::InitOpenGLExtensions()
 
     HDC dummy_dc = GetDC(dummy_window);
 
-    PIXELFORMATDESCRIPTOR pfd = {
-        sizeof(PIXELFORMATDESCRIPTOR),                               // nSize
-        1,                                                           // nVersion
-        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,  // dwFlags
-        PFD_TYPE_RGBA,                                               // iPixelType
-        32,                                                          // cColorBits
-        8,                                                           // cRedBits (если не используется, 0)
-        0,                                                           // cRedShift
-        8,                                                           // cAlphaBits
-        0,                                                           // cAlphaShift
-        0,                                                           // cAccumBits
-        0,                                                           // cAccumRedBits
-        0,                                                           // cAccumGreenBits
-        0,                                                           // cAccumBlueBits
-        0,                                                           // cAccumAlphaBits
-        24,                                                          // cDepthBits
-        8,                                                           // cStencilBits
-        0,                                                           // cAuxBuffers
-        PFD_MAIN_PLANE,                                              // iLayerType
-        0,                                                           // bReserved
-        0,                                                           // dwLayerMask
-        0,                                                           // dwVisibleMask
-        0                                                            // dwDamageMask
-    };
+    PIXELFORMATDESCRIPTOR pfd = {0};
+    pfd.nSize = sizeof(pfd);
+    pfd.nVersion = 1;
+    pfd.iPixelType = PFD_TYPE_RGBA;
+    pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+    pfd.cColorBits = 32;
+    pfd.cAlphaBits = 8;
+    pfd.iLayerType = PFD_MAIN_PLANE;
+    pfd.cDepthBits = 24;
+    pfd.cStencilBits = 8;
 
     int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
     if (!pixel_format)

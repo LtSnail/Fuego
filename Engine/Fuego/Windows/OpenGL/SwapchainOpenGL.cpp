@@ -50,18 +50,15 @@ SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     if (!wglMakeCurrent(hdc, gl33_context))
         FU_CORE_ERROR("Failed to activate OpenGL 3.3 rendering context.");
 
-    int res = gladLoaderLoadGL();
-    if (res == 0)
-    {
-        FU_CORE_ERROR("XUE");
-    }
+    if (!gladLoaderLoadGL())
+        FU_CORE_ERROR("[OpenGL] can't load OoenGL");
 
     FU_CORE_INFO("OpenGL info:");
     FU_CORE_INFO("  Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
     FU_CORE_INFO("  GLSL Version: {0}", reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
     FU_CORE_INFO("  GPU Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
     FU_CORE_INFO("  Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
-    // TODO: if debuf then enable OpenGL debug callback:
+    // TODO: if debug then enable OpenGL debug callback:
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(SwapchainOpenGL::OpenGLDebugCallbackFunc, nullptr);
