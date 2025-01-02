@@ -34,21 +34,31 @@ SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     UINT num_formats;
     wglChoosePixelFormatARB(hdc, pixel_format_attribs, 0, 1, &pixel_format, &num_formats);
     if (!num_formats)
-        FU_CORE_ERROR("Failed to set the OpenGL 3.3 pixel format.");
+        FU_CORE_ERROR("Failed to set the OpenGL 4.6 pixel format.");
 
     PIXELFORMATDESCRIPTOR pfd;
     DescribePixelFormat(hdc, pixel_format, sizeof(pfd), &pfd);
     if (!SetPixelFormat(hdc, pixel_format, &pfd))
-        FU_CORE_ERROR("Failed to set the OpenGL 3.3 pixel format.");
-    int gl33_attribs[] = {
-        WGL_CONTEXT_MAJOR_VERSION_ARB, 4, WGL_CONTEXT_MINOR_VERSION_ARB, 6, WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB, 0,
+        FU_CORE_ERROR("Failed to set the OpenGL 4.6 pixel format.");
+
+    // clang-format off
+    int ctx_attribs[] = {
+        WGL_CONTEXT_MAJOR_VERSION_ARB,
+        4,
+        WGL_CONTEXT_MINOR_VERSION_ARB,
+        6,
+        WGL_CONTEXT_PROFILE_MASK_ARB,
+        WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+        0,
     };
-    HGLRC ctx = wglCreateContextAttribsARB(hdc, 0, gl33_attribs);
+    // clang-format on
+
+    HGLRC ctx = wglCreateContextAttribsARB(hdc, 0, ctx_attribs);
     if (!ctx)
-        FU_CORE_ERROR("Failed to create OpenGL 3.3 context.");
+        FU_CORE_ERROR("Failed to create OpenGL 4.6 context.");
 
     if (!wglMakeCurrent(hdc, ctx))
-        FU_CORE_ERROR("Failed to activate OpenGL 3.3 rendering context.");
+        FU_CORE_ERROR("Failed to activate OpenGL 4.6 rendering context.");
 
     if (!gladLoaderLoadGL())
         FU_CORE_ERROR("[OpenGL] can't load OoenGL");
