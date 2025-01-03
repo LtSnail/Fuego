@@ -87,7 +87,6 @@ DeviceOpenGL::DeviceOpenGL()
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
     glEnable(GL_DEPTH_TEST);
-    ReleaseDC(hwnd, hdc);
 }
 
 void DeviceOpenGL::OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)

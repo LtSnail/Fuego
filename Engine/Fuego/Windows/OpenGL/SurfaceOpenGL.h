@@ -15,8 +15,7 @@ public:
     const PIXELFORMATDESCRIPTOR* GetPfd() const;
 
 private:
-    HWND _window;                // shouldn't be here
-    HDC _hdc;                    // WIN32: Handle to Device Context
-    PIXELFORMATDESCRIPTOR _pfd;  // WIN32: Pixel format descriptor
+    HWND _window;  // shouldn't be here
+    HDC _hdc;      // WIN32: Handle to Device Context
 };
 }  // namespace Fuego::Renderer
