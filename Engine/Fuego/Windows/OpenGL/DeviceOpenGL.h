@@ -2,13 +2,14 @@
 #include <memory>
 
 #include "Renderer/Device.h"
+#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
 class DeviceOpenGL : public Device
 {
 public:
-    virtual ~DeviceOpenGL() = default;
+    virtual ~DeviceOpenGL();
 
     virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) override;
     virtual std::unique_ptr<CommandQueue> CreateCommandQueue() override;
@@ -18,6 +19,11 @@ public:
 
 protected:
     friend class Device;
-    DeviceOpenGL() = default;
+    DeviceOpenGL();
+
+private:
+    static void APIENTRY OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
+                                                 const void* userParam);
+    HGLRC ctx;
 };
 }  // namespace Fuego::Renderer
