@@ -2,24 +2,18 @@
 
 namespace Fuego::Renderer
 {
-SurfaceOpenGL::SurfaceOpenGL(const void* window)
+SurfaceOpenGL::SurfaceOpenGL(const Fuego::Window* window)
+    : _window(reinterpret_cast<const WindowWin*>(window))
 {
-    _window = (HWND)window;
-    _hdc = GetDC(_window);
 }
 
 SurfaceOpenGL::~SurfaceOpenGL()
 {
-    ReleaseDC(_window, _hdc);
 }
 
-const void* SurfaceOpenGL::GetNativeHandle() const
+Window& SurfaceOpenGL::GetBindedWindow() const
 {
-    return _window;
-}
-HDC SurfaceOpenGL::GetHdc() const
-{
-    return _hdc;
+    return (Window&)*_window;
 }
 
 }  // namespace Fuego::Renderer

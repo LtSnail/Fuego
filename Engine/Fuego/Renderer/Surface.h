@@ -2,11 +2,13 @@
 
 namespace Fuego::Renderer
 {
+class Window;
+
 class Surface
 {
 public:
     virtual ~Surface() = default;
 
-    virtual const void* GetNativeHandle() const = 0;
+    virtual Window& GetBindedWindow() const = 0;
 };
 }  // namespace Fuego::Renderer

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shader.h"
+#include "Window.h"
 
 namespace Fuego::Renderer
 {
@@ -10,6 +11,7 @@ class CommandPool;
 class Swapchain;
 class Surface;
 class Shader;
+class Fuego::Window;
 
 class Device
 {
@@ -22,6 +24,6 @@ public:
     virtual std::unique_ptr<CommandPool> CreateCommandPool(const CommandQueue& queue) = 0;
     virtual std::unique_ptr<Swapchain> CreateSwapchain(const Surface& surface) = 0;
     virtual std::unique_ptr<Shader> CreateShader(std::string_view shaderName, Shader::ShaderType type) = 0;
-    virtual std::unique_ptr<Surface> CreateSurface(const void* window);
+    virtual std::unique_ptr<Surface> CreateSurface(const Fuego::Window* window);
 };
 }  // namespace Fuego::Renderer

@@ -1,21 +1,27 @@
 #pragma once
 
 #include "Renderer/Surface.h"
+#include "WindowWin.h"
 
 namespace Fuego::Renderer
 {
 class SurfaceOpenGL : public Surface
 {
 public:
-    SurfaceOpenGL(const void* window);
+    SurfaceOpenGL(const Fuego::Window* window);
     ~SurfaceOpenGL();
 
-    virtual const void* GetNativeHandle() const override;
-    HDC GetHdc() const;
-    const PIXELFORMATDESCRIPTOR* GetPfd() const;
+    virtual Window& GetBindedWindow() const override;
+    inline const HDC GetDescriptor() const
+    {
+        return _window->GetDescriptor();
+    }
+    inline const HWND GetHandle() const
+    {
+        return _window->GetHandle();
+    }
 
 private:
-    HWND _window;  // shouldn't be here
-    HDC _hdc;      // WIN32: Handle to Device Context
+    const WindowWin* _window;
 };
 }  // namespace Fuego::Renderer

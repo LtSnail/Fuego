@@ -176,7 +176,7 @@ Fuego::FS::FileSystem& Application::FileSystem()
     return *d->_fs.get();
 }
 
-Window& Application::GetWindow()
+const Window& Application::GetWindow()
 {
     return *d->m_Window;
 }

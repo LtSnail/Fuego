@@ -20,7 +20,7 @@ SwapchainOpenGL::~SwapchainOpenGL()
 
 void SwapchainOpenGL::Present()
 {
-    SwapBuffers(_surface.GetHdc());
+    SwapBuffers(_surface.GetDescriptor());
 }
 
 Surface& SwapchainOpenGL::GetScreenTexture()
@@ -43,7 +43,7 @@ void SwapchainOpenGL::ShowWireFrame(bool show)
 void SwapchainOpenGL::ValidateWindow()
 {
     static PAINTSTRUCT ps;
-    BeginPaint((HWND)_surface.GetNativeHandle(), &ps);
-    EndPaint((HWND)_surface.GetNativeHandle(), &ps);
+    BeginPaint(_surface.GetHandle(), &ps);
+    EndPaint(_surface.GetHandle(), &ps);
 }
 }  // namespace Fuego::Renderer

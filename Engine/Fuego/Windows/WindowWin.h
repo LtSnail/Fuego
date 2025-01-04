@@ -11,6 +11,7 @@ class WindowWin : public Window
 {
 public:
     WindowWin(const WindowProps& props, EventQueue& eventQueue);
+    virtual ~WindowWin() override;
 
     virtual void Update() override;
 
@@ -34,10 +35,18 @@ public:
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
     void GetCursorPos(OUT float& xPos, OUT float& yPos) const;
 
-
     virtual inline bool IsResizing() const
     {
         return isResizing;
+    }
+
+    inline HDC GetDescriptor() const
+    {
+        return _hdc;
+    }
+    inline HWND GetHandle() const
+    {
+        return _hwnd;
     }
 
 private:
@@ -55,6 +64,7 @@ private:
 
     // Window handle
     HWND _hwnd;
+    HDC _hdc;
     HINSTANCE _hinstance;  // Relates to the Application
     WindowProps _props;
 

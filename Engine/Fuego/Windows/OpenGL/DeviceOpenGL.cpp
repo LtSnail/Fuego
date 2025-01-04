@@ -1,5 +1,6 @@
 ﻿#include "OpenGL/DeviceOpenGL.h"
 
+#include "WindowWin.h"
 #include "Application.h"
 #include "BufferOpenGL.h"
 #include "CommandPoolOpenGL.h"
@@ -17,8 +18,8 @@ namespace Fuego::Renderer
 DeviceOpenGL::DeviceOpenGL()
     : ctx(nullptr)
 {
-    HWND hwnd = (HWND)Application::Get().GetWindow().GetNativeHandle();
-    HDC hdc = GetDC(hwnd);
+    const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());
+    const HDC hdc = window.GetDescriptor();
 
     int pixel_format_attribs[] = {WGL_DRAW_TO_WINDOW_ARB,
                                   GL_TRUE,
@@ -177,7 +178,7 @@ std::unique_ptr<Device> Device::CreateDevice()
     return std::unique_ptr<Device>(new DeviceOpenGL());
 }
 
-std::unique_ptr<Surface> Device::CreateSurface(const void* window)
+std::unique_ptr<Surface> Device::CreateSurface(const Fuego::Window* window)
 {
     return std::unique_ptr<Surface>(new SurfaceOpenGL(window));
 }

@@ -47,7 +47,7 @@ public:
     static Application& Get();
     Fuego::Renderer::Renderer& Renderer();
     Fuego::FS::FileSystem& FileSystem();
-    Window& GetWindow();
+    const Window& GetWindow();
 };
 
 // Should be defined in a client.

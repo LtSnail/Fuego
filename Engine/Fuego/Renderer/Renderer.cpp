@@ -14,8 +14,7 @@ Renderer::Renderer()
     _device = Device::CreateDevice();
     _commandQueue = _device->CreateCommandQueue();
 
-    // Temporary: we're creating surface for main Application window
-    _surface = _device->CreateSurface(Fuego::Application::Get().GetWindow().GetNativeHandle());
+    _surface = _device->CreateSurface(&Fuego::Application::Get().GetWindow());
     _swapchain = _device->CreateSwapchain(*_surface);
     _commandPool = _device->CreateCommandPool(*_commandQueue);
 

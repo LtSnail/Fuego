@@ -23,7 +23,6 @@ wglChoosePixelFormatARB_type* wglChoosePixelFormatARB;
 
 namespace Fuego
 {
-
 DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 {
     InitOpenGLExtensions();
@@ -279,9 +278,16 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , isPainted(true)
     , _currentWidth(props.Width)
     , _currentHeigth(props.Height)
+    , _hdc(nullptr)
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
     WaitForSingleObject(_onThreadCreated, INFINITE);
+    _hdc = GetDC(_hwnd);
+}
+
+WindowWin::~WindowWin()
+{
+    ReleaseDC(_hwnd, _hdc);
 }
 
 void WindowWin::Update()
