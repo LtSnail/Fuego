@@ -8,6 +8,14 @@
 
 namespace Fuego
 {
+
+enum WindowMode
+{
+    MINIMIZED = 0,
+    MAXIMIZED = 1,
+    RESTORED = 2,
+};
+
 struct WindowProps
 {
     std::string Title = "Fuego Engine";
@@ -15,6 +23,7 @@ struct WindowProps
     long y = 100;
     unsigned int Width = 1280;
     unsigned int Height = 720;
+    WindowMode mode = RESTORED;
 
     bool Centered = true;
     bool Resizable = true;

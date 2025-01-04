@@ -154,7 +154,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
     case WM_PAINT:
     {
-        if (!isPainted || isResizing) return 0;
+        if (!isPainted || isResizing || _props.mode == MINIMIZED) return 0;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowValidateEvent()));
         isPainted = false;
         return 0;
@@ -166,17 +166,24 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
     }
     case WM_EXITSIZEMOVE:
+    {
         isResizing = false;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowEndResizeEvent()));
+
+        UINT width = LOWORD(lparam);
+        UINT height = HIWORD(lparam);
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
         break;
+    }
     case WM_SIZE:
     {
         if (isResizing) break;
 
         UINT width = LOWORD(lparam);
         UINT height = HIWORD(lparam);
-
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
+
+        SetWindowMode(wparam);
         break;
     }
     case WM_MOUSEMOVE:
@@ -266,6 +273,8 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , _onThreadCreated(CreateEvent(nullptr, FALSE, FALSE, nullptr))
     , isResizing(false)
     , isPainted(true)
+    , _currentWidth(props.Width)
+    , _currentHeigth(props.Height)
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
     WaitForSingleObject(_onThreadCreated, INFINITE);
@@ -273,9 +282,9 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
 
 void WindowWin::Update()
 {
-    if (isResizing)
+    if (isResizing || _props.mode == MINIMIZED)
     {
-        FU_CORE_INFO("Window is in resizing mode, stop rendering");
+        FU_CORE_INFO("stop rendering");
         return;
     }
         _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
@@ -315,5 +324,21 @@ void WindowWin::GetCursorPos(OUT float& xPos, OUT float& yPos) const
 std::unique_ptr<Window> Window::CreateAppWindow(const WindowProps& props, EventQueue& eventQueue)
 {
     return std::make_unique<WindowWin>(props, eventQueue);
+}
+
+void WindowWin::SetWindowMode(WPARAM mode)
+{
+    switch (mode)
+    {
+    case SIZE_MINIMIZED:
+        _props.mode = MINIMIZED;
+        break;
+    case SIZE_MAXIMIZED:
+        _props.mode = MAXIMIZED;
+        break;
+    case SIZE_RESTORED:
+        _props.mode = RESTORED;
+        break;
+    }
 }
 }  // namespace Fuego
