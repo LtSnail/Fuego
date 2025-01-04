@@ -172,6 +172,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
         UINT width = LOWORD(lparam);
         UINT height = HIWORD(lparam);
+        _currentWidth = width;
+        _currentHeigth = height;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
         break;
     }
@@ -181,6 +183,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
         UINT width = LOWORD(lparam);
         UINT height = HIWORD(lparam);
+        _currentWidth = width;
+        _currentHeigth = height;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
 
         SetWindowMode(wparam);
