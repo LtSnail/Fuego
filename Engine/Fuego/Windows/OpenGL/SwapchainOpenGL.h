@@ -18,6 +18,7 @@ public:
     virtual Surface& GetScreenTexture() override;
 
     virtual void ShowWireFrame(bool show) override;
+    virtual void ValidateWindow() override;
 
 private:
     SurfaceOpenGL _surface;

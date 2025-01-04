@@ -35,9 +35,14 @@ public:
     void PushOverlay(Layer* overlay);
 
     void OnEvent(EventVariant& event);
+    bool OnRenderEvent(AppRenderEvent& event);
+
+    // Window events:
     bool OnWindowClose(WindowCloseEvent& event);
     bool OnWindowResize(WindowResizeEvent& event);
-    bool OnRenderEvent(AppRenderEvent& event);
+    bool OnStartResizeWindow(WindowStartResizeEvent& event);
+    bool OnEndResizeWindow(WindowEndResizeEvent& event);
+    bool OnValidateWindow(WindowValidateEvent& event);
 
     static Application& Get();
     Fuego::Renderer::Renderer& Renderer();

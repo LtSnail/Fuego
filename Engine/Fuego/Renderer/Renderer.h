@@ -22,6 +22,7 @@ public:
     void Present();
 
     void ShowWireFrame(bool show = true);
+    void ValidateWindow();
 
     Renderer(const Renderer&&) = delete;
     Renderer(const Renderer&) = delete;

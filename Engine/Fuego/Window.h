@@ -51,6 +51,9 @@ public:
 
     virtual const void* GetNativeHandle() const = 0;
 
+    virtual void SetPainted() = 0;
+    virtual inline bool IsResizing() const = 0;
+
     static std::unique_ptr<Window> CreateAppWindow(const WindowProps& props, EventQueue& eventQueue);
 };
 }  // namespace Fuego

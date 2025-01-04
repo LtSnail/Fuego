@@ -34,6 +34,12 @@ public:
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
     void GetCursorPos(OUT float& xPos, OUT float& yPos) const;
 
+
+    virtual inline bool IsResizing() const
+    {
+        return isResizing;
+    }
+
 private:
     static DWORD WinThreadMain(_In_ LPVOID lpParameter);
     static LRESULT CALLBACK WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -53,6 +59,16 @@ private:
     HANDLE _winThread;
     LPDWORD _winThreadID;
     HANDLE _onThreadCreated;
+
+    bool isResizing;
+    bool isPainted;
+
+    private:
+    friend class Application;
+    virtual inline void SetPainted() override
+    {
+        isPainted = true;
+    }
 };
 
 }  // namespace Fuego

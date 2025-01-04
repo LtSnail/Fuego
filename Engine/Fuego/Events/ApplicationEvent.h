@@ -34,6 +34,47 @@ private:
     uint32_t _width, _height;
 };
 
+class FUEGO_API WindowStartResizeEvent : public Event
+{
+public:
+    WindowStartResizeEvent()
+        : Event(EVENT_NAME(WindowStartResizeEvent))
+    {
+    }
+
+    inline std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << _name;
+        return ss.str();
+    }
+};
+
+class FUEGO_API WindowEndResizeEvent : public Event
+{
+public:
+    WindowEndResizeEvent()
+        : Event(EVENT_NAME(WindowEndResizeEvent))
+    {
+    }
+
+    inline std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << _name;
+        return ss.str();
+    }
+};
+
+class FUEGO_API WindowValidateEvent : public Event
+{
+public:
+    WindowValidateEvent()
+        : Event(EVENT_NAME(WindowValidateEvent))
+    {
+    }
+};
+
 class FUEGO_API WindowCloseEvent : public Event
 {
 public:

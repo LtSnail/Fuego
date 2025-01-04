@@ -57,4 +57,9 @@ void Renderer::ShowWireFrame(bool show)
     _swapchain->ShowWireFrame(show);
 }
 
+void Renderer::ValidateWindow()
+{
+    _swapchain->ValidateWindow();
+}
+
 }  // namespace Fuego::Renderer

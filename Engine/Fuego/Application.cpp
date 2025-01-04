@@ -60,6 +60,9 @@ void Application::OnEvent(EventVariant& event)
     auto ApplicationEventVisitor = EventVisitor{[this](WindowCloseEvent&    ev) { OnWindowClose(ev); },
                                                 [this](WindowResizeEvent&   ev) { OnWindowResize(ev); },
                                                 [this](AppRenderEvent&      ev) { OnRenderEvent(ev); },
+                                                [this](WindowStartResizeEvent&    ev) { OnStartResizeWindow(ev); },
+                                                [this](WindowEndResizeEvent&    ev) { OnEndResizeWindow(ev); },
+                                                [this](WindowValidateEvent&    ev) { OnValidateWindow(ev); },
                                                 [](Event&){}};
     // clang-format on
 
@@ -95,6 +98,26 @@ bool Application::OnWindowResize(WindowResizeEvent& event)
 
     // TODO: Recreate swapchain?
 
+    return true;
+}
+
+bool Application::OnStartResizeWindow(WindowStartResizeEvent& event)
+{
+    event.SetHandled();
+    return true;
+}
+
+bool Application::OnEndResizeWindow(WindowEndResizeEvent& event)
+{
+    event.SetHandled();
+    return true;
+}
+
+bool Application::OnValidateWindow(WindowValidateEvent& event)
+{
+    d->_renderer->ValidateWindow();
+    d->m_Window->SetPainted();
+    event.SetHandled();
     return true;
 }
 

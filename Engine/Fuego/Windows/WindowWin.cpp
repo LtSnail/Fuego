@@ -150,12 +150,35 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
     {
-    case WM_PAINT:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
-        return 0;
     case WM_ACTIVATE:
         break;
+    case WM_PAINT:
+    {
+        if (!isPainted || isResizing) return 0;
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowValidateEvent()));
+        isPainted = false;
+        return 0;
+    }
+    case WM_ENTERSIZEMOVE:
+    {
+        isResizing = true;
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowStartResizeEvent()));
+        break;
+    }
+    case WM_EXITSIZEMOVE:
+        isResizing = false;
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowEndResizeEvent()));
+        break;
+    case WM_SIZE:
+    {
+        if (isResizing) break;
 
+        UINT width = LOWORD(lparam);
+        UINT height = HIWORD(lparam);
+
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
+        break;
+    }
     case WM_MOUSEMOVE:
     {
         float x = static_cast<float>(GET_X_LPARAM(lparam));
@@ -219,14 +242,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowCloseEvent()));
         break;
 
-    case WM_SIZE:
-    {
-        UINT width = LOWORD(lparam);
-        UINT height = HIWORD(lparam);
 
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
-        break;
-    }
 
     default:
     {
@@ -248,6 +264,8 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , _winThread{}
     , _winThreadID(nullptr)
     , _onThreadCreated(CreateEvent(nullptr, FALSE, FALSE, nullptr))
+    , isResizing(false)
+    , isPainted(true)
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
     WaitForSingleObject(_onThreadCreated, INFINITE);
@@ -255,6 +273,12 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
 
 void WindowWin::Update()
 {
+    if (isResizing)
+    {
+        FU_CORE_INFO("Window is in resizing mode, stop rendering");
+        return;
+    }
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
 }
 
 void WindowWin::SetVSync(bool enabled)
