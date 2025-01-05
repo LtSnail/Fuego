@@ -37,4 +37,19 @@ const std::string FileSystem::GetExecutablePath() const
     return std::filesystem::path(path).parent_path().string();
 }
 
+const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
+{
+    for (const auto& path : _searchPaths)
+    {
+        std::filesystem::path filePath = pathToResources / std::filesystem::path(path) / fileName;
+
+        if (std::filesystem::exists(filePath))
+        {
+            return filePath.lexically_normal().string();
+        }
+    }
+
+    return "";
+}
+
 }  // namespace Fuego::FS
