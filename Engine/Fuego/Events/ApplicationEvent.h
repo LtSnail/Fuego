@@ -7,20 +7,30 @@ namespace Fuego
 class FUEGO_API WindowResizeEvent : public Event
 {
 public:
-    WindowResizeEvent(uint32_t width, uint32_t height)
+    WindowResizeEvent(float x, float y, float width, float height)
         : Event(EVENT_NAME(WindowResizeEvent))
+        , x(x)
+        , y(y)
         , _width(width)
         , _height(height)
     {
     }
 
-    inline uint32_t GetWidth() const
+    inline float GetWidth() const
     {
         return _width;
     }
-    inline uint32_t GetHeight() const
+    inline float GetHeight() const
     {
         return _height;
+    }
+    inline float GetX() const
+    {
+        return x;
+    }
+    inline float GetY() const
+    {
+        return y;
     }
 
     inline std::string ToString() const override
@@ -31,7 +41,7 @@ public:
     }
 
 private:
-    uint32_t _width, _height;
+    float x, y, _width, _height;
 };
 
 class FUEGO_API WindowStartResizeEvent : public Event

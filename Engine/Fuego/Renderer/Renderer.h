@@ -27,7 +27,17 @@ public:
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
 
+    struct Viewport
+    {
+        float width = 0.0f;
+        float heigth = 0.0f;
+        float x = 0.0f;
+        float y = 0.0f;
+    };
+
 private:
+
+    void UpdateViewport();
     std::unique_ptr<Buffer> _buffer;
     std::unique_ptr<Device> _device;
     std::unique_ptr<CommandQueue> _commandQueue;
@@ -37,7 +47,10 @@ private:
     std::unique_ptr<Shader> _pixelShader;
     std::unique_ptr<Surface> _surface;
 
+    Viewport viewport;
+
     friend class Fuego::Application;
     Renderer();
+    void ChangeViewport(float x, float y, float w, float h);
 };
 }  // namespace Fuego::Renderer

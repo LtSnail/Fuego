@@ -94,10 +94,8 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    UNUSED(event);
-
-    // TODO: Recreate swapchain?
-
+    d->_renderer->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
+    event.SetHandled();
     return true;
 }
 

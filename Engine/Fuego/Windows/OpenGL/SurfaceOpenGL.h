@@ -12,7 +12,6 @@ public:
 
     virtual const void* GetNativeHandle() const override;
     HDC GetHdc() const;
-    const PIXELFORMATDESCRIPTOR* GetPfd() const;
 
 private:
     HWND _window;  // shouldn't be here

@@ -59,4 +59,21 @@ void Renderer::ValidateWindow()
     _swapchain->ValidateWindow();
 }
 
+void Renderer::ChangeViewport(float x, float y, float w, float h)
+{
+    viewport.x = x;
+    viewport.y = y;
+    viewport.width = w;
+    viewport.heigth = h;
+    UpdateViewport();
+}
+
+void Renderer::UpdateViewport()
+{
+    _surface.release();
+    _surface = _device->CreateSurface(Fuego::Application::Get().GetWindow().GetNativeHandle());
+    _swapchain.release();
+    _swapchain = _device->CreateSwapchain(*_surface, 0, 0, viewport.width, viewport.heigth);
+}
+
 }  // namespace Fuego::Renderer

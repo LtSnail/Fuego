@@ -57,22 +57,7 @@ void CommandBufferOpenGL::Submit()
 
 void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // TODO: shouldn't be here
-    auto handle = (HWND)texture.GetNativeHandle();
-    RECT clientRect;
-    if (GetClientRect(handle, &clientRect))
-    {
-        int width = clientRect.right - clientRect.left;
-        int height = clientRect.bottom - clientRect.top;
-
-        glViewport(0, 0, width, height);
-    }
-    else
-    {
-        FU_CORE_ERROR("[CommandBufferOpenGL] Failed to get client rect for HWND");
-    }
+   // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)

@@ -170,22 +170,27 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         isResizing = false;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowEndResizeEvent()));
 
-        UINT width = LOWORD(lparam);
-        UINT height = HIWORD(lparam);
-        _currentWidth = width;
-        _currentHeigth = height;
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
+        RECT r;
+        GetWindowRect(hwnd, &r);
+        _currentWidth = r.right - r.left;
+        _currentHeigth = r.bottom - r.top;
+        _xPos = r.left;
+        _yPos = r.top;
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(_xPos, _yPos, _currentWidth, _currentHeigth)));
         break;
     }
     case WM_SIZE:
     {
         if (isResizing) break;
 
-        UINT width = LOWORD(lparam);
-        UINT height = HIWORD(lparam);
-        _currentWidth = width;
-        _currentHeigth = height;
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(width, height)));
+        _currentWidth = LOWORD(lparam);
+        _currentHeigth = HIWORD(lparam);
+
+        RECT r;
+        GetWindowRect(hwnd, &r);
+        _xPos = r.left;
+        _yPos = r.top;
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowResizeEvent(_xPos, _yPos, _currentWidth, _currentHeigth)));
 
         SetWindowMode(wparam);
         break;
@@ -279,6 +284,8 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , isPainted(true)
     , _currentWidth(props.Width)
     , _currentHeigth(props.Height)
+    , _xPos(props.x)
+    , _yPos(props.y)
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
     WaitForSingleObject(_onThreadCreated, INFINITE);
