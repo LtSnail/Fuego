@@ -4,6 +4,7 @@
 #include "FileSystem/FileSystem.h"
 #include "LayerStack.h"
 #include "Renderer.h"
+#include "stb_image.h"
 
 
 namespace Fuego
@@ -32,6 +33,11 @@ Application::Application()
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
+
+    // Image
+    int widthImg, heigthImg, numColCh;
+    unsigned char* img = stbi_load(d->_fs->GetFullPathTo("PopCat.png").c_str(), &widthImg, &heigthImg, &numColCh, 0);
+    UNUSED(img);
 }
 
 Renderer::Renderer& Application::Renderer()
