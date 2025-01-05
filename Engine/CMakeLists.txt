@@ -29,10 +29,11 @@ set(PROJECT_HEADERS
     Fuego/FileSystem/FileSystem.h
     Fuego.h
     fupch.h
+    External/image-loader/stb_image.h
 )
 
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
-            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp)
+            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp External/image-loader/stb_image.cpp)
 
 set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
 
@@ -79,7 +80,8 @@ set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer 
     ${CMAKE_CURRENT_SOURCE_DIR}/External/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/External/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include 
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/image-loader/
 )
 
 # An interface library to propagate headers to platform implementations
