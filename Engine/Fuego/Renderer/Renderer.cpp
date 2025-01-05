@@ -49,6 +49,11 @@ void Renderer::Present()
     _swapchain->Present();
 }
 
+void Renderer::BindTexture(unsigned char* bytes)
+{
+    
+}
+
 void Renderer::ShowWireFrame(bool show)
 {
     _swapchain->ShowWireFrame(show);

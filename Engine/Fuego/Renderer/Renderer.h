@@ -19,6 +19,8 @@ public:
     void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount);
     void Clear();
     void Present();
+    // TODO: replace array of bytes into Texture2D class
+    void BindTexture(unsigned char* bytes);
 
     void ShowWireFrame(bool show = true);
     void ValidateWindow();
