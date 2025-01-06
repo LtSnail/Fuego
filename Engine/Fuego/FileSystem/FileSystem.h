@@ -26,6 +26,7 @@ private:
     const std::string pathToResources = GetExecutablePath() + "\\..\\..\\..\\..\\Sandbox\\Resources\\";
     const std::string pathToShadersWindows = "Windows\\Shaders\\";
     const std::string pathToImagesWindows = "Windows\\Images\\";
-    const std::vector<std::string_view> _searchPaths = {pathToShadersWindows.data(), pathToImagesWindows.data()};
+    const std::string pathToModelsWindows = "Windows\\Models\\";
+    const std::vector<std::string_view> _searchPaths = {pathToShadersWindows.data(), pathToImagesWindows.data(), pathToModelsWindows.data()};
 };
 }  // namespace Fuego::FS

@@ -3,11 +3,13 @@
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
 #include "LayerStack.h"
+#include "Mesh.h"
 #include "Renderer.h"
-
 
 namespace Fuego
 {
+Renderer::Mesh* model = new Renderer::Mesh();
+std::vector<float> data;
 
 class Application::ApplicationImpl
 {
@@ -32,6 +34,9 @@ Application::Application()
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
+
+    data = model->load(d->_fs->GetFullPathTo("Model.obj").data());
+    //model->Release();
 }
 
 Renderer::Renderer& Application::Renderer()
@@ -121,44 +126,45 @@ bool Application::OnValidateWindow(WindowValidateEvent& event)
 
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    // clang-format off
-    static float mesh[] = {
-    // Positions          // Colors
-    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  // Front-bottom-left (Red)
-    0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,  // Front-bottom-right (Green)
-    0.5f,  0.5f, -0.5f,   0.0f, 0.0f, 1.0f,  // Front-top-right (Blue)
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  // Front-top-left (Yellow)
-    -0.5f, -0.5f,  0.5f,  0.5f, 0.0f, 0.5f,  // Back-bottom-left (Cyan)
-    0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 1.0f,  // Back-bottom-right (Magenta)
-    0.5f,  0.5f,  0.5f,   0.5f, 0.5f, 0.5f,  // Back-top-right (Gray)
-    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f   // Back-top-left (White)
-};
-    static unsigned int indices[] = {
-    // Front face
-    0, 1, 2,
-    2, 3, 0,
-    // Back face
-    4, 5, 6,
-    6, 7, 4,
-    // Left face
-    4, 0, 3,
-    3, 7, 4,
-    // Right face
-    1, 5, 6,
-    6, 2, 1,
-    // Top face
-    3, 2, 6,
-    6, 7, 3,
-    // Bottom face
-    4, 5, 1,
-    1, 0, 4
-};
-    // clang-format on
+    //    // clang-format off
+    //    static float mesh[] = {
+    //    // Positions          // Colors
+    //    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  // Front-bottom-left (Red)
+    //    0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,  // Front-bottom-right (Green)
+    //    0.5f,  0.5f, -0.5f,   0.0f, 0.0f, 1.0f,  // Front-top-right (Blue)
+    //    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  // Front-top-left (Yellow)
+    //    -0.5f, -0.5f,  0.5f,  0.5f, 0.0f, 0.5f,  // Back-bottom-left (Cyan)
+    //    0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 1.0f,  // Back-bottom-right (Magenta)
+    //    0.5f,  0.5f,  0.5f,   0.5f, 0.5f, 0.5f,  // Back-top-right (Gray)
+    //    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f   // Back-top-left (White)
+    //};
+    //    static unsigned int indices[] = {
+    //    // Front face
+    //    0, 1, 2,
+    //    2, 3, 0,
+    //    // Back face
+    //    4, 5, 6,
+    //    6, 7, 4,
+    //    // Left face
+    //    4, 0, 3,
+    //    3, 7, 4,
+    //    // Right face
+    //    1, 5, 6,
+    //    6, 2, 1,
+    //    // Top face
+    //    3, 2, 6,
+    //    6, 7, 3,
+    //    // Bottom face
+    //    4, 5, 1,
+    //    1, 0, 4
+    //};
+    //    // clang-format on
 
 
     d->_renderer->ShowWireFrame(false);
     d->_renderer->Clear();
-    d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
+    //d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
+    d->_renderer->DrawMesh(data, model->GetVertexCount());
     d->_renderer->Present();
 
     event.SetHandled();

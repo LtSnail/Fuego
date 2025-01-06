@@ -1,8 +1,8 @@
- #version 330 core
- in vec3 fragColor;   // Interpolated color from the vertex shader
- out vec4 color;      // Output color to the framebuffer
+#version 330 core
 
- void main()
- {
-     color = vec4(fragColor, 1.0); // Set fragment color
- }
+out vec4 FragColor;  // Выходной цвет фрагмента
+
+void main()
+{
+    FragColor = vec4(0.4f, 0.2f, 0.2f, 1.0f);  // Устанавливаем белый цвет
+}

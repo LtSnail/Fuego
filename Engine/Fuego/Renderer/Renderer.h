@@ -8,15 +8,19 @@
 #include "Shader.h"
 #include "Surface.h"
 #include "Swapchain.h"
-
+#include "glm/ext.hpp"
+#include "glm/glm.hpp"
 namespace Fuego::Renderer
 {
+class Mesh;
+
 class Renderer
 {
 public:
     ~Renderer() = default;
     // TODO replace array of floats to Mesh class
     void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount);
+    void DrawMesh(std::vector<float> data, uint32_t vertec_count);
     void Clear();
     void Present();
 
@@ -34,6 +38,15 @@ public:
         float x = 0.0f;
         float y = 0.0f;
     };
+
+#pragma pack(push, 1)
+    struct VertexData
+    {
+        glm::vec3 pos;
+        glm::vec2 textcoord;
+        glm::vec3 normal;
+    };
+#pragma pack(pop)
 
 private:
 

@@ -3,6 +3,7 @@
 #include <span>
 
 #include "CommandBuffer.h"
+#include "Mesh.h"
 
 
 namespace Fuego::Renderer
@@ -34,6 +35,22 @@ void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices
     cmd.BindPixelShader(*_pixelShader);
     cmd.BindIndexBuffer(indices, sizeof(unsigned int) * indicesCount);
     cmd.IndexedDraw(vertexCount);
+    cmd.EndRecording();
+    cmd.Submit();
+}
+
+void Renderer::DrawMesh(std::vector<float> data, uint32_t vertex_count)
+{
+    _buffer->BindData<float>(std::span(data.data(), data.size()));
+    CommandBuffer& cmd = _commandPool->GetCommandBuffer();
+    cmd.BeginRecording();
+    cmd.BindRenderTarget(_swapchain->GetScreenTexture());
+    cmd.BindVertexBuffer(*_buffer);
+    cmd.BindVertexShader(*_vertexShader);
+    cmd.BindPixelShader(*_pixelShader);
+    //cmd.BindIndexBuffer( );
+    //cmd.IndexedDraw();
+    cmd.Draw(vertex_count);
     cmd.EndRecording();
     cmd.Submit();
 }
