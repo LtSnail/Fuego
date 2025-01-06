@@ -13,14 +13,22 @@ public:
     virtual void BeginRecording() override;
     virtual void EndRecording() override;
     virtual void Submit() override;
+
     virtual void BindRenderTarget(const Surface& texture) override;
+
     virtual void BindVertexShader(const Shader& vertexShader) override;
     virtual void BindPixelShader(const Shader& pixelShader) override;
+
     virtual void BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex) override;
+
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) override;
     virtual void BindIndexBuffer(uint32_t indices[], uint32_t size) override;
+
     virtual void Draw(uint32_t vertexCount) override;
     virtual void IndexedDraw(uint32_t vertexCount) override;
+
+    virtual void BindTexture(const unsigned char* bytes, int w, int h) override;
+
     virtual void Clear() override;
 
 private:
@@ -29,6 +37,7 @@ private:
     uint32_t _programID;
     uint32_t _vertexShader;
     uint32_t _pixelShader;
+    unsigned int _texture;
     bool _isLinked;
     bool _isDataAllocated;
 

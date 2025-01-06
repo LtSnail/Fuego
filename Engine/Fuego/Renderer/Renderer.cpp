@@ -23,11 +23,14 @@ Renderer::Renderer()
     _buffer = _device->CreateBuffer(0, 0);
 }
 
-void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount)
+void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount, unsigned char* texture, int w, int h)
 {
     _buffer->BindData<float>(std::span(vertices, vertexCount * sizeof(float)));
     CommandBuffer& cmd = _commandPool->GetCommandBuffer();
     cmd.BeginRecording();
+    if (texture != nullptr)
+        cmd.BindTexture(texture, w, h);
+
     cmd.BindRenderTarget(_swapchain->GetScreenTexture());
     cmd.BindVertexBuffer(*_buffer);
     cmd.BindVertexShader(*_vertexShader);
@@ -47,11 +50,6 @@ void Renderer::Clear()
 void Renderer::Present()
 {
     _swapchain->Present();
-}
-
-void Renderer::BindTexture(unsigned char* bytes)
-{
-    
 }
 
 void Renderer::ShowWireFrame(bool show)

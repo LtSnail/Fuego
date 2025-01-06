@@ -26,6 +26,7 @@ public:
     virtual void Draw(uint32_t vertexCount) = 0;
     virtual void IndexedDraw(uint32_t vertexCount) = 0;
     virtual void Clear() = 0;
+    virtual void BindTexture(const unsigned char* texture, int w, int h) = 0;
 };
 
 }  // namespace Fuego::Renderer

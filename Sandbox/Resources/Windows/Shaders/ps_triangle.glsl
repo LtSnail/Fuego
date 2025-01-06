@@ -1,8 +1,11 @@
- #version 330 core
- in vec3 fragColor;   // Interpolated color from the vertex shader
- out vec4 color;      // Output color to the framebuffer
+#version 330 core
+out vec4 FragColor;
 
- void main()
- {
-     color = vec4(fragColor, 1.0); // Set fragment color
- }
+in vec2 TexCoord;
+
+uniform sampler2D texture1;
+
+void main()
+{
+    FragColor = texture(texture1, TexCoord);
+}

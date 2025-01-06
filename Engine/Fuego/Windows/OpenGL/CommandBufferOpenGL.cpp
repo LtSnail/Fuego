@@ -16,6 +16,7 @@ glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0
 int modelLoc;
 int viewLoc;
 int projLoc;
+int textureLoc;
 
 CommandBufferOpenGL::CommandBufferOpenGL()
     : _programID(0)
@@ -26,6 +27,7 @@ CommandBufferOpenGL::CommandBufferOpenGL()
     , _vao(0)
     , _ebo(0)
     , _isDataAllocated(false)
+    , _texture(0)
 {
     _programID = glCreateProgram();
     glGenBuffers(1, &_ebo);
@@ -53,11 +55,13 @@ void CommandBufferOpenGL::Submit()
 {
     // TODO Execute gl commands from commands queue
     _isFree = true;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDeleteTextures(1, &_texture);
 }
 
 void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
 {
-   // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)
@@ -105,6 +109,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         modelLoc = glGetUniformLocation(_programID, "model");
         viewLoc = glGetUniformLocation(_programID, "view");
         projLoc = glGetUniformLocation(_programID, "projection");
+        textureLoc = glGetUniformLocation(_programID, "texture1");
         glUseProgram(0);
 
         return;
@@ -132,10 +137,10 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
     const BufferOpenGL& buff = static_cast<const BufferOpenGL&>(vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)0);  // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)0);  // Position attribute
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(3 * sizeof(float)));  // Color attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(3 * sizeof(float)));  // UV attribute
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -170,6 +175,10 @@ void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount)
     glUseProgram(_programID);
     glBindVertexArray(_vao);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture);
+    glUniform1i(textureLoc, 0);
+
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
@@ -192,4 +201,12 @@ void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSe
     FU_CORE_INFO("[OpenGL unused function: BindDescriptorSet]");
 }
 
+void CommandBufferOpenGL::BindTexture(const unsigned char* bytes, int w, int h)
+{
+    glGenTextures(1, &_texture);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
 }  // namespace Fuego::Renderer

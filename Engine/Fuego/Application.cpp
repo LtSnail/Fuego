@@ -9,6 +9,9 @@
 
 namespace Fuego
 {
+// Image
+int widthImg, heigthImg, numColCh;
+unsigned char* img;
 
 class Application::ApplicationImpl
 {
@@ -35,9 +38,7 @@ Application::Application()
     d->m_Running = true;
 
     // Image
-    int widthImg, heigthImg, numColCh;
-    unsigned char* img = stbi_load(d->_fs->GetFullPathTo("PopCat.png").c_str(), &widthImg, &heigthImg, &numColCh, 0);
-    UNUSED(img);
+    img = stbi_load(d->_fs->GetFullPathTo("PopCat.png").c_str(), &widthImg, &heigthImg, &numColCh, 0);
 }
 
 Renderer::Renderer& Application::Renderer()
@@ -129,15 +130,15 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     // clang-format off
     static float mesh[] = {
-    // Positions          // Colors
-    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,  // Front-bottom-left (Red)
-    0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,  // Front-bottom-right (Green)
-    0.5f,  0.5f, -0.5f,   0.0f, 0.0f, 1.0f,  // Front-top-right (Blue)
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 0.0f,  // Front-top-left (Yellow)
-    -0.5f, -0.5f,  0.5f,  0.5f, 0.0f, 0.5f,  // Back-bottom-left (Cyan)
-    0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 1.0f,  // Back-bottom-right (Magenta)
-    0.5f,  0.5f,  0.5f,   0.5f, 0.5f, 0.5f,  // Back-top-right (Gray)
-    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f   // Back-top-left (White)
+    // Positions          // Texture Coords
+    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  // Front-bottom-left
+     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  // Front-bottom-right
+     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  // Front-top-right
+    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  // Front-top-left
+    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,  // Back-bottom-left
+     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,  // Back-bottom-right
+     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,  // Back-top-right
+    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f   // Back-top-left
 };
     static unsigned int indices[] = {
     // Front face
@@ -164,7 +165,7 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
 
     d->_renderer->ShowWireFrame(false);
     d->_renderer->Clear();
-    d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
+    d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), img, widthImg, heigthImg);
     d->_renderer->Present();
 
     event.SetHandled();

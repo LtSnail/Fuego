@@ -16,11 +16,9 @@ class Renderer
 public:
     ~Renderer() = default;
     // TODO replace array of floats to Mesh class
-    void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount);
+    void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount, unsigned char* texture, int w, int h);
     void Clear();
     void Present();
-    // TODO: replace array of bytes into Texture2D class
-    void BindTexture(unsigned char* bytes);
 
     void ShowWireFrame(bool show = true);
     void ValidateWindow();
@@ -38,7 +36,6 @@ public:
     };
 
 private:
-
     void UpdateViewport();
     std::unique_ptr<Buffer> _buffer;
     std::unique_ptr<Device> _device;
