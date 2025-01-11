@@ -7,15 +7,11 @@
 
 Fuego::Renderer::Mesh::Mesh()
     : vertex_count(0)
+    , polygons(0)
+    , quads(0)
+    , triangles(0)
 {
 }
-
-Fuego::Renderer::Mesh::~Mesh()
-{
-    Release();
-}
-
-
 
 std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
 {
@@ -46,187 +42,179 @@ std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
 
     for (std::string_view line : lines)
     {
-        if (line.size() <= 2) continue;
+        if (line.size() <= 2)
+            continue;
         const char first_char = line[0];
-        const char second_char = line[1];
+
         switch (first_char)
         {
         case '#':
             break;
-        case 'v':
-            float x, y, z;
-            switch (second_char)
+        case 'm':
+        {
+            if (line.starts_with("mtllib"))
             {
-            case ' ':
-                sscanf(line.data(), "%*s %f %f %f", &x, &y, &z);
-                vertices_vec.emplace_back(glm::vec3(x, y, z));
-                break;
-            case 't':
-                sscanf(line.data(), "%*s %f %f", &x, &y);
-                textcoords_vec.emplace_back(glm::vec2(x, y));
-                break;
-            case 'n':
-                sscanf(line.data(), "%*s %f %f %f", &x, &y, &z);
-                normals_vec.emplace_back(glm::vec3(x, y, z));
-                break;
-            break;
+                const char* ptr = line.data();
+                ptr += 7;
+                char buffer[32] = {0};
+                char* buffer_ptr = buffer;
+                while (*ptr != '\0')
+                {
+                    *buffer_ptr += *ptr;
+                    ptr++;
+                    buffer_ptr++;
+                }
+                *buffer_ptr = '\0';
+                material = std::string(buffer);
             }
+            break;
+        }
+
+        case 'v':
+            ParseVertices(line, vertices_vec, textcoords_vec, normals_vec);
             break;
         case 'f':
-            std::vector<int> v_indices, t_indices, n_indices;
-            size_t pos = 2;
-
-            while (pos < line.size())
-            {
-                int v = -1, t = -1, n = -1;
-                size_t next_space = line.find(' ', pos);
-                std::string_view vertex = line.substr(pos, next_space - pos);
-
-                if (sscanf(vertex.data(), "%d/%d/%d", &v, &t, &n) == 3)
-                {
-                    v_indices.push_back(v - 1);
-                    t_indices.push_back(t - 1);
-                    n_indices.push_back(n - 1);
-                }
-                else if (sscanf(vertex.data(), "%d/%d/", &v, &t) == 2)
-                {
-                    v_indices.push_back(v - 1);
-                    t_indices.push_back(t - 1);
-                }
-                else if (sscanf(vertex.data(), "%d//%d", &v, &n) == 2)
-                {
-                    v_indices.push_back(v - 1);
-                    n_indices.push_back(n - 1);
-                }
-                else if (sscanf(vertex.data(), "%d", &v) == 1)
-                {
-                    v_indices.push_back(v - 1);
-                }
-
-                if (next_space == std::string::npos)
-                    break;
-                pos = next_space + 1;
-            }
-            
-            if (!t_indices.empty())
-                condition |= 1;
-            if (!n_indices.empty())
-                condition |= 2;
-
-            if (v_indices.size() == 3)
-            {
-                faces.emplace_back(Face(glm::ivec3(v_indices[0], v_indices[1], v_indices[2]),
-                                        condition & 1 ? glm::ivec3(t_indices[0], t_indices[1], t_indices[2]) : glm::ivec3(-1),
-                                        condition & 2 ? glm::ivec3(n_indices[0], n_indices[1], n_indices[2]) : glm::ivec3(-1)));
-                vertex_count +=3;
-
-            }
-            else if (v_indices.size() == 4)
-            {
-                // Triangulate quad into two faces
-                faces.emplace_back(Face(glm::ivec3(v_indices[0], v_indices[1], v_indices[2]),
-                                        condition & 1 ? glm::ivec3(t_indices[0], t_indices[1], t_indices[2]) : glm::ivec3(-1),
-                                        condition & 2 ? glm::ivec3(n_indices[0], n_indices[1], n_indices[2]) : glm::ivec3(-1)));
-
-                faces.emplace_back(Face(glm::ivec3(v_indices[0], v_indices[2], v_indices[3]),
-                                        condition & 1 ? glm::ivec3(t_indices[0], t_indices[2], t_indices[3]) : glm::ivec3(-1),
-                                        condition & 2 ? glm::ivec3(n_indices[0], n_indices[2], n_indices[3]) : glm::ivec3(-1)));
-                vertex_count += 6;
-            }
+            ParseFace(line, faces, textcoords_vec.size() > 0, normals_vec.size() > 0);
+            break;
         }
     }
     polygons = faces.size();
 
     vertices.reserve(vertex_count);
+
+    ProcessFaces(faces, vertices_vec, textcoords_vec, normals_vec, vertices);
+
+    return vertices;
+}
+
+void Fuego::Renderer::Mesh::ParseFace(const std::string_view& line, OUT std::vector<Face>& faces, bool hasTextcoord, bool hasNormals)
+{
+    std::vector<int> v_indices, t_indices, n_indices;
+    size_t pos = 2;
+
+    while (pos < line.size())
+    {
+        int v = -1, t = -1, n = -1;
+        size_t next_space = line.find(' ', pos);
+        std::string_view vertex = line.substr(pos, next_space - pos);
+
+        if (hasTextcoord && hasNormals)
+        {
+            sscanf(vertex.data(), "%d/%d/%d", &v, &t, &n);
+            v_indices.push_back(v);
+            t_indices.push_back(t);
+            n_indices.push_back(n);
+        }
+        else if (hasTextcoord && !hasNormals)
+        {
+            sscanf(vertex.data(), "%d/%d/", &v, &t);
+            v_indices.push_back(v);
+            t_indices.push_back(t);
+        }
+        else if (!hasTextcoord && hasNormals)
+        {
+            sscanf(vertex.data(), "%d//%d", &v, &n);
+            v_indices.push_back(v);
+            n_indices.push_back(n);
+        }
+        else
+        {
+            sscanf(vertex.data(), "%d", &v);
+            v_indices.push_back(v);
+        }
+
+        if (next_space == std::string::npos)
+            break;
+        pos = next_space + 1;
+    }
+
+    if (v_indices.size() == 3)
+    {
+        faces.emplace_back(Face(glm::ivec3(v_indices[0], v_indices[1], v_indices[2]),
+                                hasTextcoord ? glm::ivec3(t_indices[0], t_indices[1], t_indices[2]) : glm::ivec3(-1),
+                                hasNormals ? glm::ivec3(n_indices[0], n_indices[1], n_indices[2]) : glm::ivec3(-1)));
+        vertex_count += 3;
+        triangles += 1;
+    }
+    else if (v_indices.size() == 4)
+    {
+        faces.emplace_back(Face(glm::ivec3(v_indices[0], v_indices[1], v_indices[2]),
+                                hasTextcoord ? glm::ivec3(t_indices[0], t_indices[1], t_indices[2]) : glm::ivec3(-1),
+                                hasNormals ? glm::ivec3(n_indices[0], n_indices[1], n_indices[2]) : glm::ivec3(-1)));
+
+        faces.emplace_back(Face(glm::ivec3(v_indices[0], v_indices[2], v_indices[3]),
+                                hasTextcoord ? glm::ivec3(t_indices[0], t_indices[2], t_indices[3]) : glm::ivec3(-1),
+                                hasNormals ? glm::ivec3(n_indices[0], n_indices[2], n_indices[3]) : glm::ivec3(-1)));
+
+        vertex_count += 6;
+        quads += 1;
+    }
+}
+
+
+void Fuego::Renderer::Mesh::ParseVertices(const std::string_view& line, OUT std::vector<glm::vec3>& vertecies, OUT std::vector<glm::vec2>& textcoord,
+                                          OUT std::vector<glm::vec3>& normals)
+{
+    float x, y, z;
+    const char second_char = line[1];
+    switch (second_char)
+    {
+    case ' ':
+        if (sscanf(line.data(), "%*s %f %f %f", &x, &y, &z) == 3)
+            ;
+        vertecies.emplace_back(glm::vec3(x, y, z));
+        break;
+    case 't':
+        if (sscanf(line.data(), "%*s %f %f", &x, &y) == 2)
+            ;
+        textcoord.emplace_back(glm::vec2(x, y));
+        break;
+    case 'n':
+        if (sscanf(line.data(), "%*s %f %f %f", &x, &y, &z) == 3)
+            ;
+        normals.emplace_back(glm::vec3(x, y, z));
+        break;
+    }
+}
+
+void Fuego::Renderer::Mesh::ProcessFaces(const std::vector<Face>& faces, std::vector<glm::vec3>& in_vertices, std::vector<glm::vec2>& in_textcoords,
+                                         std::vector<glm::vec3>& in_normals, OUT std::vector<float>& output_vector)
+{
     for (const auto& face : faces)
     {
         for (int i = 0; i < 3; ++i)
         {
             Renderer::VertexData vertex;
-            vertex.pos = vertices_vec[face.v_indecies[i]];
-            vertices.push_back(vertex.pos.x);
-            vertices.push_back(vertex.pos.y);
-            vertices.push_back(vertex.pos.z);
-            if (condition & 1)  // Textcoords exist
+
+            vertex.pos = in_vertices[face.v_indecies[i] - 1];
+
+            if (!in_textcoords.empty())
             {
-                vertex.textcoord = textcoords_vec[face.tx_indecies[i % 2]];
-                vertices.push_back(vertex.textcoord.x);
-                vertices.push_back(vertex.textcoord.y);
+                if (i < 2)
+                    vertex.textcoord = in_textcoords[face.tx_indecies[i] - 1];
+            }
+            else
+            {
+                vertex.textcoord = glm::vec2(-1.0f);
             }
 
-            if (condition & 2)  // Normals exist
+            if (!in_normals.empty())
             {
-                vertex.normal = normals_vec[face.n_indecies[i]];
-                vertices.push_back(vertex.normal.x);
-                vertices.push_back(vertex.normal.y);
-                vertices.push_back(vertex.normal.z);
+                vertex.normal = in_normals[face.n_indecies[i] - 1];
             }
+            else
+            {
+                vertex.normal = glm::vec3(-1.0f);
+            }
+
+            output_vector.push_back(vertex.pos.x);
+            output_vector.push_back(vertex.pos.y);
+            output_vector.push_back(vertex.pos.z);
+            output_vector.push_back(vertex.textcoord.x);
+            output_vector.push_back(vertex.textcoord.y);
+            output_vector.push_back(vertex.normal.x);
+            output_vector.push_back(vertex.normal.y);
+            output_vector.push_back(vertex.normal.z);
         }
     }
-    return vertices;
-}
-
-void Fuego::Renderer::Mesh::Release()
-{
-    /*for (float* v : vertices_vec)
-    {
-        delete[] v;
-    }
-    vertices_vec.clear();
-
-    for (float* t : textcoords_vec)
-    {
-        delete[] t;
-    }
-    textcoords_vec.clear();
-
-    for (float* n : normals_vec)
-    {
-        delete[] n;
-    }
-    normals_vec.clear();
-
-    for (Face& face : faces)
-    {
-        delete[] face._vertices;
-        delete[] face._textcoords;
-    }
-    faces.clear();*/
-}
-
-
-// Parse C-style string till first ' ', '/' occurance
-// Input: pointer to first float char or sign '-'
-float Fuego::Renderer::Mesh::GetFloatFromCString(const char*& str)
-{
-    char buffer[16] = {'0'};
-    char* bptr = buffer;
-
-    do
-    {
-        *bptr++ = *str++;
-    } while (*str != ' ' && *str != '\0' && *str != '/');
-
-    return std::stof(buffer);
-}
-
-// Input: pointer to first value of Face
-void Fuego::Renderer::Mesh::ParseFace(const char*& str, OUT int& vertex, OUT int& texture, OUT int& normal)
-{
-    vertex = (int)GetFloatFromCString(str) - 1;
-    str++;
-    if (*str == '/')
-        texture = -1;
-    else
-        texture = (int)GetFloatFromCString(str) - 1;
-    str++;
-    if (*str == '/')
-        normal = -1;
-    else
-        normal = (int)GetFloatFromCString(str) - 1;
-}
-
-void Fuego::Renderer::Mesh::draw()
-{
-
 }

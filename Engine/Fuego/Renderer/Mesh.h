@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Renderer.h"
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
-#include "Renderer.h"
 
 namespace Fuego::Renderer
 {
@@ -10,11 +10,9 @@ class Mesh
 {
 public:
     Mesh();
-    ~Mesh();
+    ~Mesh() = default;
 
-    void draw();
     std::vector<float> load(const char* name);
-    void Release();
     inline unsigned short int GetVertexCount() const
     {
         return vertex_count;
@@ -36,15 +34,17 @@ private:
         }
     };
 
-   
-    float GetFloatFromCString(const char*& str);
-    void ParseFace(const char*& str, OUT int& vertex, OUT int& texture, OUT int& normal);
-
-    //std::vector<Renderer::VertexData> vertices;
+    void ParseFace(const std::string_view& line, OUT std::vector<Face>& faces, bool hasTextcoord, bool hasNormals);
+    void ParseVertices(const std::string_view& line, OUT std::vector<glm::vec3>& vertecies, OUT std::vector<glm::vec2>& textcoord,
+                       OUT std::vector<glm::vec3>& normals);
+    void ProcessFaces(const std::vector<Face>& faces, std::vector<glm::vec3>& in_vertices, std::vector<glm::vec2>& in_textcoords,
+                      std::vector<glm::vec3>& in_normals, OUT std::vector<float>& output_vector);
 
     std::string model_name;
-    unsigned int list;
+    std::string material;
     unsigned short int vertex_count;
     unsigned short int polygons;
+    unsigned short int quads;
+    unsigned short int triangles;
 };
 }  // namespace Fuego::Renderer

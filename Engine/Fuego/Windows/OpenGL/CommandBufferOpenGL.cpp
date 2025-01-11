@@ -4,16 +4,16 @@
 #include <glm/glm.hpp>
 
 #include "BufferOpenGL.h"
+#include "Renderer.h"
 #include "Renderer/Surface.h"
 #include "ShaderOpenGL.h"
 #include "glad/gl.h"
-#include "Renderer.h"
 
 namespace Fuego::Renderer
 {
 glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
+glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0F / 720.0F, 0.1f, 100.0f);
 int modelLoc;
 int viewLoc;
 int projLoc;
@@ -58,7 +58,7 @@ void CommandBufferOpenGL::Submit()
 
 void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
 {
-   // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void CommandBufferOpenGL::BindVertexShader(const Shader& vertexShader)
@@ -133,13 +133,13 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
     const BufferOpenGL& buff = static_cast<const BufferOpenGL&>(vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)offsetof(Renderer::VertexData, pos));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)sizeof(Renderer::VertexData::pos));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)offsetof(Renderer::VertexData, textcoord));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)(sizeof(Renderer::VertexData::pos) + sizeof(Renderer::VertexData::textcoord)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)offsetof(Renderer::VertexData, normal));
     glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
@@ -152,7 +152,7 @@ void CommandBufferOpenGL::BindIndexBuffer(uint32_t indices[], uint32_t size)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
     if (!_isDataAllocated)
     {
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_DYNAMIC_DRAW);
         _isDataAllocated = true;
     }
     else
@@ -166,6 +166,11 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
     glUseProgram(_programID);
     glBindVertexArray(_vao);
+
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
     glBindVertexArray(0);
 }
