@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "Buffer.h"
+#include "Camera.h"
 #include "CommandPool.h"
 #include "CommandQueue.h"
 #include "Device.h"
@@ -10,6 +11,7 @@
 #include "Swapchain.h"
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
+
 namespace Fuego::Renderer
 {
 class Mesh;
@@ -63,6 +65,7 @@ private:
     std::unique_ptr<Shader> _vertexShader;
     std::unique_ptr<Shader> _pixelShader;
     std::unique_ptr<Surface> _surface;
+    std::unique_ptr<Camera> _camera;
 
     Viewport viewport;
 

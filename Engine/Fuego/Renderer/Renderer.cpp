@@ -2,6 +2,7 @@
 
 #include <span>
 
+#include "Camera.h"
 #include "CommandBuffer.h"
 #include "Mesh.h"
 
@@ -11,6 +12,8 @@ namespace Fuego::Renderer
 
 Renderer::Renderer()
 {
+    _camera = std::unique_ptr<Camera>(new Camera());
+
     _device = Device::CreateDevice();
     _commandQueue = _device->CreateCommandQueue();
 

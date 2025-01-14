@@ -41,6 +41,9 @@ public:
     bool OnEndResizeWindow(WindowEndResizeEvent& event);
     bool OnValidateWindow(WindowValidateEvent& event);
 
+    // Input events
+    bool OnMouseMoveEvent(MouseMovedEvent& event);
+
     static Application& Get();
     Fuego::Renderer::Renderer& Renderer();
     Fuego::FS::FileSystem& FileSystem();

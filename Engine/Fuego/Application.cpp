@@ -32,6 +32,7 @@ Application::Application()
     d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
 
@@ -67,6 +68,7 @@ void Application::OnEvent(EventVariant& event)
                                                 [this](WindowStartResizeEvent&    ev) { OnStartResizeWindow(ev); },
                                                 [this](WindowEndResizeEvent&    ev) { OnEndResizeWindow(ev); },
                                                 [this](WindowValidateEvent&    ev) { OnValidateWindow(ev); },
+                                                [this](MouseMovedEvent&    ev) { OnMouseMoveEvent(ev); },
                                                 [](Event&){}};
     // clang-format on
 
@@ -132,6 +134,12 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
     d->_renderer->Present();
 
     event.SetHandled();
+    return true;
+}
+
+bool Application::OnMouseMoveEvent(MouseMovedEvent& event)
+{
+    UNUSED(event);
     return true;
 }
 

@@ -13,9 +13,10 @@ set(PROJECT_HEADERS
     Swapchain.h
     Texture.h
     Renderer.h
-    Mesh.h)
+    Mesh.h
+    Camera.h)
 
-set(PROJECT_SOURCES Renderer.cpp Mesh.cpp)
+set(PROJECT_SOURCES Renderer.cpp Mesh.cpp Camera.cpp)
 
 add_library(Renderer STATIC ${PROJECT_HEADERS} ${PROJECT_SOURCES})
 
