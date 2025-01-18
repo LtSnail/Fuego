@@ -14,6 +14,7 @@ Renderer::Renderer()
     : show_wireframe(false)
 {
     _camera = std::unique_ptr<Camera>(new Camera());
+    _camera->Activate();
 
     _device = Device::CreateDevice();
     _commandQueue = _device->CreateCommandQueue();
@@ -90,6 +91,11 @@ void Renderer::ToggleWireFrame()
 void Renderer::ValidateWindow()
 {
     _swapchain->ValidateWindow();
+}
+
+const Camera* Renderer::GetActiveCamera()
+{
+    return Camera::active_camera;
 }
 
 void Renderer::ChangeViewport(float x, float y, float w, float h)

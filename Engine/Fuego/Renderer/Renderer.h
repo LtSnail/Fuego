@@ -37,6 +37,7 @@ public:
     void ShowWireFrame();
     void ToggleWireFrame();
     void ValidateWindow();
+    static const Camera* GetActiveCamera();
     inline const Viewport& Getviewport() const
     {
         return viewport;
