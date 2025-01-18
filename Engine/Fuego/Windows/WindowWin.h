@@ -49,9 +49,8 @@ private:
     static void InitOpenGLExtensions();
 
     EventQueueWin* _eventQueue;
-    Input::KeyInfo _lastKey;
-    Input::MouseInfo _lastMouse;
-    Input::CursorPos _cursorPos;
+
+    
 
     // Window handle
     HWND _hwnd;
@@ -71,6 +70,11 @@ private:
     {
         isPainted = true;
     }
+
+    friend class InputWin;
+    Input::KeyInfo _lastKey;
+    Input::MouseInfo _lastMouse;
+    Input::CursorPos _cursorPos;
 
 protected:
     virtual void SetWindowMode(WPARAM mode);

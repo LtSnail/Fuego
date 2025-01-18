@@ -7,7 +7,8 @@ namespace Fuego
 class InputWin : public Input
 {
 protected:
-    virtual bool IsKeyPressedImpl(KeyCode keyCode) override;
+    virtual KeyCode GetPressedKeyImpl() const override;
+    virtual bool IsKeyPressedImpl(KeyCode keyCode) const override;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) override;
     virtual std::pair<float, float> GetMousePositionImpl() const override;

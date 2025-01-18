@@ -8,6 +8,12 @@ namespace Fuego
 class FUEGO_API Input
 {
 public:
+
+    static inline KeyCode GetPressedKey()
+    {
+        return m_Instance->GetPressedKeyImpl();
+    }
+
     static inline bool IsKeyPressed(KeyCode keyCode)
     {
         return m_Instance->IsKeyPressedImpl(keyCode);
@@ -77,7 +83,8 @@ public:
     };
 
 protected:
-    virtual bool IsKeyPressedImpl(KeyCode keyCode) = 0;
+    virtual KeyCode GetPressedKeyImpl() const = 0;
+    virtual bool IsKeyPressedImpl(KeyCode keyCode) const = 0;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) = 0;
     virtual std::pair<float, float> GetMousePositionImpl() const = 0;
