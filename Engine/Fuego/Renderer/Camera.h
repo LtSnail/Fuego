@@ -13,7 +13,7 @@ public:
     ~Camera();
     FUEGO_NON_COPYABLE_NON_MOVABLE(Camera);
 
-    void Update();
+    
     inline glm::mat4 GetView() const
     {
         return view;
@@ -27,15 +27,25 @@ public:
         return dir;
     }
     void Activate();
+    static inline Camera* GetActiveCamera()
+    {
+        return active_camera;
+    }
 
 private:
 
-    void MoveCamera();
+    float speed;
+    void TranslateCamera();
     static Camera* active_camera;
+    glm::vec3 position;
     glm::mat4 view;
     glm::vec3 dir;
 
+
     friend class Renderer;
     Camera();
+
+    friend class Application;
+    void Update();
 };
 }  // namespace Fuego::Renderer

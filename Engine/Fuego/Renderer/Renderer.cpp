@@ -93,11 +93,6 @@ void Renderer::ValidateWindow()
     _swapchain->ValidateWindow();
 }
 
-const Camera* Renderer::GetActiveCamera()
-{
-    return Camera::active_camera;
-}
-
 void Renderer::ChangeViewport(float x, float y, float w, float h)
 {
     viewport.x = x;

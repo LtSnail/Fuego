@@ -168,7 +168,7 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
     glBindVertexArray(_vao);
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(Renderer::GetActiveCamera()->GetView()));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(Camera::GetActiveCamera()->GetView()));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
@@ -181,7 +181,7 @@ void CommandBufferOpenGL::IndexedDraw(uint32_t vertexCount)
     glBindVertexArray(_vao);
 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(Renderer::GetActiveCamera()->GetView()));
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(Camera::GetActiveCamera()->GetView()));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
     glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);

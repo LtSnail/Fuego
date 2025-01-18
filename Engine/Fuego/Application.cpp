@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Renderer.h"
 #include "KeyCodes.h"
+#include "Camera.h"
 
 namespace Fuego
 {
@@ -131,14 +132,13 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 {
     KeyEvent& e = (KeyEvent&)event;
     KeyCode crossplatform_key = e.GetKeyCode();
+    
     switch (crossplatform_key)
     {
     case Key::D1:
         d->_renderer->ToggleWireFrame();
         break;
-    case Key::W:
-        
-        break;
+
     }
     event.SetHandled();
     return true;
@@ -182,6 +182,7 @@ void Application::Run()
     {
         d->m_EventQueue->Update();
         d->m_Window->Update();
+        Fuego::Renderer::Camera::GetActiveCamera()->Update();
 
         for (auto layer : d->m_LayerStack)
         {
