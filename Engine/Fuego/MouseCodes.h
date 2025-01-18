@@ -20,7 +20,9 @@ enum : MouseCode
     ButtonLast = Button7,
     ButtonLeft = Button0,
     ButtonRight = Button1,
-    ButtonMiddle = Button2
+    ButtonMiddle = Button2,
+
+    None = 20
 };
 
 inline std::string GetMouseButtonName(MouseCode button)

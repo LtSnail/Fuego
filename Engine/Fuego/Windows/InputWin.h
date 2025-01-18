@@ -7,7 +7,6 @@ namespace Fuego
 class InputWin : public Input
 {
 protected:
-    virtual KeyCode GetPressedKeyImpl() const override;
     virtual bool IsKeyPressedImpl(KeyCode keyCode) const override;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) override;

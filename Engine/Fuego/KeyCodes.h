@@ -140,10 +140,8 @@ enum : KeyCode
     RightAlt        = 186,
     RightSuper      = 187,
     Menu            = 188,
-
-    // Flag to indicate button releasing
-    Released        = 200,
-
+    
+    None            = 500,
     Unknown
     // clang-format on
 };

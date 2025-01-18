@@ -8,11 +8,26 @@ namespace Fuego
 class FUEGO_API Input
 {
 public:
-
-    static inline KeyCode GetPressedKey()
+    enum KeyState
     {
-        return m_Instance->GetPressedKeyImpl();
-    }
+        KEY_NONE = 0,
+        KEY_PRESSED = 1,
+        KEY_REPEAT = 2,
+        KEY_RELEASED = 3
+    };
+    struct KeyInfo
+    {
+        KeyState state;
+        KeyCode keyCode;
+    };
+    enum MouseState
+    {
+        MOUSE_NONE,
+        MOUSE_LPRESSED,
+        MOUSE_RPRESSED,
+        MOUSE_MPRESSED,
+        MOUSE_SCROLL
+    };
 
     static inline bool IsKeyPressed(KeyCode keyCode)
     {
@@ -47,29 +62,6 @@ public:
         return false;
     };
 
-    enum KeyState
-    {
-        KEY_NONE = 0,
-        KEY_PRESSED = 1,
-        KEY_REPEAT = 2,
-        KEY_RELEASED = 3
-    };
-
-    struct KeyInfo
-    {
-        KeyState state;
-        KeyCode keyCode;
-    };
-
-    enum MouseState
-    {
-        MOUSE_NONE,
-        MOUSE_LPRESSED,
-        MOUSE_RPRESSED,
-        MOUSE_MPRESSED,
-        MOUSE_SCROLL
-    };
-
     struct MouseInfo
     {
         MouseState state;
@@ -83,7 +75,6 @@ public:
     };
 
 protected:
-    virtual KeyCode GetPressedKeyImpl() const = 0;
     virtual bool IsKeyPressedImpl(KeyCode keyCode) const = 0;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) = 0;

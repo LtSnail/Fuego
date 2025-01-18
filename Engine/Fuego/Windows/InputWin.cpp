@@ -7,12 +7,6 @@ namespace Fuego
 {
 Input* Input::m_Instance = nullptr;
 
-KeyCode InputWin::GetPressedKeyImpl() const
-{
-    const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());
-    return window._lastKey.keyCode;
-}
-
 bool InputWin::IsKeyPressedImpl(KeyCode keyCode) const
 {
     const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());

@@ -71,7 +71,6 @@ private:
         isPainted = true;
     }
 
-    friend class InputWin;
     Input::KeyInfo _lastKey;
     Input::MouseInfo _lastMouse;
     Input::CursorPos _cursorPos;
