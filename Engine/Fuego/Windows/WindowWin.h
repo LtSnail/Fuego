@@ -35,6 +35,10 @@ public:
     Input::KeyState GetKeyState(KeyCode keyCode) const;
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
     void GetMousePos(OUT float& xPos, OUT float& yPos) const;
+    virtual inline bool HasMouseMoved(float x, float y) const override
+    {
+        return !(_cursorPos.x == x && _cursorPos.y == y);
+    }
 
 
     virtual inline bool IsResizing() const

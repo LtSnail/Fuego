@@ -202,8 +202,11 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
         float x = static_cast<float>(GET_X_LPARAM(lparam));
         float y = static_cast<float>(GET_Y_LPARAM(lparam));
-        SetMousePos(x, y);
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
+        if (HasMouseMoved(x, y))
+        {
+            SetMousePos(x, y);
+            _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
+        }
         break;
     }
 

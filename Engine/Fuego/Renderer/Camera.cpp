@@ -1,4 +1,5 @@
 #include "Camera.h"
+
 #include "Input.h"
 
 namespace Fuego::Renderer
