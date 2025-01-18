@@ -202,32 +202,49 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         float y = static_cast<float>(GET_Y_LPARAM(lparam));
         _cursorPos = {x, y};
         _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
-        break;
+        //break;
     }
 
     case WM_LBUTTONDOWN:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::Button0)));
-        break;
-
     case WM_LBUTTONUP:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::Button0)));
-        break;
-
     case WM_RBUTTONDOWN:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::Button1)));
-        break;
-
     case WM_RBUTTONUP:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::Button1)));
-        break;
-
     case WM_MBUTTONDOWN:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(Mouse::Button2)));
-        break;
-
     case WM_MBUTTONUP:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(Mouse::Button2)));
-        break;
+    {
+        MouseCode button = Mouse::None;
+        switch (msg)
+        {
+        case WM_LBUTTONDOWN:
+            button = Mouse::Button0;
+            break;
+        case WM_LBUTTONUP:
+            button = Mouse::Button0;
+            break;
+        case WM_RBUTTONDOWN:
+            button = Mouse::Button1;
+            break;
+        case WM_RBUTTONUP:
+            button = Mouse::Button1;
+            break;
+        case WM_MBUTTONDOWN:
+            button = Mouse::Button2;
+            break;
+        case WM_MBUTTONUP:
+            button = Mouse::Button2;
+            break;
+        }
+
+        if (msg == WM_LBUTTONDOWN || msg == WM_RBUTTONDOWN || msg == WM_MBUTTONDOWN)
+        {
+            _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonPressedEvent(button)));
+        }
+        else
+        {
+            _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(button)));
+        }
+        //break;
+    }
 
     case WM_MOUSEWHEEL:
     {
@@ -244,10 +261,10 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     }
 
    case WM_KEYDOWN:
-    case WM_KEYUP:
-    {
+   case WM_KEYUP:
+   {
         bool isKeyDown = (msg == WM_KEYDOWN);
-        KeyCode window_keycode = static_cast<int>(wparam);
+        int window_keycode = static_cast<int>(wparam);
         KeyCode crossplatform_keycode = GetKeyCode(window_keycode);
 
         if (isKeyDown)
@@ -259,21 +276,17 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         else
         {
             _eventQueue->PushEvent(std::make_shared<EventVariant>(KeyReleasedEvent(crossplatform_keycode)));
-            _lastKey = {Input::KEY_RELEASED, Key::Released};
+            _lastKey = {Input::KEY_RELEASED, crossplatform_keycode};
         }
         break;
-    }
+   }
 
     case WM_CLOSE:
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowCloseEvent()));
         break;
 
-
-
     default:
     {
-        _lastKey = {Input::KEY_NONE, LAST_CODE};
-        _lastMouse = {Input::MOUSE_NONE, LAST_CODE};
         break;
     }
     }
@@ -284,8 +297,8 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     : _eventQueue(dynamic_cast<EventQueueWin*>(&eventQueue))
     , _hinstance(GetModuleHandle(nullptr))
     , _props(props)
-    , _lastKey{Input::KEY_NONE, LAST_CODE}
-    , _lastMouse{Input::MOUSE_NONE, LAST_CODE}
+    , _lastKey{Input::KEY_NONE, Key::None}
+    , _lastMouse{Input::MOUSE_NONE, Mouse::None}
     , _cursorPos{0.f, 0.f}
     , _winThread{}
     , _winThreadID(nullptr)
