@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 namespace Fuego
 {
@@ -139,6 +140,9 @@ enum : KeyCode
     RightAlt        = 186,
     RightSuper      = 187,
     Menu            = 188,
+
+    // Flag to indicate button releasing
+    Released        = 200,
 
     Unknown
     // clang-format on

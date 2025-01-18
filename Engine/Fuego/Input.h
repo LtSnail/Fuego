@@ -46,6 +46,7 @@ public:
         KEY_NONE = 0,
         KEY_PRESSED = 1,
         KEY_REPEAT = 2,
+        KEY_RELEASED = 3
     };
 
     struct KeyInfo

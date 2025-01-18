@@ -1,30 +1,31 @@
 #pragma once
 
 #include "Event.h"
+#include "KeyCodes.h"
 
 namespace Fuego
 {
 class FUEGO_API KeyEvent
 {
 public:
-    inline int GetKeyCode() const
+    inline KeyCode GetKeyCode() const
     {
         return _keyCode;
     }
 
 protected:
-    explicit KeyEvent(int keycode)
+    explicit KeyEvent(KeyCode keycode)
         : _keyCode(keycode)
     {
     }
 
-    int _keyCode;
+    KeyCode _keyCode;
 };
 
 class FUEGO_API KeyPressedEvent final : public Event, KeyEvent
 {
 public:
-    KeyPressedEvent(int keycode, int repeatCount)
+    KeyPressedEvent(KeyCode keycode, int repeatCount)
         : Event(EVENT_NAME(KeyPressedEvent))
         , KeyEvent(keycode)
         , _repeatCount(repeatCount)
@@ -51,7 +52,7 @@ private:
 class FUEGO_API KeyReleasedEvent final : public Event, KeyEvent
 {
 public:
-    KeyReleasedEvent(int keycode)
+    KeyReleasedEvent(KeyCode keycode)
         : Event(EVENT_NAME(KeyReleasedEvent))
         , KeyEvent(keycode)
     {
