@@ -5,6 +5,7 @@
 
 #include "InputWin.h"
 #include "Log.h"
+#include "KeyCodesWin.h"
 
 #define LAST_CODE UINT16_MAX
 
@@ -242,17 +243,26 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
     }
 
-    case WM_KEYDOWN:
+   case WM_KEYDOWN:
+    case WM_KEYUP:
     {
-        int repeatCount = (lparam >> 16) & 0xFF;
-        int keyCode = static_cast<int>(wparam);
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(KeyPressedEvent(keyCode, repeatCount)));
-        _lastKey = {Input::KEY_PRESSED, (uint16_t)keyCode};
+        bool isKeyDown = (msg == WM_KEYDOWN);
+        KeyCode window_keycode = static_cast<int>(wparam);
+        KeyCode crossplatform_keycode = GetKeyCode(window_keycode);
+
+        if (isKeyDown)
+        {
+            int repeatCount = (lparam >> 16) & 0xFF;
+            _eventQueue->PushEvent(std::make_shared<EventVariant>(KeyPressedEvent(crossplatform_keycode, repeatCount)));
+            _lastKey = {Input::KEY_PRESSED, crossplatform_keycode};
+        }
+        else
+        {
+            _eventQueue->PushEvent(std::make_shared<EventVariant>(KeyReleasedEvent(crossplatform_keycode)));
+            _lastKey = {Input::KEY_RELEASED, Key::Released};
+        }
         break;
     }
-    case WM_KEYUP:
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(KeyReleasedEvent(static_cast<int>(wparam))));
-        break;
 
     case WM_CLOSE:
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowCloseEvent()));

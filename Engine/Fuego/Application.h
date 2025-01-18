@@ -40,6 +40,7 @@ public:
     bool OnStartResizeWindow(WindowStartResizeEvent& event);
     bool OnEndResizeWindow(WindowEndResizeEvent& event);
     bool OnValidateWindow(WindowValidateEvent& event);
+    bool OnKeyPressEvent(KeyPressedEvent& event);
 
     // Input events
     bool OnMouseMoveEvent(MouseMovedEvent& event);

@@ -5,6 +5,7 @@
 #include "LayerStack.h"
 #include "Mesh.h"
 #include "Renderer.h"
+#include "KeyCodes.h"
 
 namespace Fuego
 {
@@ -69,6 +70,7 @@ void Application::OnEvent(EventVariant& event)
                                                 [this](WindowEndResizeEvent&    ev) { OnEndResizeWindow(ev); },
                                                 [this](WindowValidateEvent&    ev) { OnValidateWindow(ev); },
                                                 [this](MouseMovedEvent&    ev) { OnMouseMoveEvent(ev); },
+                                                [this](KeyPressedEvent&    ev) { OnKeyPressEvent(ev); },
                                                 [](Event&){}};
     // clang-format on
 
@@ -125,9 +127,23 @@ bool Application::OnValidateWindow(WindowValidateEvent& event)
     return true;
 }
 
+bool Application::OnKeyPressEvent(KeyPressedEvent& event)
+{
+    KeyEvent& e = (KeyEvent&)event;
+    KeyCode crossplatform_key = e.GetKeyCode();
+    switch (crossplatform_key)
+    {
+    case Key::D1:
+        d->_renderer->ToggleWireFrame();
+        break;
+    }
+    event.SetHandled();
+    return true;
+}
+
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    d->_renderer->ShowWireFrame(true);
+    d->_renderer->ShowWireFrame();
     d->_renderer->Clear();
     // d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
     d->_renderer->DrawMesh(data, model->GetVertexCount());
