@@ -23,7 +23,7 @@ std::pair<float, float> InputWin::GetMousePositionImpl() const
 {
     const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());
     float xPos, yPos;
-    window.GetCursorPos(xPos, yPos);
+    window.GetMousePos(xPos, yPos);
     return {xPos, yPos};
 }
 float InputWin::GetMouseXImpl() const

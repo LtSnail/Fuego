@@ -34,7 +34,7 @@ public:
 
     Input::KeyState GetKeyState(KeyCode keyCode) const;
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
-    void GetCursorPos(OUT float& xPos, OUT float& yPos) const;
+    void GetMousePos(OUT float& xPos, OUT float& yPos) const;
 
 
     virtual inline bool IsResizing() const
@@ -55,7 +55,6 @@ private:
 
     EventQueueWin* _eventQueue;
 
-    
 
     // Window handle
     HWND _hwnd;
@@ -77,7 +76,7 @@ private:
     }
 
     virtual void SetMousePos(float x, float y) override;
-   
+
     glm::vec2 _mouseDir;
     Input::KeyInfo _lastKey;
     Input::MouseInfo _lastMouse;

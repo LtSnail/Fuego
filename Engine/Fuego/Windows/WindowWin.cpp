@@ -4,8 +4,8 @@
 #include <glad/wgl.h>
 
 #include "InputWin.h"
-#include "Log.h"
 #include "KeyCodesWin.h"
+#include "Log.h"
 
 #define LAST_CODE UINT16_MAX
 
@@ -155,7 +155,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
     case WM_PAINT:
     {
-        if (!isPainted || isResizing || _props.mode == MINIMIZED) return 0;
+        if (!isPainted || isResizing || _props.mode == MINIMIZED)
+            return 0;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowValidateEvent()));
         isPainted = false;
         return 0;
@@ -182,7 +183,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     }
     case WM_SIZE:
     {
-        if (isResizing) break;
+        if (isResizing)
+            break;
 
         _currentWidth = LOWORD(lparam);
         _currentHeigth = HIWORD(lparam);
@@ -200,7 +202,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
         float x = static_cast<float>(GET_X_LPARAM(lparam));
         float y = static_cast<float>(GET_Y_LPARAM(lparam));
-        SetCursorPos(x, y);
+        SetMousePos(x, y);
         _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
         break;
     }
@@ -243,7 +245,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
             _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(button)));
         }
-        //break;
+        // break;
     }
 
     case WM_MOUSEWHEEL:
@@ -260,9 +262,9 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
     }
 
-   case WM_KEYDOWN:
-   case WM_KEYUP:
-   {
+    case WM_KEYDOWN:
+    case WM_KEYUP:
+    {
         bool isKeyDown = (msg == WM_KEYDOWN);
         int window_keycode = static_cast<int>(wparam);
         KeyCode crossplatform_keycode = GetKeyCode(window_keycode);
@@ -279,7 +281,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
             _lastKey = {Input::KEY_RELEASED, crossplatform_keycode};
         }
         break;
-   }
+    }
 
     case WM_CLOSE:
         _eventQueue->PushEvent(std::make_shared<EventVariant>(WindowCloseEvent()));
@@ -311,6 +313,12 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , _yPos(props.y)
     , _prevCursorPos(_cursorPos)
 {
+    POINT cursorPos;
+    ::GetCursorPos(&cursorPos);
+    _cursorPos.x = cursorPos.x;
+    _cursorPos.y = cursorPos.y;
+    _prevCursorPos = _cursorPos;
+
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
     WaitForSingleObject(_onThreadCreated, INFINITE);
 }
@@ -322,8 +330,8 @@ void WindowWin::Update()
         FU_CORE_INFO("stop rendering");
         return;
     }
-        _mouseDir = _cursorPos - _prevCursorPos;
-        _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
+    _mouseDir = _cursorPos - _prevCursorPos;
+    _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
 }
 
 void WindowWin::SetVSync(bool enabled)
@@ -351,7 +359,7 @@ Input::MouseState WindowWin::GetMouseState(MouseCode mouseCode) const
     return _lastMouse.mouseCode == mouseCode ? _lastMouse.state : Input::MouseState::MOUSE_NONE;
 }
 
-void WindowWin::GetCursorPos(OUT float& xPos, OUT float& yPos) const
+void WindowWin::GetMousePos(OUT float& xPos, OUT float& yPos) const
 {
     xPos = _cursorPos.x;
     yPos = _cursorPos.y;
