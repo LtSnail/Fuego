@@ -1,6 +1,8 @@
 #pragma once
 
 #include "EventQueue.h"
+#include "glm/ext.hpp"
+#include "glm/glm.hpp"
 
 namespace Fuego
 {
@@ -58,6 +60,9 @@ public:
 
     virtual void SetPainted() = 0;
     virtual inline bool IsResizing() const = 0;
+
+    virtual void SetMousePos(float x, float y) = 0;
+    inline virtual glm::vec2 GetMouseDir() const = 0;
 
     static std::unique_ptr<Window> CreateAppWindow(const WindowProps& props, EventQueue& eventQueue);
 };

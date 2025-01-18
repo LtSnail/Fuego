@@ -13,6 +13,7 @@ protected:
     virtual std::pair<float, float> GetMousePositionImpl() const override;
     virtual float GetMouseXImpl() const override;
     virtual float GetMouseYImpl() const override;
+    virtual glm::vec2 GetMouseDirImpl() const override;
 
     friend class WindowWin;
 

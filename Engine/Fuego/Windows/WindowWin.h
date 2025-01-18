@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Window.h"
 
+
 namespace Fuego
 {
 class SurfaceWindows;
@@ -40,6 +41,10 @@ public:
     {
         return isResizing;
     }
+    inline virtual glm::vec2 GetMouseDir() const override
+    {
+        return _mouseDir;
+    }
 
 private:
     float _xPos, _yPos, _currentWidth, _currentHeigth;
@@ -71,9 +76,14 @@ private:
         isPainted = true;
     }
 
+    virtual void SetMousePos(float x, float y) override;
+   
+    glm::vec2 _mouseDir;
     Input::KeyInfo _lastKey;
     Input::MouseInfo _lastMouse;
-    Input::CursorPos _cursorPos;
+    glm::vec2 _cursorPos;
+    glm::vec2 _prevCursorPos;
+
 
 protected:
     virtual void SetWindowMode(WPARAM mode);

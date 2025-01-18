@@ -200,9 +200,9 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
         float x = static_cast<float>(GET_X_LPARAM(lparam));
         float y = static_cast<float>(GET_Y_LPARAM(lparam));
-        _cursorPos = {x, y};
+        SetCursorPos(x, y);
         _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
-        //break;
+        break;
     }
 
     case WM_LBUTTONDOWN:
@@ -309,6 +309,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , _currentHeigth(props.Height)
     , _xPos(props.x)
     , _yPos(props.y)
+    , _prevCursorPos(_cursorPos)
 {
     _winThread = CreateThread(nullptr, 0, WinThreadMain, this, 0, _winThreadID);
     WaitForSingleObject(_onThreadCreated, INFINITE);
@@ -321,6 +322,7 @@ void WindowWin::Update()
         FU_CORE_INFO("stop rendering");
         return;
     }
+        _mouseDir = _cursorPos - _prevCursorPos;
         _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
 }
 
@@ -358,6 +360,13 @@ void WindowWin::GetCursorPos(OUT float& xPos, OUT float& yPos) const
 std::unique_ptr<Window> Window::CreateAppWindow(const WindowProps& props, EventQueue& eventQueue)
 {
     return std::make_unique<WindowWin>(props, eventQueue);
+}
+
+void WindowWin::SetMousePos(float x, float y)
+{
+    _prevCursorPos = _cursorPos;
+    _cursorPos.x = x;
+    _cursorPos.y = y;
 }
 
 void WindowWin::SetWindowMode(WPARAM mode)

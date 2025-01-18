@@ -44,12 +44,21 @@ void Camera::Update()
         dir.x = -1.0f * speed;
     }
     TranslateCamera();
+    RotateCamera();
 }
 
 void Camera::TranslateCamera()
 {
     position += dir;
     view = glm::translate(glm::mat4(1.0f), position);
+}
+
+void Camera::RotateCamera()
+{
+    glm::vec2 mouseDir = Input::GetMouseDir();
+    float angle = glm::atan(mouseDir.y, mouseDir.x);
+    glm::vec3 rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+    view = glm::rotate(view, angle, rotationAxis);
 }
 
 }  // namespace Fuego::Renderer

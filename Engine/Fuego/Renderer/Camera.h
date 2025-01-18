@@ -36,6 +36,7 @@ private:
 
     float speed;
     void TranslateCamera();
+    void RotateCamera();
     static Camera* active_camera;
     glm::vec3 position;
     glm::mat4 view;

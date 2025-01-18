@@ -2,6 +2,8 @@
 
 #include "KeyCodes.h"
 #include "MouseCodes.h"
+#include "glm/ext.hpp"
+#include "glm/glm.hpp"
 
 namespace Fuego
 {
@@ -52,6 +54,10 @@ public:
     {
         return m_Instance->GetMousePositionImpl();
     }
+    static inline glm::vec2 GetMouseDir()
+    {
+        return m_Instance->GetMouseDirImpl();
+    }
     static inline bool Init(Input* input)
     {
         if (!m_Instance && input != nullptr)
@@ -68,12 +74,6 @@ public:
         MouseCode mouseCode;
     };
 
-    struct CursorPos
-    {
-        float x;
-        float y;
-    };
-
 protected:
     virtual bool IsKeyPressedImpl(KeyCode keyCode) const = 0;
 
@@ -81,6 +81,7 @@ protected:
     virtual std::pair<float, float> GetMousePositionImpl() const = 0;
     virtual float GetMouseXImpl() const = 0;
     virtual float GetMouseYImpl() const = 0;
+    virtual glm::vec2 GetMouseDirImpl() const = 0;
 
 private:
     static Input* m_Instance;
