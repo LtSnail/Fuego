@@ -11,6 +11,7 @@ namespace Fuego::Renderer
 {
 
 Renderer::Renderer()
+    : show_wireframe(false)
 {
     _camera = std::unique_ptr<Camera>(new Camera());
 
@@ -69,9 +70,21 @@ void Renderer::Present()
     _swapchain->Present();
 }
 
-void Renderer::ShowWireFrame(bool show)
+void Renderer::ShowWireFrame()
 {
-    _swapchain->ShowWireFrame(show);
+    if (show_wireframe)
+    {
+        _swapchain->ShowWireFrame(true);
+    }
+    else
+    {
+        _swapchain->ShowWireFrame(false);
+    }
+}
+
+void Renderer::ToggleWireFrame()
+{
+    show_wireframe = !show_wireframe;
 }
 
 void Renderer::ValidateWindow()

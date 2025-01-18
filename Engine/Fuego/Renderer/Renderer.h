@@ -34,7 +34,8 @@ public:
     void Clear();
     void Present();
 
-    void ShowWireFrame(bool show = true);
+    void ShowWireFrame();
+    void ToggleWireFrame();
     void ValidateWindow();
     inline const Viewport& Getviewport() const
     {
@@ -56,6 +57,9 @@ public:
 #pragma pack(pop)
 
 private:
+
+    bool show_wireframe;
+
     void UpdateViewport();
     std::unique_ptr<Buffer> _buffer;
     std::unique_ptr<Device> _device;
