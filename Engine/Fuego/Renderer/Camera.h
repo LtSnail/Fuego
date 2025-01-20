@@ -3,6 +3,9 @@
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
+using vec3 = glm::vec3;
+using mat4 = glm::mat4;
+
 namespace Fuego::Renderer
 {
 class Renderer;
@@ -14,15 +17,15 @@ public:
     FUEGO_NON_COPYABLE_NON_MOVABLE(Camera);
 
     
-    inline glm::mat4 GetView() const
+    inline mat4 GetView() const
     {
         return view;
     }
-    inline const glm::mat4* GetViewPtr() const
+    inline const mat4* GetViewPtr() const
     {
         return &view;
     }
-    inline glm::vec3 GetDir() const
+    inline vec3 GetDir() const
     {
         return dir;
     }
@@ -38,10 +41,11 @@ private:
     void TranslateCamera();
     void RotateCamera();
     static Camera* active_camera;
-    glm::vec3 position;
-    glm::mat4 view;
-    glm::vec3 dir;
-
+    vec3 position;
+    mat4 view;
+    vec3 dir;
+    vec3 view_direction;
+    vec3 up;
 
     friend class Renderer;
     Camera();
