@@ -38,14 +38,17 @@ public:
 private:
 
     float speed;
-    void TranslateCamera();
     void RotateCamera();
     static Camera* active_camera;
     vec3 position;
     mat4 view;
     vec3 dir;
-    vec3 view_direction;
+    vec3 camera_forward;
     vec3 up;
+
+    float yaw;
+    float pitch;
+    float mouse_sensitivity;
 
     friend class Renderer;
     Camera();

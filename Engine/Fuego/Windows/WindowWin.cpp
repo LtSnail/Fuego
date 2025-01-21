@@ -202,11 +202,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
         float x = static_cast<float>(GET_X_LPARAM(lparam));
         float y = static_cast<float>(GET_Y_LPARAM(lparam));
-        if (HasMouseMoved(x, y))
-        {
-            SetMousePos(x, y);
-            _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
-        }
+        SetMousePos(x, y);
+        _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
         break;
     }
 
@@ -248,7 +245,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
             _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(button)));
         }
-        // break;
+         break;
     }
 
     case WM_MOUSEWHEEL:
@@ -335,6 +332,7 @@ void WindowWin::Update()
     }
     _mouseDir = _cursorPos - _prevCursorPos;
     _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
+    _prevCursorPos = _cursorPos;
 }
 
 void WindowWin::SetVSync(bool enabled)
