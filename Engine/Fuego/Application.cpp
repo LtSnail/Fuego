@@ -10,9 +10,6 @@
 
 namespace Fuego
 {
-Renderer::Mesh* model = new Renderer::Mesh();
-std::vector<float> data;
-
 class Application::ApplicationImpl
 {
     friend class Application;
@@ -37,8 +34,6 @@ Application::Application()
 
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
-
-    data = model->load(d->_fs->GetFullPathTo("Model.obj").data());
 }
 
 Renderer::Renderer& Application::Renderer()
