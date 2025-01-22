@@ -152,7 +152,8 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
     d->_renderer->DrawMesh(data, model->GetVertexCount());
     d->_renderer->Present();
 
-    event.SetHandled();
+    //event.SetHandled();
+    UNUSED(event);
     return true;
 }
 

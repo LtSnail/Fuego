@@ -1,4 +1,4 @@
-#include <Fuego.h>
+﻿#include <Fuego.h>
 
 class ExampleLayer : public Fuego::Layer
 {
@@ -14,10 +14,23 @@ public:
 
     void OnEvent(Fuego::EventVariant& event) override
     {
-        auto LogEventVisitor = Fuego::EventVisitor{[](const Fuego::Event& ev) { FU_TRACE("{0}", ev.ToString()); }};
+        auto LogEventVisitor =
+            Fuego::EventVisitor{[this](Fuego::AppRenderEvent& ev) { OnRenderEvent(ev); },
+            [](const Fuego::Event& ev) 
+            {
+                FU_TRACE("{0}", ev.ToString()); 
+            }};
 
         std::visit(LogEventVisitor, event);
     }
+
+    bool OnRenderEvent(Fuego::AppRenderEvent& event)
+    {
+        UNUSED(event);
+        FU_TRACE("Client OnRenderEvent");
+        return true;
+    }
+
 };
 
 class SandboxApp : public Fuego::Application
