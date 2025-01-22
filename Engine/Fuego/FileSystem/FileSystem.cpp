@@ -1,4 +1,4 @@
-#include "FileSystem/FileSystem.h"
+#include "FileSystem.h"
 
 #if defined(FUEGO_PLATFORM_MACOS)
 #include <limits.h>
@@ -7,12 +7,37 @@
 
 namespace Fuego::FS
 {
+class FileSystem::FileSystemImpl
+{
+    friend class FileSystem;
+    std::string GetExecutablePath();
+    FileSystemImpl();
+    std::string pathToResources;
+    std::string pathToShadersWindows;
+    std::string pathToImagesWindows;
+    std::string pathToModelsWindows;
+    std::vector<std::string_view> _searchPaths;
+};
+
+FileSystem::FileSystemImpl::FileSystemImpl()
+{
+    pathToResources = GetExecutablePath() + "\\..\\..\\..\\..\\Sandbox\\Resources\\";
+    pathToShadersWindows = "Windows\\Shaders\\";
+    pathToImagesWindows = "Windows\\Images\\";
+    pathToModelsWindows = "Windows\\Models\\";
+    _searchPaths = {pathToShadersWindows.data(), pathToImagesWindows.data(), pathToModelsWindows.data()};
+}
+
+FileSystem::FileSystem()
+    : d(new FileSystemImpl())
+{
+}
 
 std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base::openmode mode)
 {
-    std::string path = pathToResources + pathToShadersWindows + file;
+    std::string path = GetFullPathTo(file);
     std::fstream f(path, mode);
-    FU_CORE_ASSERT(f.is_open(), "[FS] failed open a file");
+    FU_CORE_ASSERT(f.is_open(), "[FS] failed to open a file");
 
     std::stringstream buffer;
     buffer << f.rdbuf();
@@ -21,7 +46,7 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
     return buffer.str();
 }
 
-const std::string FileSystem::GetExecutablePath() const
+std::string FileSystem::FileSystemImpl::GetExecutablePath()
 {
 #if defined(FUEGO_PLATFORM_WIN)
     char path[MAX_PATH];
@@ -39,9 +64,9 @@ const std::string FileSystem::GetExecutablePath() const
 
 const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
 {
-    for (const auto& path : _searchPaths)
+    for (const auto& path : d->_searchPaths)
     {
-        std::filesystem::path filePath = pathToResources / std::filesystem::path(path) / fileName;
+        std::filesystem::path filePath = d->pathToResources / std::filesystem::path(path) / fileName;
 
         if (std::filesystem::exists(filePath))
         {
