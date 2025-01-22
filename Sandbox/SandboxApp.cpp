@@ -8,11 +8,12 @@ Fuego::Application* Fuego::CreateApplication()
 
 SandboxApp::SandboxApp()
 {
-    PushLayer(new SceneLayer);
+    SceneLayer* scene_layer = new SceneLayer();
+    PushLayer(scene_layer);
 }
 
 SceneLayer::SceneLayer()
-        : Layer("Example")
+        : Layer("3D scene layer")
     {
     }
 
@@ -23,9 +24,10 @@ void SceneLayer::OnUpdate()
 void SceneLayer::OnAttach()
 {
     scene_meshes.emplace_back(new Fuego::Renderer::Mesh());
+    Fuego::FS::FileSystem& fs = Fuego::Application::Get().FileSystem();
     for (auto mesh : scene_meshes)
     {
-        mesh_data.push_back(std::move(mesh->load(Fuego::Application::Get().FileSystem().GetFullPathTo("Model.obj").data())));
+        mesh_data.push_back(std::move(mesh->load(fs.GetFullPathTo("Model.obj").data())));
     }
 }
 
@@ -51,9 +53,16 @@ void SceneLayer::OnEvent(Fuego::EventVariant& event)
     }
 
 bool SceneLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
-    {
+{
     UNUSED(event);
     FU_TRACE("Client OnRenderEvent");
+    auto& renderer = Fuego::Application::Get().Renderer();
+    int i = 0;
+    for (auto& mesh : mesh_data)
+    {
+        renderer.DrawMesh(mesh, scene_meshes[i]->GetVertexCount());
+        i++;
+    }
     return true;
 }
 
