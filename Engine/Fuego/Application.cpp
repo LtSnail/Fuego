@@ -49,6 +49,7 @@ Application::~Application()
 void Application::PushLayer(Layer* layer)
 {
     d->m_LayerStack.PushLayer(layer);
+    layer->OnAttach();
 }
 
 void Application::PushOverlay(Layer* overlay)
@@ -142,9 +143,9 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     d->_renderer->ShowWireFrame();
-    d->_renderer->Clear();
+    //d->_renderer->Clear();
     // d->_renderer->DrawMesh(mesh, sizeof(mesh) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int));
-    d->_renderer->DrawMesh(data, model->GetVertexCount());
+    //d->_renderer->DrawMesh(data, model->GetVertexCount());
     d->_renderer->Present();
 
     //event.SetHandled();
