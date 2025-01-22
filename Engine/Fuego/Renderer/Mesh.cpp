@@ -87,7 +87,7 @@ std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
     return vertices;
 }
 
-void Fuego::Renderer::Mesh::ParseFace(const std::string_view& line, OUT std::vector<Face>& faces, bool hasTextcoord, bool hasNormals)
+void Fuego::Renderer::Mesh::ParseFace(const std::string_view& line, std::vector<Face>& faces, bool hasTextcoord, bool hasNormals)
 {
     std::vector<int> v_indices, t_indices, n_indices;
     size_t pos = 2;
@@ -152,8 +152,8 @@ void Fuego::Renderer::Mesh::ParseFace(const std::string_view& line, OUT std::vec
 }
 
 
-void Fuego::Renderer::Mesh::ParseVertices(const std::string_view& line, OUT std::vector<glm::vec3>& vertecies, OUT std::vector<glm::vec2>& textcoord,
-                                          OUT std::vector<glm::vec3>& normals)
+void Fuego::Renderer::Mesh::ParseVertices(const std::string_view& line, std::vector<glm::vec3>& vertecies, std::vector<glm::vec2>& textcoord,
+                                          std::vector<glm::vec3>& normals)
 {
     float x, y, z;
     const char second_char = line[1];
@@ -178,7 +178,7 @@ void Fuego::Renderer::Mesh::ParseVertices(const std::string_view& line, OUT std:
 }
 
 void Fuego::Renderer::Mesh::ProcessFaces(const std::vector<Face>& faces, std::vector<glm::vec3>& in_vertices, std::vector<glm::vec2>& in_textcoords,
-                                         std::vector<glm::vec3>& in_normals, OUT std::vector<float>& output_vector)
+                                         std::vector<glm::vec3>& in_normals, std::vector<float>& output_vector)
 {
     for (const auto& face : faces)
     {

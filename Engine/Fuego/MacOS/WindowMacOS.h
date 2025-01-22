@@ -43,6 +43,18 @@ public:
         return false;
     }
 
+    virtual void SetMousePos(float x, float y) override
+    {
+    }
+    inline virtual glm::vec2 GetMouseDir() const override
+    {
+        return {0.0f, 0.0f};
+    }
+    virtual bool HasMouseMoved(float x, float y) const override
+    {
+        return false;
+    }
+
 private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();

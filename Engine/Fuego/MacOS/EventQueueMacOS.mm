@@ -27,7 +27,8 @@
 {
     NSWindow* window = (NSWindow*)[notification object];
     NSRect rect = [window contentRectForFrameRect:[window frame]];
-    Fuego::EventQueueMacOS::PushEvent(_eq, std::make_shared<Fuego::EventVariant>(Fuego::WindowResizeEvent(rect.size.width, rect.size.height)));
+    Fuego::EventQueueMacOS::PushEvent(
+        _eq, std::make_shared<Fuego::EventVariant>(Fuego::WindowResizeEvent(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)));
 }
 
 - (instancetype)initWithEventQueue:(Fuego::EventQueueMacOS*)eq

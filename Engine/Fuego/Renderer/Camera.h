@@ -16,7 +16,7 @@ public:
     ~Camera();
     FUEGO_NON_COPYABLE_NON_MOVABLE(Camera);
 
-    
+
     inline mat4 GetView() const
     {
         return view;
@@ -35,8 +35,9 @@ public:
         return active_camera;
     }
 
-private:
+    void Update();
 
+private:
     float speed;
     void RotateCamera();
     static Camera* active_camera;
@@ -52,8 +53,5 @@ private:
 
     friend class Renderer;
     Camera();
-
-    friend class Application;
-    void Update();
 };
 }  // namespace Fuego::Renderer

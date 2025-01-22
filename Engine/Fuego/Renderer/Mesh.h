@@ -34,11 +34,10 @@ private:
         }
     };
 
-    void ParseFace(const std::string_view& line, OUT std::vector<Face>& faces, bool hasTextcoord, bool hasNormals);
-    void ParseVertices(const std::string_view& line, OUT std::vector<glm::vec3>& vertecies, OUT std::vector<glm::vec2>& textcoord,
-                       OUT std::vector<glm::vec3>& normals);
+    void ParseFace(const std::string_view& line, std::vector<Face>& faces, bool hasTextcoord, bool hasNormals);
+    void ParseVertices(const std::string_view& line, std::vector<glm::vec3>& vertecies, std::vector<glm::vec2>& textcoord, std::vector<glm::vec3>& normals);
     void ProcessFaces(const std::vector<Face>& faces, std::vector<glm::vec3>& in_vertices, std::vector<glm::vec2>& in_textcoords,
-                      std::vector<glm::vec3>& in_normals, OUT std::vector<float>& output_vector);
+                      std::vector<glm::vec3>& in_normals, std::vector<float>& output_vector);
 
     std::string model_name;
     std::string material;
