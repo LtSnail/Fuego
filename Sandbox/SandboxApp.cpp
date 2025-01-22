@@ -1,18 +1,21 @@
-﻿#include <Fuego.h>
+﻿#include "SandboxApp.h"
 
-class ExampleLayer : public Fuego::Layer
+
+Fuego::Application* Fuego::CreateApplication()
 {
-public:
-    ExampleLayer()
+    return new SandboxApp();
+}
+
+ExampleLayer::ExampleLayer()
         : Layer("Example")
     {
     }
 
-    void OnUpdate() override
-    {
-    }
+void ExampleLayer::OnUpdate() 
+{
+}
 
-    void OnEvent(Fuego::EventVariant& event) override
+void ExampleLayer::OnEvent(Fuego::EventVariant& event)
     {
         auto LogEventVisitor =
             Fuego::EventVisitor{[this](Fuego::AppRenderEvent& ev) { OnRenderEvent(ev); },
@@ -24,25 +27,14 @@ public:
         std::visit(LogEventVisitor, event);
     }
 
-    bool OnRenderEvent(Fuego::AppRenderEvent& event)
-    {
-        UNUSED(event);
-        FU_TRACE("Client OnRenderEvent");
-        return true;
-    }
-
-};
-
-class SandboxApp : public Fuego::Application
+bool ExampleLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
 {
-public:
-    SandboxApp()
-    {
-        PushLayer(new ExampleLayer);
-    }
-};
+    UNUSED(event);
+    FU_TRACE("Client OnRenderEvent");
+    return true;
+}
 
-Fuego::Application* Fuego::CreateApplication()
+SandboxApp::SandboxApp()
 {
-    return new SandboxApp();
+    PushLayer(new ExampleLayer);
 }
