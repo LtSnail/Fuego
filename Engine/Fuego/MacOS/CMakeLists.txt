@@ -5,6 +5,7 @@ set(PROJECT_HEADERS
     InputMacOS.h
     KeyCodesMacOS.h
     WindowMacOS.h
+    FileSystemPathsMacOS.h
     Metal/DeviceMetal.h
     Metal/BufferMetal.h
     Metal/CommandQueueMetal.h

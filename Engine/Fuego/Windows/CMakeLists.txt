@@ -5,6 +5,7 @@ set(PROJECT_HEADERS
     InputWin.h
     KeyCodesWin.h
     WindowWin.h
+    FileSystemPathsWin.h
     OpenGL/BufferOpenGL.h
     OpenGL/DeviceOpenGL.h
     OpenGL/CommandBufferOpenGL.h
