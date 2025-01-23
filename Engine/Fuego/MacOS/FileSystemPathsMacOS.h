@@ -1,5 +1,4 @@
 #pragma once
-#include "filesystem"
 
 static std::string resource = "STAB";
 static std::string shaders = "STAB";

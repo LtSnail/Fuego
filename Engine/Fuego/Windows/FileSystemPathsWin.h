@@ -1,5 +1,4 @@
 #pragma once
-#include "filesystem"
 
 static std::string resource = "\\..\\..\\..\\..\\Sandbox\\Resources\\";
 static std::string shaders = "Windows\\Shaders\\";
