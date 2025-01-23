@@ -15,9 +15,11 @@ Camera::Camera()
     , pitch(0.0f)
     , mouse_sensitivity(1.0f)
     , camera_forward(0.0f, 0.0f, -1.0f)
+    , view(glm::mat4(1.0f))
+    , dir(glm::vec3(0.0f, 0.0f, 0.0f))
+
 {
-    view = glm::mat4(1.0f);
-    dir = glm::vec3(0.0f, 0.0f, 0.0f);
+
 }
 
 Camera::~Camera()
