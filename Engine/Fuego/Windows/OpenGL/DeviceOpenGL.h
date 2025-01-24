@@ -29,5 +29,6 @@ private:
     static void APIENTRY OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
                                                  const void* userParam);
     HGLRC ctx;
+    int max_textures_units;
 };
 }  // namespace Fuego::Renderer

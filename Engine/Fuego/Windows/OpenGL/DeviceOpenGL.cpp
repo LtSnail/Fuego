@@ -16,6 +16,7 @@ namespace Fuego::Renderer
 
 DeviceOpenGL::DeviceOpenGL()
     : ctx(nullptr)
+    , max_textures_units(0)
 {
     HWND hwnd = (HWND)Application::Get().GetWindow().GetNativeHandle();
     HDC hdc = GetDC(hwnd);
@@ -85,7 +86,8 @@ DeviceOpenGL::DeviceOpenGL()
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(DeviceOpenGL::OpenGLDebugCallbackFunc, nullptr);
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_textures_units);
+    FU_CORE_INFO("  Max texture units: {0}", max_textures_units);
     glEnable(GL_DEPTH_TEST);
 }
 
