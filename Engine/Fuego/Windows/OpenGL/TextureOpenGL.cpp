@@ -2,8 +2,9 @@
 
 namespace Fuego::Renderer
 {
-TextureOpenGL::TextureOpenGL(unsigned int* data, int width, int heigth)
+TextureOpenGL::TextureOpenGL(unsigned char* data, int width, int heigth)
     : _textureTarget(GL_TEXTURE_2D)
+    , _texture(0)
 {
     glGenTextures(1, &_texture);
     glBindTexture(_textureTarget, _texture);
@@ -16,6 +17,11 @@ TextureOpenGL::TextureOpenGL(unsigned int* data, int width, int heigth)
     glTexParameterf(_textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     glBindTexture(_texture, 0);
+}
+
+Texture* Texture::CreateTexture(unsigned char* data, int width, int heigth)
+{
+    return new TextureOpenGL(data, width, heigth);
 }
 
 void TextureOpenGL::Bind()

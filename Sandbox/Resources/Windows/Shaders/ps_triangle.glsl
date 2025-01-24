@@ -1,8 +1,11 @@
 #version 330 core
 
-out vec4 FragColor;  // Выходной цвет фрагмента
+uniform sampler2D sampler;
+
+in vec2 TextCoord;
+vec4 FragColor;
 
 void main()
 {
-    FragColor = vec4(0.4f, 0.2f, 0.2f, 1.0f);  // Устанавливаем белый цвет
+    FragColor = texture2D(sampler, TextCoord);
 }
