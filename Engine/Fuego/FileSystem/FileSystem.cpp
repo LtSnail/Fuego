@@ -1,4 +1,5 @@
 #include "FileSystem.h"
+#include "External/stb_image/stb_image.h"
 
 #if defined(FUEGO_PLATFORM_WIN)
 #include "FileSystemPathsWin.h"
@@ -39,6 +40,12 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
     f.close();
 
     return buffer.str();
+}
+
+unsigned char* FileSystem::LoadImage(const std::string& file, int& x, int& y, int& n, int components)
+{
+    stbi_set_flip_vertically_on_load(1);
+    return stbi_load(file.c_str(), &x, &y, &n, components);
 }
 
 std::string FileSystem::FileSystemImpl::GetExecutablePath()

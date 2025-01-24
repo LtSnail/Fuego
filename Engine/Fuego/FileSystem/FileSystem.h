@@ -13,7 +13,7 @@ public:
     FUEGO_NON_COPYABLE_NON_MOVABLE(FileSystem)
 
     std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode = std::fstream::ios_base::in);
-
+    unsigned char* LoadImage(const std::string& file, int& x, int& y, int& n, int components = 0);
     const std::string GetFullPathTo(std::string_view fileName) const;
 
 
