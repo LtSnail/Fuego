@@ -42,10 +42,10 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
     return buffer.str();
 }
 
-unsigned char* FileSystem::LoadImage(const std::string& file, int& x, int& y, int& n, int components)
+unsigned char* FileSystem::LoadImage(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels)
 {
     stbi_set_flip_vertically_on_load(1);
-    return stbi_load(file.c_str(), &x, &y, &n, components);
+    return stbi_load(file.c_str(), &x, &y, &bits_per_pixel, image_channels);
 }
 
 std::string FileSystem::FileSystemImpl::GetExecutablePath()
