@@ -45,7 +45,12 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
 unsigned char* FileSystem::LoadImage(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels)
 {
     stbi_set_flip_vertically_on_load(1);
-    return stbi_load(file.c_str(), &x, &y, &bits_per_pixel, image_channels);
+    unsigned char*  data = stbi_load(file.c_str(), &x, &y, &bits_per_pixel, image_channels);
+    if (!data)
+    {
+        FU_CORE_ERROR("Can't load an image: {0} {1}", file, stbi_failure_reason());
+    }
+    return data;
 }
 
 std::string FileSystem::FileSystemImpl::GetExecutablePath()
