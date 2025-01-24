@@ -27,12 +27,13 @@ set(PROJECT_HEADERS
     Fuego/ImGui/ImGuiLayer.h
     Fuego/Renderer
     Fuego/FileSystem/FileSystem.h
+    External/stb_image/stb_image.h
     Fuego.h
     fupch.h
 )
 
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
-            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp)
+            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp External/stb_image/stb_image.cpp)
 
 set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
 
