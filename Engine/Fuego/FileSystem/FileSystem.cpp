@@ -59,6 +59,20 @@ std::string FileSystem::FileSystemImpl::GetExecutablePath()
 
 const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
 {
+    std::filesystem::path file(fileName);
+    if (std::filesystem::exists(file))
+    {
+        std::string extension = file.extension().string();
+        if (extension == "png" || extension == "jpg")
+        {
+            std::filesystem::path filePath = d->resource_path / std::filesystem::path(images) / fileName;
+            if (std::filesystem::exists(filePath))
+            {
+                return filePath.lexically_normal().string();
+            }
+        }
+    }
+
     for (const auto& path : d->_searchPaths)
     {
         std::filesystem::path filePath = d->resource_path / std::filesystem::path(path) / fileName;
