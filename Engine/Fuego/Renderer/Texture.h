@@ -20,6 +20,7 @@ class Texture
 public:
     virtual ~Texture() = default;
 
+    virtual void Bind() = 0;
     virtual TextureFormat GetTextureFormat() const = 0;
 };
 
