@@ -6,6 +6,7 @@ class Surface;
 class Shader;
 class DescriptorBuffer;
 class Buffer;
+class Texture;
 
 class CommandBuffer
 {
@@ -26,6 +27,7 @@ public:
     virtual void Draw(uint32_t vertexCount) = 0;
     virtual void IndexedDraw(uint32_t vertexCount) = 0;
     virtual void Clear() = 0;
+    virtual void BindTexture(Texture& texture) = 0;
 };
 
 }  // namespace Fuego::Renderer

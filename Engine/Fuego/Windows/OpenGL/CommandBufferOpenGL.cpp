@@ -7,6 +7,7 @@
 #include "Renderer.h"
 #include "Renderer/Surface.h"
 #include "ShaderOpenGL.h"
+#include "TextureOpenGL.h"
 #include "glad/gl.h"
 
 namespace Fuego::Renderer
@@ -17,6 +18,7 @@ glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0F / 720.0F, 0
 int modelLoc;
 int viewLoc;
 int projLoc;
+int samplerLoc;
 
 CommandBufferOpenGL::CommandBufferOpenGL()
     : _programID(0)
@@ -107,6 +109,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         modelLoc = glGetUniformLocation(_programID, "model");
         viewLoc = glGetUniformLocation(_programID, "view");
         projLoc = glGetUniformLocation(_programID, "projection");
+        samplerLoc = glGetUniformLocation(_programID, "sampler");
         glUseProgram(0);
 
         return;
@@ -171,6 +174,7 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(Camera::GetActiveCamera()->GetView()));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform1i(samplerLoc, 0);
 
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
     glBindVertexArray(0);
@@ -194,6 +198,11 @@ void CommandBufferOpenGL::Clear()
 {
     glClearColor(1.f, 1.f, 1.f, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void CommandBufferOpenGL::BindTexture(Texture& texture)
+{
+    texture.Bind();
 }
 
 void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex)

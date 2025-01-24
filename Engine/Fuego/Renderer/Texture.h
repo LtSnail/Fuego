@@ -18,6 +18,7 @@ enum class TextureFormat
 class Texture
 {
 public:
+    static Texture* CreateTexture(unsigned char* data, int width, int heigth);
     virtual ~Texture() = default;
 
     virtual void Bind() = 0;

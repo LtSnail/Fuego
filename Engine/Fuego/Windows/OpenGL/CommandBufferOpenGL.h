@@ -22,6 +22,7 @@ public:
     virtual void Draw(uint32_t vertexCount) override;
     virtual void IndexedDraw(uint32_t vertexCount) override;
     virtual void Clear() override;
+    virtual void BindTexture(Texture& texture) override;
 
 private:
     uint32_t _vao;

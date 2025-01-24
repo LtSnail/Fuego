@@ -42,15 +42,16 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
     return buffer.str();
 }
 
-unsigned char* FileSystem::LoadImage(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels)
+unsigned char* FileSystem::Load_Image(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels)
 {
+    std::string path = GetFullPathTo(file);
     stbi_set_flip_vertically_on_load(1);
-    unsigned char*  data = stbi_load(file.c_str(), &x, &y, &bits_per_pixel, image_channels);
+    unsigned char* data = stbi_load(path.c_str(), &x, &y, &bits_per_pixel, image_channels);
     if (!data)
     {
-        FU_CORE_ERROR("Can't load an image: {0} {1}", file, stbi_failure_reason());
+        FU_CORE_ERROR("Can't load an image: {0} {1}", path, stbi_failure_reason());
     }
-    stbi_image_free(data);
+    //stbi_image_free(data);
     return data;
 }
 

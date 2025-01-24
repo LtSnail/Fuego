@@ -1,5 +1,7 @@
 ﻿#include "SandboxApp.h"
+#include "Texture.h"
 
+Fuego::Renderer::Texture* texture;
 
 Fuego::Application* Fuego::CreateApplication()
 {
@@ -29,6 +31,9 @@ void SceneLayer::OnAttach()
     {
         mesh_data.push_back(std::move(mesh->load(fs.GetFullPathTo("Model.obj").data())));
     }
+    int x, y, n;
+    unsigned char* texture_buffer = fs.Load_Image("image.jpg", x, y, n);
+    texture = Fuego::Renderer::Texture::CreateTexture(texture_buffer, x, y);
 }
 
 void SceneLayer::OnDetach()
@@ -60,7 +65,7 @@ bool SceneLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
     int i = 0;
     for (auto& mesh : mesh_data)
     {
-        renderer.DrawMesh(mesh, scene_meshes[i]->GetVertexCount());
+        renderer.DrawMesh(mesh, scene_meshes[i]->GetVertexCount(), *texture);
         i++;
     }
     return true;
