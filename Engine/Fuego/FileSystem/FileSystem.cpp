@@ -50,6 +50,7 @@ unsigned char* FileSystem::LoadImage(const std::string& file, int& x, int& y, in
     {
         FU_CORE_ERROR("Can't load an image: {0} {1}", file, stbi_failure_reason());
     }
+    stbi_image_free(data);
     return data;
 }
 
