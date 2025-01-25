@@ -11,7 +11,7 @@
 
 namespace Fuego::Renderer
 {
-glm::mat4 model_pos = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5.0f)); 
+glm::mat4 model_pos = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 0.0f, -5.0f)); 
 glm::mat4 model = glm::rotate(model_pos, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0F / 720.0F, 0.1f, 100.0f);
 int modelLoc;
