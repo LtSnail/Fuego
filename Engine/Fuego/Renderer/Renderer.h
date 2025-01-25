@@ -37,7 +37,7 @@ public:
     void ShowWireFrame();
     void ToggleWireFrame();
     void ValidateWindow();
-    inline const Viewport& Getviewport() const
+    inline const Viewport& GetViewport() const
     {
         return viewport;
     }
@@ -57,7 +57,6 @@ public:
 #pragma pack(pop)
 
 private:
-
     bool show_wireframe;
 
     void UpdateViewport();

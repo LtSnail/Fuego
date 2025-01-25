@@ -7,16 +7,9 @@
 #include "KeyCodesWin.h"
 #include "Log.h"
 
-#define LAST_CODE UINT16_MAX
 
 typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int* attribList);
 wglCreateContextAttribsARB_type* wglCreateContextAttribsARB;
-
-#define WGL_CONTEXT_MAJOR_VERSION_ARB 0x2091
-#define WGL_CONTEXT_MINOR_VERSION_ARB 0x2092
-#define WGL_CONTEXT_PROFILE_MASK_ARB 0x9126
-
-#define WGL_CONTEXT_CORE_PROFILE_BIT_ARB 0x00000001
 
 typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats,
                                                  UINT* nNumFormats);
@@ -35,7 +28,7 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 #ifdef UNICODE
     MultiByteToWideChar(CP_UTF8, 0, props.Title.c_str(), -1, buffer, _countof(buffer));
 #else
-    sprintf_s(buffer, window->_props.Title.c_str());
+    FU_CORE_ASSERT(sprintf_s(buffer, window->_props.Title.c_str()), "")
 #endif
     WNDCLASSEX wndClass = {};
     wndClass.cbSize = sizeof(WNDCLASSEX);
@@ -86,8 +79,7 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 
 LRESULT CALLBACK WindowWin::WindowProcStatic(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    WindowWin* window = reinterpret_cast<WindowWin*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    if (window)
+    if (WindowWin* window = reinterpret_cast<WindowWin*>(GetWindowLongPtr(hWnd, GWLP_USERDATA)))
     {
         return window->WindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -100,7 +92,7 @@ void WindowWin::InitOpenGLExtensions()
     WNDCLASSA window_class = {
         .style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
         .lpfnWndProc = DefWindowProcA,
-        .hInstance = GetModuleHandle(0),
+        .hInstance = GetModuleHandle(nullptr),
         .lpszClassName = "Dummy_Window",
     };
 
@@ -108,13 +100,13 @@ void WindowWin::InitOpenGLExtensions()
         FU_CORE_ERROR("Failed to register dummy OpenGL window");
 
     HWND dummy_window = CreateWindowExA(0, window_class.lpszClassName, "Dummy OpenGL Window", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 0,
-                                        0, window_class.hInstance, 0);
+                                        0, window_class.hInstance, nullptr);
     if (!dummy_window)
         FU_CORE_ERROR("Failed to create dummy OpenGL window.");
 
     HDC dummy_dc = GetDC(dummy_window);
 
-    PIXELFORMATDESCRIPTOR pfd = {0};
+    PIXELFORMATDESCRIPTOR pfd = {};
     pfd.nSize = sizeof(pfd);
     pfd.nVersion = 1;
     pfd.iPixelType = PFD_TYPE_RGBA;
@@ -125,21 +117,29 @@ void WindowWin::InitOpenGLExtensions()
     pfd.cDepthBits = 24;
     pfd.cStencilBits = 8;
 
-    int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
+    const int pixel_format = ChoosePixelFormat(dummy_dc, &pfd);
     if (!pixel_format)
+    {
         FU_CORE_ERROR("Failed to find a suitable pixel format.");
+    }
     if (!SetPixelFormat(dummy_dc, pixel_format, &pfd))
+    {
         FU_CORE_ERROR("Failed to set the pixel format.");
+    }
 
-    HGLRC dummy_context = wglCreateContext(dummy_dc);
+    const HGLRC dummy_context = wglCreateContext(dummy_dc);
     if (!dummy_context)
+    {
         FU_CORE_ERROR("Failed to create a dummy OpenGL rendering context.");
+    }
 
     if (!wglMakeCurrent(dummy_dc, dummy_context))
+    {
         FU_CORE_ERROR("Failed to activate dummy OpenGL rendering context.");
+    }
 
-    wglCreateContextAttribsARB = (wglCreateContextAttribsARB_type*)wglGetProcAddress("wglCreateContextAttribsARB");
-    wglChoosePixelFormatARB = (wglChoosePixelFormatARB_type*)wglGetProcAddress("wglChoosePixelFormatARB");
+    wglCreateContextAttribsARB = reinterpret_cast<wglCreateContextAttribsARB_type*>(wglGetProcAddress("wglCreateContextAttribsARB"));
+    wglChoosePixelFormatARB = reinterpret_cast<wglChoosePixelFormatARB_type*>(wglGetProcAddress("wglChoosePixelFormatARB"));
 
     wglMakeCurrent(dummy_dc, 0);
     wglDeleteContext(dummy_context);
@@ -200,8 +200,8 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     }
     case WM_MOUSEMOVE:
     {
-        float x = static_cast<float>(GET_X_LPARAM(lparam));
-        float y = static_cast<float>(GET_Y_LPARAM(lparam));
+        const float x = static_cast<float>(GET_X_LPARAM(lparam));
+        const float y = static_cast<float>(GET_Y_LPARAM(lparam));
         SetMousePos(x, y);
         _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseMovedEvent(x, y)));
         break;
@@ -218,20 +218,14 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         switch (msg)
         {
         case WM_LBUTTONDOWN:
-            button = Mouse::Button0;
-            break;
         case WM_LBUTTONUP:
             button = Mouse::Button0;
             break;
         case WM_RBUTTONDOWN:
-            button = Mouse::Button1;
-            break;
         case WM_RBUTTONUP:
             button = Mouse::Button1;
             break;
         case WM_MBUTTONDOWN:
-            button = Mouse::Button2;
-            break;
         case WM_MBUTTONUP:
             button = Mouse::Button2;
             break;
@@ -245,7 +239,7 @@ LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         {
             _eventQueue->PushEvent(std::make_shared<EventVariant>(MouseButtonReleasedEvent(button)));
         }
-         break;
+        break;
     }
 
     case WM_MOUSEWHEEL:

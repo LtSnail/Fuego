@@ -21,15 +21,19 @@ public:
     {
         return view;
     }
+
     inline const mat4* GetViewPtr() const
     {
         return &view;
     }
+
     inline vec3 GetDir() const
     {
         return dir;
     }
+
     void Activate();
+
     static inline Camera* GetActiveCamera()
     {
         return active_camera;

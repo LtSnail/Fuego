@@ -34,30 +34,33 @@ public:
     static inline bool IsKeyPressed(KeyCode keyCode)
     {
         return m_Instance->IsKeyPressedImpl(keyCode);
-    };
+    }
 
     static inline bool IsMouseButtonPressed(MouseCode mouseCode)
     {
         return m_Instance->IsMouseButtonPressedImpl(mouseCode);
-    };
+    }
 
     static inline float GetMouseX()
     {
         return m_Instance->GetMouseXImpl();
-    };
+    }
 
     static inline float GetMouseY()
     {
         return m_Instance->GetMouseYImpl();
-    };
+    }
+
     static inline std::pair<float, float> GetMousePosition()
     {
         return m_Instance->GetMousePositionImpl();
     }
+
     static inline glm::vec2 GetMouseDir()
     {
         return m_Instance->GetMouseDirImpl();
     }
+
     static inline bool Init(Input* input)
     {
         if (!m_Instance && input != nullptr)
@@ -66,7 +69,7 @@ public:
             return true;
         }
         return false;
-    };
+    }
 
     struct MouseInfo
     {
@@ -75,13 +78,13 @@ public:
     };
 
 protected:
-    virtual bool IsKeyPressedImpl(KeyCode keyCode) const = 0;
+    [[nodiscard]] virtual bool IsKeyPressedImpl(KeyCode keyCode) const = 0;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) = 0;
-    virtual std::pair<float, float> GetMousePositionImpl() const = 0;
-    virtual float GetMouseXImpl() const = 0;
-    virtual float GetMouseYImpl() const = 0;
-    virtual glm::vec2 GetMouseDirImpl() const = 0;
+    [[nodiscard]] virtual std::pair<float, float> GetMousePositionImpl() const = 0;
+    [[nodiscard]] virtual float GetMouseXImpl() const = 0;
+    [[nodiscard]] virtual float GetMouseYImpl() const = 0;
+    [[nodiscard]] virtual glm::vec2 GetMouseDirImpl() const = 0;
 
 private:
     static Input* m_Instance;

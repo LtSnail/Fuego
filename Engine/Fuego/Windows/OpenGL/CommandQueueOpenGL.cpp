@@ -3,10 +3,6 @@
 namespace Fuego::Renderer
 {
 
-CommandQueueOpenGL::CommandQueueOpenGL()
-{
-}
-
 void CommandQueueOpenGL::Submit(const CommandBuffer& commandBuffer)
 {
     UNUSED(commandBuffer);

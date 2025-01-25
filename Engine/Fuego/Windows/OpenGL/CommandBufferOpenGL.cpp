@@ -5,13 +5,12 @@
 
 #include "BufferOpenGL.h"
 #include "Renderer.h"
-#include "Renderer/Surface.h"
 #include "ShaderOpenGL.h"
 #include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
-glm::mat4 model_pos = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 0.0f, -5.0f)); 
+glm::mat4 model_pos = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 0.0f, -5.0f));
 glm::mat4 model = glm::rotate(model_pos, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0F / 720.0F, 0.1f, 100.0f);
 int modelLoc;
@@ -20,14 +19,15 @@ int projLoc;
 int samplerLoc;
 
 CommandBufferOpenGL::CommandBufferOpenGL()
-    : _programID(0)
-    , _isFree(true)
+    : _vao(0)
+    , _ebo(0)
+    , _programID(0)
     , _vertexShader(-1)
     , _pixelShader(-1)
     , _isLinked(false)
-    , _vao(0)
-    , _ebo(0)
     , _isDataAllocated(false)
+    , _texture(0)
+    , _isFree(true)
 {
     _programID = glCreateProgram();
     glGenBuffers(1, &_ebo);
@@ -134,16 +134,16 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer)
 {
     glBindVertexArray(_vao);
 
-    const BufferOpenGL& buff = static_cast<const BufferOpenGL&>(vertexBuffer);
+    const BufferOpenGL& buff = dynamic_cast<const BufferOpenGL&>(vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)offsetof(Renderer::VertexData, pos));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), reinterpret_cast<void*>(offsetof(Renderer::VertexData, pos)));
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)offsetof(Renderer::VertexData, textcoord));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), reinterpret_cast<void*>(offsetof(Renderer::VertexData, textcoord)));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), (void*)offsetof(Renderer::VertexData, normal));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Renderer::VertexData), reinterpret_cast<void*>(offsetof(Renderer::VertexData, normal)));
     glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
@@ -173,7 +173,7 @@ void CommandBufferOpenGL::BindTexture(unsigned char* data, int w, int h)
     glGenTextures(1, &_texture);
     glBindTexture(textureTarget, _texture);
     glTexImage2D(textureTarget, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    //glBindTexture(textureTarget, texture);
+    // glBindTexture(textureTarget, texture);
 
     // Configuration of minification/Magnification
     glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -181,9 +181,9 @@ void CommandBufferOpenGL::BindTexture(unsigned char* data, int w, int h)
     glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    //glBindTexture(texture, 0);
+    // glBindTexture(texture, 0);
     glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(_textureTarget, _texture);
+    // glBindTexture(_textureTarget, _texture);
 }
 
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)

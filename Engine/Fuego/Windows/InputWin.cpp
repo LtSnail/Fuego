@@ -36,6 +36,7 @@ float InputWin::GetMouseYImpl() const
     auto [x, y] = GetMousePositionImpl();
     return y;
 }
+
 glm::vec2 InputWin::GetMouseDirImpl() const
 {
     const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());

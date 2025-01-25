@@ -4,11 +4,11 @@
 
 namespace Fuego::Renderer
 {
-class SurfaceOpenGL : public Surface
+class SurfaceOpenGL final : public Surface
 {
 public:
     SurfaceOpenGL(const void* window);
-    ~SurfaceOpenGL();
+    virtual ~SurfaceOpenGL() override;
 
     virtual const void* GetNativeHandle() const override;
     HDC GetHdc() const;

@@ -4,3 +4,4 @@
 
 #include "Fuego/Application.h"
 #include "Fuego/Log.h"
+#include "Mesh.h"

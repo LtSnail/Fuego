@@ -16,9 +16,9 @@ SandboxApp::SandboxApp()
 }
 
 SceneLayer::SceneLayer()
-        : Layer("3D scene layer")
-    {
-    }
+    : Layer("3D scene layer")
+{
+}
 
 void SceneLayer::OnUpdate()
 {
@@ -28,38 +28,31 @@ void SceneLayer::OnAttach()
 {
     scene_meshes.emplace_back(new Fuego::Renderer::Mesh());
     Fuego::FS::FileSystem& fs = Fuego::Application::Get().FileSystem();
-    for (auto mesh : scene_meshes)
+    for (const auto& mesh : scene_meshes)
     {
-        mesh_data.push_back(std::move(mesh->load(fs.GetFullPathTo("Model.obj").data())));
+        mesh_data.emplace_back((mesh->load(fs.GetFullPathTo("Model.obj").data())));
     }
     texture_data = fs.Load_Image("image.jpg", w, h, n);
 }
 
 void SceneLayer::OnDetach()
 {
-    for (auto mesh : scene_meshes)
-    {
-        delete mesh;
-    }
+    scene_meshes.clear();
     mesh_data.clear();
 }
 
 void SceneLayer::OnEvent(Fuego::EventVariant& event)
-    {
-        auto LogEventVisitor =
-            Fuego::EventVisitor{[this](Fuego::AppRenderEvent& ev) { OnRenderEvent(ev); },
-            [](const Fuego::Event& ev) 
-            {
-                FU_TRACE("{0}", ev.ToString()); 
-            }};
+{
+    auto LogEventVisitor =
+        Fuego::EventVisitor{[this](Fuego::AppRenderEvent& ev) { OnRenderEvent(ev); }, [](const Fuego::Event& ev) { FU_TRACE("{0}", ev.ToString()); }};
 
-        std::visit(LogEventVisitor, event);
-    }
+    std::visit(LogEventVisitor, event);
+}
 
 bool SceneLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
 {
     UNUSED(event);
-    //FU_TRACE("Client OnRenderEvent");
+
     auto& renderer = Fuego::Application::Get().Renderer();
     int i = 0;
     for (auto& mesh : mesh_data)
@@ -67,7 +60,6 @@ bool SceneLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
         renderer.DrawMesh(mesh, scene_meshes[i]->GetVertexCount(), texture_data, w, h);
         i++;
     }
+
     return true;
 }
-
-

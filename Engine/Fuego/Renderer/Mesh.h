@@ -26,12 +26,7 @@ private:
         glm::ivec2 tx_indecies;
         glm::ivec3 n_indecies;
 
-        Face(glm::ivec3 v_ind, glm::vec2 tx_ind, glm::vec3 n_ind)
-            : v_indecies(v_ind)
-            , tx_indecies(tx_ind)
-            , n_indecies(n_ind)
-        {
-        }
+        Face(glm::ivec3 v_ind, glm::vec2 tx_ind, glm::vec3 n_ind);
     };
 
     void ParseFace(const std::string_view& line, std::vector<Face>& faces, bool hasTextcoord, bool hasNormals);

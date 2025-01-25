@@ -10,8 +10,8 @@ int APIENTRY FuegoMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int c
 
     AllocConsole();
     FILE* stream;
-    freopen_s(&stream, "CONOUT$", "w", stdout);
-    freopen_s(&stream, "CONOUT$", "w", stderr);
+    assert(freopen_s(&stream, "CONOUT$", "w", stdout) == 0);
+    assert(freopen_s(&stream, "CONOUT$", "w", stderr) == 0);
 
     Fuego::Log::Init();
 

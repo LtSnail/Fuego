@@ -4,11 +4,10 @@
 
 namespace Fuego::Renderer
 {
-class TextureOpenGL : public Texture
+class TextureOpenGL final : public Texture
 {
 public:
     TextureOpenGL() = default;
-    ~TextureOpenGL() = default;
 
     virtual TextureFormat GetTextureFormat() const override;
 };

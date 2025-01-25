@@ -1,15 +1,15 @@
 ﻿#pragma once
-#include <memory>
 
 #include "Renderer/Device.h"
-#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
-class DeviceOpenGL : public Device
+class DeviceOpenGL final : public Device
 {
 public:
-    virtual ~DeviceOpenGL();
+    FUEGO_NON_COPYABLE_NON_MOVABLE(DeviceOpenGL)
+
+    virtual ~DeviceOpenGL() override;
 
     virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) override;
     virtual std::unique_ptr<CommandQueue> CreateCommandQueue() override;
@@ -26,8 +26,6 @@ protected:
     DeviceOpenGL();
 
 private:
-    static void APIENTRY OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message,
-                                                 const void* userParam);
     HGLRC ctx;
     int max_textures_units;
 };

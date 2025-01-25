@@ -1,5 +1,25 @@
 #include "ShaderOpenGL.h"
 
+#include "glad/gl.h"
+
+namespace
+{
+GLint GetShaderType(Fuego::Renderer::ShaderOpenGL::ShaderType type)
+{
+    switch (type)
+    {
+    case Fuego::Renderer::Shader::Pixel:
+        return GL_FRAGMENT_SHADER;
+    case Fuego::Renderer::Shader::Vertex:
+        return GL_VERTEX_SHADER;
+    }
+
+    FU_CORE_ERROR("[Shader] Invalid shader type:");
+    return 0;
+}
+}  // namespace
+
+
 namespace Fuego::Renderer
 {
 ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
@@ -27,19 +47,4 @@ ShaderOpenGL::~ShaderOpenGL()
 {
     glDeleteShader(_shaderID);
 }
-
-GLint ShaderOpenGL::GetShaderType(ShaderType type) const
-{
-    switch (type)
-    {
-    case Pixel:
-        return GL_FRAGMENT_SHADER;
-    case Vertex:
-        return GL_VERTEX_SHADER;
-    default:
-        FU_CORE_ERROR("[Shader] Invalid shader type:");
-        break;
-    }
-}
-
 }  // namespace Fuego::Renderer
