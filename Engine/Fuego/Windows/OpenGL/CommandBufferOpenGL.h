@@ -33,6 +33,8 @@ private:
     bool _isLinked;
     bool _isDataAllocated;
 
+    uint32_t _texture;
+
 protected:
     friend class CommandPoolOpenGL;
     bool _isFree;

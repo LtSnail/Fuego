@@ -17,6 +17,7 @@ glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0F / 720.0F, 0
 int modelLoc;
 int viewLoc;
 int projLoc;
+int samplerLoc;
 
 CommandBufferOpenGL::CommandBufferOpenGL()
     : _programID(0)
@@ -48,7 +49,8 @@ void CommandBufferOpenGL::BeginRecording()
 
 void CommandBufferOpenGL::EndRecording()
 {
-    // TODO: add smth
+    // Temporary
+    glDeleteTextures(1, &_texture);
 }
 
 void CommandBufferOpenGL::Submit()
@@ -107,6 +109,7 @@ void CommandBufferOpenGL::BindPixelShader(const Shader& pixelShader)
         modelLoc = glGetUniformLocation(_programID, "model");
         viewLoc = glGetUniformLocation(_programID, "view");
         projLoc = glGetUniformLocation(_programID, "projection");
+        samplerLoc = glGetUniformLocation(_programID, "gSampler");
         glUseProgram(0);
 
         return;
@@ -165,12 +168,12 @@ void CommandBufferOpenGL::BindIndexBuffer(uint32_t indices[], uint32_t size)
 
 void CommandBufferOpenGL::BindTexture(unsigned char* data, int w, int h)
 {
-    GLuint texture;
     GLenum textureTarget = GL_TEXTURE_2D;
     glBindTexture(GL_TEXTURE_2D, 0);
-    glGenTextures(1, &texture);
+    glGenTextures(1, &_texture);
+    glBindTexture(textureTarget, _texture);
     glTexImage2D(textureTarget, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    glBindTexture(textureTarget, texture);
+    //glBindTexture(textureTarget, texture);
 
     // Configuration of minification/Magnification
     glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -191,6 +194,7 @@ void CommandBufferOpenGL::Draw(uint32_t vertexCount)
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(Camera::GetActiveCamera()->GetView()));
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniform1i(samplerLoc, 0);
 
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
     glBindVertexArray(0);
