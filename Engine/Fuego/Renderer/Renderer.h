@@ -30,7 +30,7 @@ public:
     ~Renderer() = default;
     // TODO replace array of floats to Mesh class
     void DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices[], uint32_t indicesCount);
-    void DrawMesh(const std::vector<float>& data, uint32_t vertex_count);
+    void DrawMesh(const std::vector<float>& data, uint32_t vertex_count, unsigned char* texture, int w, int h);
     void Clear();
     void Present();
 

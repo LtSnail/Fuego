@@ -44,7 +44,7 @@ void Renderer::DrawMesh(float vertices[], uint32_t vertexCount, uint32_t indices
     cmd.Submit();
 }
 
-void Renderer::DrawMesh(const std::vector<float>& data, uint32_t vertex_count)
+void Renderer::DrawMesh(const std::vector<float>& data, uint32_t vertex_count, unsigned char* texture, int w, int h)
 {
     _buffer->BindData<float>(std::span(data.data(), data.size()));
     CommandBuffer& cmd = _commandPool->GetCommandBuffer();
@@ -53,6 +53,7 @@ void Renderer::DrawMesh(const std::vector<float>& data, uint32_t vertex_count)
     cmd.BindVertexBuffer(*_buffer);
     cmd.BindVertexShader(*_vertexShader);
     cmd.BindPixelShader(*_pixelShader);
+    cmd.BindTexture(texture, w, h);
     // cmd.BindIndexBuffer( );
     // cmd.IndexedDraw();
     cmd.Draw(vertex_count);

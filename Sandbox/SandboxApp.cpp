@@ -1,6 +1,9 @@
 ﻿#include "SandboxApp.h"
 
 
+unsigned char* texture_data;
+int w, h, n;
+
 Fuego::Application* Fuego::CreateApplication()
 {
     return new SandboxApp();
@@ -29,6 +32,7 @@ void SceneLayer::OnAttach()
     {
         mesh_data.push_back(std::move(mesh->load(fs.GetFullPathTo("Model.obj").data())));
     }
+    texture_data = fs.Load_Image("image.jpg", w, h, n);
 }
 
 void SceneLayer::OnDetach()
@@ -55,12 +59,12 @@ void SceneLayer::OnEvent(Fuego::EventVariant& event)
 bool SceneLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
 {
     UNUSED(event);
-    FU_TRACE("Client OnRenderEvent");
+    //FU_TRACE("Client OnRenderEvent");
     auto& renderer = Fuego::Application::Get().Renderer();
     int i = 0;
     for (auto& mesh : mesh_data)
     {
-        renderer.DrawMesh(mesh, scene_meshes[i]->GetVertexCount());
+        renderer.DrawMesh(mesh, scene_meshes[i]->GetVertexCount(), texture_data, w, h);
         i++;
     }
     return true;
