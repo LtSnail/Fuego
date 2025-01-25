@@ -23,6 +23,7 @@ public:
     virtual void BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex) = 0;
     virtual void BindVertexBuffer(const Buffer& vertexBuffer) = 0;
     virtual void BindIndexBuffer(uint32_t indices[], uint32_t size) = 0;
+    virtual void BindTexture(unsigned char* data, int w, int h) = 0;
     virtual void Draw(uint32_t vertexCount) = 0;
     virtual void IndexedDraw(uint32_t vertexCount) = 0;
     virtual void Clear() = 0;

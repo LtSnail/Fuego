@@ -163,6 +163,26 @@ void CommandBufferOpenGL::BindIndexBuffer(uint32_t indices[], uint32_t size)
     glBindVertexArray(0);
 }
 
+void CommandBufferOpenGL::BindTexture(unsigned char* data, int w, int h)
+{
+    GLuint texture;
+    GLenum textureTarget = GL_TEXTURE_2D;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glGenTextures(1, &texture);
+    glTexImage2D(textureTarget, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glBindTexture(textureTarget, texture);
+
+    // Configuration of minification/Magnification
+    glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    //glBindTexture(texture, 0);
+    glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(_textureTarget, _texture);
+}
+
 void CommandBufferOpenGL::Draw(uint32_t vertexCount)
 {
     glUseProgram(_programID);
