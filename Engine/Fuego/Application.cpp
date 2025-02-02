@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include "../Editor/Scene.h"
 #include "Camera.h"
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
@@ -13,6 +14,8 @@ unsigned char* texture_data;
 
 Fuego::Renderer::Mesh* engine_mesh;
 std::vector<float> mesh_vector;
+Fuego::Editor::Scene* scene;
+
 namespace Fuego
 {
 class Application::ApplicationImpl
@@ -46,6 +49,8 @@ Application::Application()
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
+    scene = new Fuego::Editor::Scene("First scene", new Fuego::Editor::Root());
+    scene->GetRootNode()->PrintNode();
 }
 
 Renderer::Renderer& Application::Renderer()
