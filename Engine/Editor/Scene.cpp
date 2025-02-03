@@ -50,18 +50,22 @@ void TreeNode::PrintNode() const
     FU_CORE_TRACE("Node name: {0}, level: {1}", object->GetName(), node_level);
     for (std::list<TreeNode>::const_iterator it = children.begin(); it != children.end(); ++it)
     {
-        FU_CORE_TRACE("Child: {0}", it->object->GetName());
+        FU_CORE_TRACE("Child: ");
+        it->PrintNode();
     }
 }
+
 Root::Root()
     : TreeNode(new SceneFolder("Root Folder"), 0)
 {
 }
+
 Node::Node(const std::string& node_name, BaseSceneObject* obj, TreeNode* parent)
     : TreeNode(obj, parent->GetNodeLevel() + 1)
     , parent(parent)
 {
 }
+
 void Node::PrintNode() const
 {
     TreeNode::PrintNode();
@@ -101,10 +105,12 @@ ModelObject::ModelObject(const std::string& name, glm::vec3 pos, glm::vec3 rot, 
 }
 
 
-Scene::Scene(const std::string& scene_name, Root* root)
+Scene::Scene(const std::string& scene_name)
     : scene_name(scene_name)
-    , root(root)
+    , root(nullptr)
+    , objects_amount(0)
 {
+    root = new Root();
 }
 
 Scene::~Scene()

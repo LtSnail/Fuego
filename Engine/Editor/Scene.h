@@ -15,7 +15,7 @@ class Root;
 class Scene
 {
 public:
-    Scene(const std::string& scene_name, Root* root);
+    Scene(const std::string& scene_name);
     ~Scene();
 
     inline const Root* GetRootNode() const
@@ -74,6 +74,10 @@ public:
     virtual ~TreeNode();
 
     bool operator==(const TreeNode& other) const;
+    TreeNode(const TreeNode&) = delete;
+    TreeNode& operator=(const TreeNode&) = delete;
+    TreeNode(TreeNode&&) noexcept = default;
+    TreeNode& operator=(TreeNode&&) noexcept = default;
 
     virtual void AddChildFront(TreeNode&& child);
     virtual void AddChildBack(TreeNode&& child);

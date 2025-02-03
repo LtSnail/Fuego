@@ -49,7 +49,7 @@ Application::Application()
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
-    scene = new Fuego::Editor::Scene("First scene", new Fuego::Editor::Root());
+    scene = new Fuego::Editor::Scene("First scene");
     scene->GetRootNode()->PrintNode();
 }
 
