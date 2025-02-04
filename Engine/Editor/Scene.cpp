@@ -14,9 +14,11 @@ TreeNode::TreeNode(BaseSceneObject* obj, uint16_t node_level)
     , node_level(node_level)
     , id(GetID())
 {
+    FU_CORE_TRACE("TreeNode ctor");
 }
 TreeNode::~TreeNode()
 {
+    FU_CORE_TRACE("TreeNode dctor");
     delete object;
 }
 bool TreeNode::operator==(const TreeNode& other) const

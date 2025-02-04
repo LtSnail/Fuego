@@ -82,10 +82,17 @@ public:
     virtual ~TreeNode();
 
     bool operator==(const TreeNode& other) const;
+    TreeNode(TreeNode&&) noexcept
+    {
+        FU_CORE_TRACE("TreeNode move ctor");
+    }
+    TreeNode& operator=(TreeNode&&) noexcept
+    {
+        FU_CORE_TRACE("TreeNode move assigment ctor");
+    }
+
     TreeNode(const TreeNode&) = delete;
     TreeNode& operator=(const TreeNode&) = delete;
-    TreeNode(TreeNode&&) noexcept = default;
-    TreeNode& operator=(TreeNode&&) noexcept = default;
 
     virtual void AddChildFront(TreeNode child);
     virtual void AddChildBack(TreeNode child);
@@ -118,6 +125,25 @@ class Root final : public TreeNode
 {
 public:
     Root(const std::string& root_name);
+
+    ~Root()
+    {
+        FU_CORE_TRACE("Root dctor");
+    }
+
+    Root(Root&& other)
+        : TreeNode(std::move(other))
+    {
+        FU_CORE_TRACE("Root mode ctor");
+    }
+    Root operator=(Root&& other)
+    {
+        TreeNode::operator=(std::move(other));
+        FU_CORE_TRACE("Root move assigment operator");
+    }
+
+    Root(const Root& other) = delete;
+    Root operator=(Root other) = delete;
 };
 class Node final : public TreeNode
 {
