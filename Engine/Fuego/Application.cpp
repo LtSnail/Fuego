@@ -51,6 +51,8 @@ Application::Application()
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
     scene = new Fuego::Editor::Scene("First scene");
     scene->GetRootNode()->PrintNode();
+    scene->AddObject("Root Folder", new Fuego::Editor::ModelObject("Model_1", glm::vec3(25.0f), glm::vec3(-1.0f), nullptr));
+    scene->FindNode("Model_1")->PrintNode();
 }
 
 Renderer::Renderer& Application::Renderer()

@@ -11,12 +11,19 @@ namespace Fuego::Editor
 {
 class Material;
 class Root;
+class BaseSceneObject;
+class TreeNode;
 
 class Scene
 {
 public:
     Scene(const std::string& scene_name);
     ~Scene();
+
+    void AddObject(TreeNode* node, BaseSceneObject* obj);
+    void AddObject(const std::string& parent_node, BaseSceneObject* obj);
+    BaseSceneObject* FindObject(const std::string& object_name) const;
+    TreeNode* FindNode(const std::string& object_name) const;
 
     inline const Root* GetRootNode() const
     {
@@ -27,6 +34,7 @@ private:
     Root* root;
     std::string scene_name;
     uint16_t objects_amount;
+    std::unordered_map<std::string, TreeNode*> objects_map;
 };
 class BaseSceneObject
 {
@@ -79,12 +87,15 @@ public:
     TreeNode(TreeNode&&) noexcept = default;
     TreeNode& operator=(TreeNode&&) noexcept = default;
 
-    virtual void AddChildFront(TreeNode&& child);
-    virtual void AddChildBack(TreeNode&& child);
+    virtual void AddChildFront(TreeNode child);
+    virtual void AddChildBack(TreeNode child);
     virtual void RemoveChild(TreeNode& child);
-
+    std::list<TreeNode>& GetChildren()
+    {
+        return children;
+    }
     uint16_t GetNodeLevel() const;
-    inline const BaseSceneObject* GetSceneObject() const
+    inline BaseSceneObject* GetSceneObject() const
     {
         return object;
     }
@@ -106,12 +117,12 @@ private:
 class Root final : public TreeNode
 {
 public:
-    Root();
+    Root(const std::string& root_name);
 };
 class Node final : public TreeNode
 {
 public:
-    Node(const std::string& node_name, BaseSceneObject* obj, TreeNode* parent);
+    Node(BaseSceneObject* obj, TreeNode* parent);
 
     inline const TreeNode* GetParent() const
     {

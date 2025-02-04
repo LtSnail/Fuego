@@ -23,13 +23,13 @@ bool TreeNode::operator==(const TreeNode& other) const
 {
     return this->id == other.id;
 }
-void TreeNode::AddChildFront(TreeNode&& child)
+void TreeNode::AddChildFront(TreeNode child)
 {
     children.push_front(std::move(child));
 }
-void TreeNode::AddChildBack(TreeNode&& child)
+void TreeNode::AddChildBack(TreeNode child)
 {
-    children.push_back(std::move(child));
+    children.emplace_back(std::move(child));
 }
 void TreeNode::RemoveChild(TreeNode& child)
 {
@@ -55,12 +55,12 @@ void TreeNode::PrintNode() const
     }
 }
 
-Root::Root()
-    : TreeNode(new SceneFolder("Root Folder"), 0)
+Root::Root(const std::string& root_name)
+    : TreeNode(new SceneFolder(root_name), 0)
 {
 }
 
-Node::Node(const std::string& node_name, BaseSceneObject* obj, TreeNode* parent)
+Node::Node(BaseSceneObject* obj, TreeNode* parent)
     : TreeNode(obj, parent->GetNodeLevel() + 1)
     , parent(parent)
 {
@@ -110,12 +110,52 @@ Scene::Scene(const std::string& scene_name)
     , root(nullptr)
     , objects_amount(0)
 {
-    root = new Root();
+    root = new Root("Root Folder");
+    objects_map.emplace("Root Folder", root);
 }
-
 Scene::~Scene()
 {
     delete root;
+}
+void Scene::AddObject(TreeNode* node, BaseSceneObject* obj)
+{
+    node->AddChildBack(TreeNode(obj, node->GetNodeLevel() + 1));
+    TreeNode& new_child = node->GetChildren().back();
+    objects_map.emplace(obj->GetName(), &new_child);
+    objects_amount++;
+    FU_CORE_TRACE("Scene object {0} was added to {1} node, parent: {2}, level: {3}", 
+        obj->GetName(), new_child.GetNodeLevel(),
+                  node->GetSceneObject()->GetName(),
+                  node->GetNodeLevel());
+}
+void Scene::AddObject(const std::string& parent_node, BaseSceneObject* obj)
+{
+    TreeNode* node = FindNode(parent_node);
+    node->AddChildBack(Node(obj, node));
+    TreeNode& new_child = node->GetChildren().back();
+    objects_map.emplace(obj->GetName(), &new_child);
+    objects_amount++;
+    FU_CORE_TRACE("Scene object {0} was added to {1} node, parent: {2}, level: {3}", obj->GetName(), new_child.GetNodeLevel(),
+                  node->GetSceneObject()->GetName(), node->GetNodeLevel());
+}
+BaseSceneObject* Scene::FindObject(const std::string& object_name) const
+{
+    auto it = objects_map.find(object_name);
+    if (it != objects_map.end())
+    {
+        return it->second->GetSceneObject();
+    }
+    return nullptr;
+}
+
+TreeNode* Scene::FindNode(const std::string& object_name) const
+{
+    auto it = objects_map.find(object_name);
+    if (it != objects_map.end())
+    {
+        return it->second;
+    }
+    return nullptr;
 }
 
 }  // namespace Fuego::Editor
