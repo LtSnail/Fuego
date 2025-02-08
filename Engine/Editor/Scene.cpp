@@ -1,5 +1,7 @@
 #include "Scene.h"
 
+#include "../FileSystem/FileSystem.h"
+
 namespace Fuego::Editor
 {
 uint32_t TreeNode::s_id = 0;
@@ -57,6 +59,9 @@ TreeNode* Scene::FindNode(const std::string& object_name) const
         return it->second;
     }
     return nullptr;
+}
+void Scene::SaveSceneToFile(const std::string& file_name)
+{
 }
 
 BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)

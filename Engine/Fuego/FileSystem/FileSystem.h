@@ -16,6 +16,7 @@ public:
     unsigned char* Load_Image(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels = 0);
     const std::string GetFullPathTo(std::string_view fileName) const;
 
+    void FUCreateFile(const std::string& file_name, const std::string& folder) const;
 
     friend class Application;
     FileSystem();

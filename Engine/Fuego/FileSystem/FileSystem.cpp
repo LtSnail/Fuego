@@ -23,7 +23,8 @@ class FileSystem::FileSystemImpl
     const std::string shaders_path = shaders;
     const std::string images_path = images;
     const std::string models_path = models;
-    const std::vector<std::string_view> _searchPaths = {resource_path.data(), shaders_path.data(), images_path.data(), models_path.data()};
+    const std::string scenes_path = scenes;
+    const std::vector<std::string_view> _searchPaths = {resource_path.data(), shaders_path.data(), images_path.data(), models_path.data(), scenes_path.data()};
 };
 
 FileSystem::FileSystem()
@@ -43,7 +44,6 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
 
     return buffer.str();
 }
-
 unsigned char* FileSystem::Load_Image(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels)
 {
     std::string path = GetFullPathTo(file);
@@ -55,7 +55,6 @@ unsigned char* FileSystem::Load_Image(const std::string& file, int& x, int& y, i
     }
     return data;
 }
-
 std::string FileSystem::FileSystemImpl::GetExecutablePath()
 {
 #if defined(FUEGO_PLATFORM_WIN)
@@ -71,7 +70,6 @@ std::string FileSystem::FileSystemImpl::GetExecutablePath()
 #endif
     return std::filesystem::path(path).parent_path().string();
 }
-
 const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
 {
     std::filesystem::path file(fileName);
@@ -99,6 +97,23 @@ const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
     }
 
     return "";
+}
+void FileSystem::FUCreateFile(const std::string& file_name, const std::string& folder) const
+{
+    const std::string folder = GetFullPathTo(folder);
+    if (!std::filesystem::exists(folder))
+    {
+        std::filesystem::create_directories(folder);
+    }
+    std::ofstream file(file_name);
+    if (file)
+    {
+        file.close();
+    }
+    else
+    {
+        FU_CORE_ERROR("Failed to create file");
+    }
 }
 
 }  // namespace Fuego::FS

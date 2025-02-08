@@ -31,6 +31,8 @@ public:
         return root;
     }
 
+    void SaveSceneToFile(const std::string& file_name);
+
 private:
     Root* root;
     std::string scene_name;
