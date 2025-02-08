@@ -50,9 +50,9 @@ Application::Application()
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
     scene = new Fuego::Editor::Scene("First scene");
-    scene->GetRootNode()->PrintNode();
-    scene->AddObject("Root Folder", new Fuego::Editor::ModelObject("Model_1", glm::vec3(25.0f), glm::vec3(-1.0f), nullptr));
-    scene->FindNode("Model_1")->PrintNode();
+    Fuego::Editor::TreeNode* root(scene->GetRootNode());
+    scene->AddObject(root, std::move(Fuego::Editor::Node(new Fuego::Editor::ModelObject("Model"), root)));
+    scene->AddObject("Root Folder", std::move(Fuego::Editor::Node(new Fuego::Editor::SceneFolder("Models"), scene->FindNode("Root Folder"))));
 }
 
 Renderer::Renderer& Application::Renderer()
@@ -63,6 +63,7 @@ Renderer::Renderer& Application::Renderer()
 Application::~Application()
 {
     delete d;
+    delete scene;
 }
 
 void Application::PushLayer(Layer* layer)

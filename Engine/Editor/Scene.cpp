@@ -9,6 +9,81 @@ uint32_t TreeNode::GetID()
     return ++s_id;
 }
 
+Scene::Scene(const std::string& scene_name)
+    : scene_name(scene_name)
+    , root(new Root("Root Folder"))
+    , objects_amount(0)
+{
+    FU_CORE_TRACE("Scene ctor");
+    objects_map.emplace(root->GetSceneObject()->GetName(), root);
+}
+Scene::~Scene()
+{
+    FU_CORE_TRACE("Scene destructor");
+    delete root;
+}
+void Scene::AddObject(TreeNode* parent, Node&& new_node)
+{
+    TreeNode& moved_node = parent->GetChildren().emplace_back(std::move(new_node));
+
+    objects_map.emplace(moved_node.GetSceneObject()->GetName(), &moved_node);
+    objects_amount++;
+    FU_CORE_TRACE("Scene object {0} was added to {1} node, parent: {2}, level: {3}", moved_node.GetSceneObject()->GetName(), moved_node.GetNodeLevel(),
+                  parent->GetSceneObject()->GetName(), parent->GetNodeLevel());
+}
+void Scene::AddObject(const std::string& parent_node, Node&& new_node)
+{
+    TreeNode* parent = FindNode(parent_node);
+    TreeNode& moved_node = parent->GetChildren().emplace_back(std::move(new_node));
+    objects_map.emplace(moved_node.GetSceneObject()->GetName(), &moved_node);
+    objects_amount++;
+    FU_CORE_TRACE("Scene object: name {0}, level: {1} was added,  parent: {2}, level: {3}", moved_node.GetSceneObject()->GetName(), moved_node.GetNodeLevel(),
+                  parent->GetSceneObject()->GetName(), parent->GetNodeLevel());
+}
+BaseSceneObject* Scene::FindObject(const std::string& object_name) const
+{
+    auto it = objects_map.find(object_name);
+    if (it != objects_map.end())
+    {
+        return it->second->GetSceneObject();
+    }
+    return nullptr;
+}
+TreeNode* Scene::FindNode(const std::string& object_name) const
+{
+    auto it = objects_map.find(object_name);
+    if (it != objects_map.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
+BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
+    : name(name)
+    , enabled(enabled)
+{
+    FU_CORE_INFO("BaseSceneObject: {0} ctor", this->name);
+}
+SceneFolder::SceneFolder(const std::string& folder_name)
+    : BaseSceneObject(folder_name, true)
+{
+    FU_CORE_INFO("SceneFolder: {0} ctor", ((BaseSceneObject*)this)->GetName());
+}
+SceneObject::SceneObject(const std::string& name, glm::vec3 pos, glm::vec3 rot)
+    : BaseSceneObject(name, true)
+    , position(pos)
+    , rotation(rot)
+{
+    FU_CORE_INFO("SceneObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
+}
+ModelObject::ModelObject(const std::string& name, glm::vec3 pos, glm::vec3 rot, const Material* mat)
+    : SceneObject(name, pos, rot)
+    , material(mat)
+{
+    FU_CORE_INFO("ModelObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
+}
+
 TreeNode::TreeNode(BaseSceneObject* obj, uint16_t node_level)
     : object(obj)
     , node_level(node_level)
@@ -25,14 +100,42 @@ bool TreeNode::operator==(const TreeNode& other) const
 {
     return this->id == other.id;
 }
-void TreeNode::AddChildFront(TreeNode child)
+TreeNode::TreeNode(TreeNode&& other) noexcept
+    : object(other.object)
+    , node_level(other.node_level)
+    , id(other.id)
+    , children(std::move(other.children))
 {
-    children.push_front(std::move(child));
+    FU_CORE_TRACE("TreeNode move ctor");
+    other.object = nullptr;
+    other.node_level = -1;
+    other.id = 0;
 }
-void TreeNode::AddChildBack(TreeNode child)
+TreeNode& TreeNode::operator=(TreeNode&& other) noexcept
 {
-    children.emplace_back(std::move(child));
+    FU_CORE_TRACE("TreeNode move assigment ctor");
+
+    if (this != &other)
+    {
+        object = nullptr;
+        node_level = -1;
+        id = 0;
+        children.clear();
+
+        object = other.object;
+        node_level = other.node_level;
+        id = other.id;
+        children = std::move(other.children);
+
+        other.object = nullptr;
+        other.node_level = -1;
+        other.id = 0;
+        other.children.clear();
+    }
+
+    return *this;
 }
+
 void TreeNode::RemoveChild(TreeNode& child)
 {
     for (std::list<TreeNode>::iterator it = children.begin(); it != children.end(); it++)
@@ -60,14 +163,35 @@ void TreeNode::PrintNode() const
 Root::Root(const std::string& root_name)
     : TreeNode(new SceneFolder(root_name), 0)
 {
+    FU_CORE_TRACE("Root ctor");
 }
 
 Node::Node(BaseSceneObject* obj, TreeNode* parent)
     : TreeNode(obj, parent->GetNodeLevel() + 1)
     , parent(parent)
 {
+    FU_CORE_TRACE("Node ctor");
 }
+Node::Node(Node&& other) noexcept
+    : TreeNode(std::move(other))
+    , parent(other.parent)
+{
+    other.parent = nullptr;
+    FU_CORE_TRACE("Node move ctor");
+}
+Node& Node::operator=(Node&& other) noexcept
+{
+    FU_CORE_TRACE("Node move assignment operator");
 
+    if (this != &other)
+    {
+        TreeNode::operator=(std::move(other));
+        parent = other.parent;
+
+        other.parent = nullptr;
+    }
+    return *this;
+}
 void Node::PrintNode() const
 {
     TreeNode::PrintNode();
@@ -81,83 +205,4 @@ void Node::PrintNode() const
         FU_CORE_TRACE("Parent Node is Root node");
     }
 }
-BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
-    : name(name)
-    , enabled(enabled)
-{
-    FU_CORE_INFO("BaseSceneObject: {0} ctor", this->name);
-}
-SceneFolder::SceneFolder(const std::string& folder_name)
-    : BaseSceneObject(folder_name, true)
-{
-    FU_CORE_INFO("SceneFolder: {0} ctor", ((BaseSceneObject*)this)->GetName());
-}
-SceneObject::SceneObject(const std::string& name, glm::vec3 pos, glm::vec3 rot)
-    : BaseSceneObject(name, true)
-    , position(pos)
-    , rotation(rot)
-{
-    FU_CORE_INFO("SceneObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
-}
-ModelObject::ModelObject(const std::string& name, glm::vec3 pos, glm::vec3 rot, const Material* mat)
-    : SceneObject(name, pos, rot)
-    , material(mat)
-{
-    FU_CORE_INFO("ModelObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
-}
-
-
-Scene::Scene(const std::string& scene_name)
-    : scene_name(scene_name)
-    , root(nullptr)
-    , objects_amount(0)
-{
-    root = new Root("Root Folder");
-    objects_map.emplace("Root Folder", root);
-}
-Scene::~Scene()
-{
-    delete root;
-}
-void Scene::AddObject(TreeNode* node, BaseSceneObject* obj)
-{
-    node->AddChildBack(TreeNode(obj, node->GetNodeLevel() + 1));
-    TreeNode& new_child = node->GetChildren().back();
-    objects_map.emplace(obj->GetName(), &new_child);
-    objects_amount++;
-    FU_CORE_TRACE("Scene object {0} was added to {1} node, parent: {2}, level: {3}", 
-        obj->GetName(), new_child.GetNodeLevel(),
-                  node->GetSceneObject()->GetName(),
-                  node->GetNodeLevel());
-}
-void Scene::AddObject(const std::string& parent_node, BaseSceneObject* obj)
-{
-    TreeNode* node = FindNode(parent_node);
-    node->AddChildBack(Node(obj, node));
-    TreeNode& new_child = node->GetChildren().back();
-    objects_map.emplace(obj->GetName(), &new_child);
-    objects_amount++;
-    FU_CORE_TRACE("Scene object {0} was added to {1} node, parent: {2}, level: {3}", obj->GetName(), new_child.GetNodeLevel(),
-                  node->GetSceneObject()->GetName(), node->GetNodeLevel());
-}
-BaseSceneObject* Scene::FindObject(const std::string& object_name) const
-{
-    auto it = objects_map.find(object_name);
-    if (it != objects_map.end())
-    {
-        return it->second->GetSceneObject();
-    }
-    return nullptr;
-}
-
-TreeNode* Scene::FindNode(const std::string& object_name) const
-{
-    auto it = objects_map.find(object_name);
-    if (it != objects_map.end())
-    {
-        return it->second;
-    }
-    return nullptr;
-}
-
 }  // namespace Fuego::Editor

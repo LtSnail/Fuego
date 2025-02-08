@@ -13,6 +13,7 @@ class Material;
 class Root;
 class BaseSceneObject;
 class TreeNode;
+class Node;
 
 class Scene
 {
@@ -20,12 +21,12 @@ public:
     Scene(const std::string& scene_name);
     ~Scene();
 
-    void AddObject(TreeNode* node, BaseSceneObject* obj);
-    void AddObject(const std::string& parent_node, BaseSceneObject* obj);
+    void AddObject(TreeNode* parent, Node&& new_node);
+    void AddObject(const std::string& parent_node, Node&& new_node);
     BaseSceneObject* FindObject(const std::string& object_name) const;
     TreeNode* FindNode(const std::string& object_name) const;
 
-    inline const Root* GetRootNode() const
+    inline Root* GetRootNode() const
     {
         return root;
     }
@@ -68,12 +69,11 @@ private:
 class ModelObject : public SceneObject
 {
 public:
-    ModelObject(const std::string& name, glm::vec3 pos, glm::vec3 rot, const Material* mat);
+    ModelObject(const std::string& name, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rot = glm::vec3(0.0f), const Material* mat = nullptr);
 
 private:
     const Material* material;
 };
-
 
 class TreeNode
 {
@@ -82,20 +82,12 @@ public:
     virtual ~TreeNode();
 
     bool operator==(const TreeNode& other) const;
-    TreeNode(TreeNode&&) noexcept
-    {
-        FU_CORE_TRACE("TreeNode move ctor");
-    }
-    TreeNode& operator=(TreeNode&&) noexcept
-    {
-        FU_CORE_TRACE("TreeNode move assigment ctor");
-    }
+    TreeNode(TreeNode&& other) noexcept;
+    TreeNode& operator=(TreeNode&& other) noexcept;
 
     TreeNode(const TreeNode&) = delete;
     TreeNode& operator=(const TreeNode&) = delete;
 
-    virtual void AddChildFront(TreeNode child);
-    virtual void AddChildBack(TreeNode child);
     virtual void RemoveChild(TreeNode& child);
     std::list<TreeNode>& GetChildren()
     {
@@ -125,7 +117,6 @@ class Root final : public TreeNode
 {
 public:
     Root(const std::string& root_name);
-
     ~Root()
     {
         FU_CORE_TRACE("Root dctor");
@@ -149,6 +140,14 @@ class Node final : public TreeNode
 {
 public:
     Node(BaseSceneObject* obj, TreeNode* parent);
+    ~Node()
+    {
+        FU_CORE_TRACE("Node destructor");
+    }
+    Node(Node&& other) noexcept;
+    Node& operator=(Node&& other) noexcept;
+    Node(const Node&) = delete;
+    Node& operator=(const Node&) = delete;
 
     inline const TreeNode* GetParent() const
     {
