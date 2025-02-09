@@ -11,13 +11,8 @@ namespace Fuego::Renderer
 SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     : _surface(dynamic_cast<const SurfaceOpenGL&>(surface))
 {
-    glViewport(0, 0, 1280.0f, 1024.0f);
-}
-
-SwapchainOpenGL::SwapchainOpenGL(const Surface& surface, float x, float y, float w, float h)
-    : _surface(dynamic_cast<const SurfaceOpenGL&>(surface))
-{
-    glViewport(x, y, w, h);
+    auto rect = surface.GetRect();
+    glViewport(rect.x, rect.y, rect.width, rect.height);
 }
 
 SwapchainOpenGL::~SwapchainOpenGL()

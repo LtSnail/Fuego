@@ -53,16 +53,6 @@ std::unique_ptr<Swapchain> DeviceMetal::CreateSwapchain(const Surface& surface)
     return std::make_unique<SwapchainMetal>(surface);
 }
 
-std::unique_ptr<Swapchain> DeviceMetal::CreateSwapchain(const Surface& surface, float x, float y, float w, float h)
-{
-    UNUSED(x);
-    UNUSED(y);
-    UNUSED(w);
-    UNUSED(h);
-
-    return std::make_unique<SwapchainMetal>(surface);
-}
-
 std::unique_ptr<Shader> DeviceMetal::CreateShader(std::string_view shaderName, Shader::ShaderType shaderType)
 {
     UNUSED(shaderType);

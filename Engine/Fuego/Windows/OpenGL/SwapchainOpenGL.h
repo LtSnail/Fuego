@@ -27,6 +27,5 @@ private:
 protected:
     friend class DeviceOpenGL;
     SwapchainOpenGL(const Surface& surface);
-    SwapchainOpenGL(const Surface& surface, float x, float y, float w, float h);
 };
 }  // namespace Fuego::Renderer
