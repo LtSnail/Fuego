@@ -9,6 +9,7 @@ class SurfaceOpenGL final : public Surface
 public:
     SurfaceOpenGL(const void* window);
     virtual ~SurfaceOpenGL() override;
+    virtual Rect GetRect() const override;
 
     virtual const void* GetNativeHandle() const override;
     HDC GetHdc() const;

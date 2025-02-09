@@ -131,7 +131,7 @@ void Renderer::UpdateViewport()
     _surface.release();
     _surface = _device->CreateSurface(Fuego::Application::Get().GetWindow().GetNativeHandle());
     _swapchain.release();
-    _swapchain = _device->CreateSwapchain(*_surface, 0, 0, viewport.width, viewport.heigth);
+    _swapchain = _device->CreateSwapchain(*_surface);
 }
 
 }  // namespace Fuego::Renderer
