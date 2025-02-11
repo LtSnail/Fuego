@@ -18,6 +18,7 @@ public:
 
     void FUCreateFile(const std::string& file_name, const std::string& folder) const;
 
+
     friend class Application;
     FileSystem();
     ~FileSystem() = default;

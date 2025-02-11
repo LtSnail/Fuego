@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "../FileSystem/FileSystem.h"
+#include "Application.h"
 
 namespace Fuego::Editor
 {
@@ -62,6 +63,8 @@ TreeNode* Scene::FindNode(const std::string& object_name) const
 }
 void Scene::SaveSceneToFile(const std::string& file_name)
 {
+    auto& fs = Fuego::Application::Get().FileSystem();
+    fs.FUCreateFile(file_name, "Scenes");
 }
 
 BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
