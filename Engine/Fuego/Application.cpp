@@ -31,7 +31,6 @@ class Application::ApplicationImpl
     static Application* m_Instance;
 };
 Application* Application::ApplicationImpl::m_Instance = nullptr;
-
 Application::Application()
     : d(new ApplicationImpl())
 {
@@ -54,16 +53,15 @@ Application::Application()
     scene->AddObject(root, std::move(Fuego::Editor::Node(new Fuego::Editor::ModelObject("Model"), root)));
     scene->AddObject("Root Folder", std::move(Fuego::Editor::Node(new Fuego::Editor::SceneFolder("Models"), scene->FindNode("Root Folder"))));
 }
-
-Renderer::Renderer& Application::Renderer()
-{
-    return *d->_renderer.get();
-}
-
 Application::~Application()
 {
     delete d;
     delete scene;
+}
+
+Renderer::Renderer& Application::Renderer()
+{
+    return *d->_renderer.get();
 }
 
 void Application::PushLayer(Layer* layer)
@@ -71,7 +69,6 @@ void Application::PushLayer(Layer* layer)
     d->m_LayerStack.PushLayer(layer);
     layer->OnAttach();
 }
-
 void Application::PushOverlay(Layer* overlay)
 {
     d->m_LayerStack.PushOverlay(overlay);
@@ -116,26 +113,22 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
     event.SetHandled();
     return true;
 }
-
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
     d->_renderer->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
     event.SetHandled();
     return true;
 }
-
 bool Application::OnStartResizeWindow(WindowStartResizeEvent& event)
 {
     event.SetHandled();
     return true;
 }
-
 bool Application::OnEndResizeWindow(WindowEndResizeEvent& event)
 {
     event.SetHandled();
     return true;
 }
-
 bool Application::OnValidateWindow(WindowValidateEvent& event)
 {
     d->_renderer->ValidateWindow();
@@ -143,7 +136,6 @@ bool Application::OnValidateWindow(WindowValidateEvent& event)
     event.SetHandled();
     return true;
 }
-
 bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 {
     KeyEvent& e = (KeyEvent&)event;
@@ -161,7 +153,6 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
     event.SetHandled();
     return true;
 }
-
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     d->_renderer->ShowWireFrame();
@@ -178,7 +169,6 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
     UNUSED(event);
     return true;
 }
-
 bool Application::OnMouseMoveEvent(MouseMovedEvent& event)
 {
     UNUSED(event);
@@ -193,7 +183,6 @@ Fuego::FS::FileSystem& Application::FileSystem()
 {
     return *d->_fs.get();
 }
-
 Window& Application::GetWindow()
 {
     return *d->m_Window;
