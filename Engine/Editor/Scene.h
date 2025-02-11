@@ -3,9 +3,23 @@
 #include <fupch.h>
 
 #include <list>
+#include <type_traits>
 
 #include "glm/glm.hpp"
 
+#pragma region Templates and concepts
+
+template <typename T>
+concept IsNumber = std::is_integral_v<T> || std::is_floating_point_v<T>;
+
+template <typename T>
+concept StringLike = requires(T t) {
+    { t.c_str() } -> std::same_as<const char*>;
+    { std::string(t) } -> std::convertible_to<std::string>;
+};
+
+
+#pragma endregion
 
 namespace Fuego::Editor
 {
@@ -34,10 +48,26 @@ public:
     void SaveSceneToFile(const std::string& file_name);
 
 private:
+    template <typename T>
+        requires IsNumber<T> || StringLike<T>
+    struct JSONObject
+    {
+        std::string key;
+        T value;
+    };
+
     Root* root;
     std::string scene_name;
+    std::string scene_version = "1.0";
     uint16_t objects_amount;
     std::unordered_map<std::string, TreeNode*> objects_map;
+
+    std::string ParseScene() const;
+
+    template <typename... T>
+    std::string GetFormattedJSONObject(JSONObject<T>... vars) const;
+    template <typename T>
+    void ProcessVar(const JSONObject<T>& obj, OUT std::string& str) const;
 };
 class BaseSceneObject
 {
@@ -160,5 +190,4 @@ public:
 private:
     TreeNode* parent;
 };
-
 }  // namespace Fuego::Editor

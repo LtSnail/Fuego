@@ -24,8 +24,7 @@ class FileSystem::FileSystemImpl
     const std::string images_path = images;
     const std::string models_path = models;
     const std::string scenes_path = scenes;
-    const std::vector<std::string_view> _searchPaths = {shaders_path.data(), images_path.data(), models_path.data(),
-                                                        scenes_path.data()};
+    const std::vector<std::string_view> _searchPaths = {shaders_path.data(), images_path.data(), models_path.data(), scenes_path.data()};
 };
 
 FileSystem::FileSystem()
@@ -131,6 +130,9 @@ void FileSystem::FUCreateFile(const std::string& file_name, std::string_view fol
 }
 void FileSystem::WriteToFile(std::string_view file_name, const char* buffer)
 {
+    if (!buffer || file_name.empty())
+        return;
+
     const std::string path_to_folder = GetFullPathToFile(file_name);
     if (!std::filesystem::exists(path_to_folder))
     {
