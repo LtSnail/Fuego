@@ -44,7 +44,7 @@ Application::Application()
 
     FS::FileSystem& fs = Application::Get().FileSystem();
     engine_mesh = new Fuego::Renderer::Mesh();
-    mesh_vector = engine_mesh->load(fs.GetFullPathTo("!Model.obj").data());
+    mesh_vector = engine_mesh->load(fs.GetFullPathToFile("!Model.obj").data());
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
@@ -52,6 +52,7 @@ Application::Application()
     Fuego::Editor::TreeNode* root(scene->GetRootNode());
     scene->AddObject(root, std::move(Fuego::Editor::Node(new Fuego::Editor::ModelObject("Model"), root)));
     scene->AddObject("Root Folder", std::move(Fuego::Editor::Node(new Fuego::Editor::SceneFolder("Models"), scene->FindNode("Root Folder"))));
+    scene->SaveSceneToFile("Scene_1");
 }
 Application::~Application()
 {

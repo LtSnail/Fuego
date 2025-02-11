@@ -64,7 +64,9 @@ TreeNode* Scene::FindNode(const std::string& object_name) const
 void Scene::SaveSceneToFile(const std::string& file_name)
 {
     auto& fs = Fuego::Application::Get().FileSystem();
-    fs.FUCreateFile(file_name, "Scenes");
+    std::string scene_file_name = file_name + ".fu_scene";
+    fs.FUCreateFile(scene_file_name, "Scenes");
+    fs.WriteToFile(scene_file_name, "Test scene string");
 }
 
 BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
