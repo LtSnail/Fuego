@@ -24,7 +24,8 @@ class FileSystem::FileSystemImpl
     const std::string images_path = images;
     const std::string models_path = models;
     const std::string scenes_path = scenes;
-    const std::vector<std::string_view> _searchPaths = {resource_path.data(), shaders_path.data(), images_path.data(), models_path.data(), scenes_path.data()};
+    const std::vector<std::string_view> _searchPaths = {shaders_path.data(), images_path.data(), models_path.data(),
+                                                        scenes_path.data()};
 };
 
 FileSystem::FileSystem()
@@ -34,7 +35,7 @@ FileSystem::FileSystem()
 
 std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base::openmode mode)
 {
-    std::string path = GetFullPathTo(file);
+    std::string path = GetFullPathToFile(file);
     std::fstream f(path, mode);
     FU_CORE_ASSERT(f.is_open(), "[FS] failed to open a file");
 
@@ -46,7 +47,7 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
 }
 unsigned char* FileSystem::Load_Image(const std::string& file, int& x, int& y, int& bits_per_pixel, int image_channels)
 {
-    std::string path = GetFullPathTo(file);
+    std::string path = GetFullPathToFile(file);
     stbi_set_flip_vertically_on_load(1);
     unsigned char* data = stbi_load(path.c_str(), &x, &y, &bits_per_pixel, image_channels);
     if (!data)
@@ -70,7 +71,7 @@ std::string FileSystem::FileSystemImpl::GetExecutablePath()
 #endif
     return std::filesystem::path(path).parent_path().string();
 }
-const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
+const std::string FileSystem::GetFullPathToFile(std::string_view fileName) const
 {
     std::filesystem::path file(fileName);
     if (std::filesystem::exists(file))
@@ -98,21 +99,49 @@ const std::string FileSystem::GetFullPathTo(std::string_view fileName) const
 
     return "";
 }
-void FileSystem::FUCreateFile(const std::string& file_name, const std::string& folder) const
+std::string FileSystem::GetFullPathToFolder(std::string_view folder_name) const
 {
-    const std::string folder = GetFullPathTo(folder);
-    if (!std::filesystem::exists(folder))
+    for (const auto& path : d->_searchPaths)
     {
-        std::filesystem::create_directories(folder);
+        std::filesystem::path folder_path = ((d->resource_path / std::filesystem::path(path)).lexically_normal());
+        if (std::filesystem::exists(folder_path) && std::filesystem::is_directory(folder_path))
+        {
+            std::string folder = folder_path.parent_path().filename().string();
+            if (folder.compare(folder_name.data()) == 0)
+            {
+                return folder_path.string();
+            }
+        }
     }
-    std::ofstream file(file_name);
+    return "";
+}
+void FileSystem::FUCreateFile(const std::string& file_name, std::string_view folder) const
+{
+    const std::filesystem::path path_to_folder = GetFullPathToFolder(folder);
+    if (!std::filesystem::exists(path_to_folder))
+    {
+        FU_CORE_ERROR("Failed to create file");
+        return;
+    }
+    std::ofstream file(path_to_folder / file_name);
     if (file)
     {
         file.close();
     }
-    else
+}
+void FileSystem::WriteToFile(std::string_view file_name, const char* buffer)
+{
+    const std::string path_to_folder = GetFullPathToFile(file_name);
+    if (!std::filesystem::exists(path_to_folder))
     {
-        FU_CORE_ERROR("Failed to create file");
+        FU_CORE_ERROR("[FileSystem] File doesn't exist");
+        return;
+    }
+    std::ofstream file(path_to_folder, std::ios::out | std::ios::trunc);
+    if (file)
+    {
+        file << buffer << std::endl;
+        file.close();
     }
 }
 
