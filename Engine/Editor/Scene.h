@@ -18,6 +18,8 @@ concept StringLike = requires(T t) {
     { std::string(t) } -> std::convertible_to<std::string>;
 };
 
+template <typename T>
+concept IsJsonObject = IsNumber<T> || StringLike<T>;
 
 #pragma endregion
 
@@ -48,8 +50,7 @@ public:
     void SaveSceneToFile(const std::string& file_name);
 
 private:
-    template <typename T>
-        requires IsNumber<T> || StringLike<T>
+    template <IsJsonObject T>
     struct JSONObject
     {
         std::string key;
