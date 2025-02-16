@@ -71,12 +71,12 @@ void Scene::SaveSceneToFile(const std::string& file_name)
 
 std::string Scene::ParseScene() const
 {
-    return GetFormattedJSONObject(JSONObject<std::string>("Scene name", scene_name), JSONObject<std::string>("Scene version", scene_version),
-                                  JSONObject<int>("Objects amount", objects_amount));
+    return GetFormattedFUSONObject(FUSONObject<std::string>("Scene name", scene_name), FUSONObject<std::string>("Scene version", scene_version),
+                                  FUSONObject<int>("Objects amount", objects_amount));
 }
 
 template <typename... T>
-std::string Scene::GetFormattedJSONObject(JSONObject<T>... vars) const
+std::string Scene::GetFormattedFUSONObject(FUSONObject<T>... vars) const
 {
     if (sizeof...(vars) == 0)
         return "";
@@ -92,7 +92,7 @@ std::string Scene::GetFormattedJSONObject(JSONObject<T>... vars) const
 }
 
 template <typename T>
-void Scene::ProcessVar(const JSONObject<T>& obj, OUT std::string& str) const
+void Scene::ProcessVar(const FUSONObject<T>& obj, OUT std::string& str) const
 {
     if constexpr (IsNumber<T>)
     {

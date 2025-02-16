@@ -4,6 +4,7 @@
 
 #include <list>
 #include <type_traits>
+#include <variant>
 
 #include "glm/glm.hpp"
 
@@ -19,8 +20,11 @@ concept StringLike = requires(T t) {
 };
 
 template <typename T>
-concept IsJsonObject = IsNumber<T> || StringLike<T>;
+concept IsFUsonObject = IsNumber<T> || StringLike<T>;
 
+// Template section for std::variant:
+template <typename Ty, typename... Types>
+concept IsInVariant = (std::same_as<Ty, Types> || ...);
 #pragma endregion
 
 namespace Fuego::Editor
@@ -50,8 +54,8 @@ public:
     void SaveSceneToFile(const std::string& file_name);
 
 private:
-    template <IsJsonObject T>
-    struct JSONObject
+    template <IsFUsonObject T>
+    struct FUSONObject
     {
         std::string key;
         T value;
@@ -66,9 +70,16 @@ private:
     std::string ParseScene() const;
 
     template <typename... T>
-    std::string GetFormattedJSONObject(JSONObject<T>... vars) const;
+    std::string GetFormattedFUSONObject(FUSONObject<T>... vars) const;
     template <typename T>
-    void ProcessVar(const JSONObject<T>& obj, OUT std::string& str) const;
+    void ProcessVar(const FUSONObject<T>& obj, OUT std::string& str) const;
+
+    template <typename Ty, typename... Types>
+        requires IsInVariant<Ty, Types...>
+    struct FusonVariantHolder
+    {
+        std::variant<std::string, uint64_t, bool, std::optional<Ty>> fuson_variant;
+    };
 };
 class BaseSceneObject
 {
