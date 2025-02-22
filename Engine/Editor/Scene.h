@@ -6,9 +6,31 @@
 
 #include "glm/glm.hpp"
 
-
 namespace Fuego::Editor
 {
+
+#pragma region Templates&Concepts
+class BaseSceneObject;
+
+template<typename T>
+concept IsFUSONSceneObject = requires (T arg)
+{
+    { arg } -> std::derived_from<BaseSceneObject>;
+};
+
+template <typename... T>
+concept IsFUSONObjectVar =
+    (
+        (std::is_same_v<T, std::string>     ||
+            std::is_same_v<T, int>          || 
+            std::is_same_v<T, float>        || 
+            std::is_same_v<T, glm::vec3>    ||
+            std::is_same_v<T, bool>)        && 
+        ...);
+
+
+#pragma endregion
+
 class Material;
 class Root;
 class BaseSceneObject;
@@ -38,6 +60,20 @@ private:
     std::string scene_name;
     uint16_t objects_amount;
     std::unordered_map<std::string, TreeNode*> objects_map;
+
+    template <typename T>
+    requires IsFUSONObjectVar<T>
+    struct FUSON
+    {
+    public:
+        struct FUSONObject
+        {
+            std::string name;
+            T key;
+        };
+
+        std::unordered_map <std::string, T> fuson_objects_map;
+    };
 };
 class BaseSceneObject
 {
