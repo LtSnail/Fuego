@@ -72,6 +72,22 @@ void Scene::SaveSceneToFile(const std::string& file_name)
 
     fs.WriteToFile(scene_file_name, "Test scene string");
 }
+template <typename T>
+    requires IsFUSONObjectVar<T>
+void Scene::FUSON::SerializeField(std::string&& field_name, T value)
+{
+    fuson_objects_map[field_name] = value;
+}
+template <typename T>
+    requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
+Scene::FUSON Scene::SerializeSceneObject(const T& scene_object)
+{
+    Scene::FUSON f{};
+
+    scene_object.SerializeObject(f);
+
+    return f;
+}
 
 BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
     : name(name)
@@ -90,7 +106,10 @@ SceneFolder::SceneFolder(const std::string& folder_name)
 {
     FU_CORE_INFO("SceneFolder: {0} ctor", ((BaseSceneObject*)this)->GetName());
 }
-
+void SceneFolder::SerializeObject(OUT Scene::FUSON& fuson) const
+{
+    fuson.SerializeField<std::string>("type", "SceneFolder");
+}
 SceneObject::SceneObject(const std::string& name, glm::vec3 pos, glm::vec3 rot)
     : BaseSceneObject(name, true)
     , position(pos)
@@ -102,6 +121,7 @@ void SceneObject::SerializeObject(OUT Scene::FUSON& fuson) const
 {
     BaseSceneObject::SerializeObject(fuson);
 
+    fuson.SerializeField<std::string>("type", "SceneObject");
     fuson.SerializeField<glm::vec3>("position", position);
     fuson.SerializeField<glm::vec3>("rotation", rotation);
 }
@@ -115,6 +135,8 @@ ModelObject::ModelObject(const std::string& name, glm::vec3 pos, glm::vec3 rot, 
 void ModelObject::SerializeObject(OUT Scene::FUSON& fuson) const
 {
     SceneObject::SerializeObject(fuson);
+
+    fuson.SerializeField<std::string>("type", "ModelObject");
     fuson.SerializeField<std::string>("material", "TODO");
 }
 
@@ -238,26 +260,6 @@ void Node::PrintNode() const
     {
         FU_CORE_TRACE("Parent Node is Root node");
     }
-}
-
-template <typename T>
-    requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
-Scene::FUSON Scene::SerializeSceneObject(const T& scene_object)
-{
-    Scene::FUSON f{};
-
-    scene_object.SerializeObject(f);
-
-    return f;
-}
-
-
-
-template <typename T>
-    requires IsFUSONObjectVar<T>
-void Scene::FUSON::SerializeField(std::string&& field_name, T value)
-{
-    fuson_objects_map[field_name] = value;
 }
 
 }  // namespace Fuego::Editor

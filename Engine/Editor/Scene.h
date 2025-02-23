@@ -54,13 +54,6 @@ public:
     struct FUSON
     {
     public:
-        /* template<typename T>
-             requires IsFUSONObjectVar<T>
-         T operator[](std::string&& string)
-         {
-             fuson_objects_map.emplace(string);
-             return fuson_objects_map[string];
-         }*/
         template <typename T>
             requires IsFUSONObjectVar<T>
         void SerializeField(std::string&& field_name, T value);
@@ -102,6 +95,7 @@ class SceneFolder : public BaseSceneObject
 {
 public:
     SceneFolder(const std::string& folder_name);
+    virtual void SerializeObject(OUT Scene::FUSON& fuson) const;
 };
 class SceneObject : public BaseSceneObject
 {
