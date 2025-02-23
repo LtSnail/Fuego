@@ -1,4 +1,4 @@
-#include "Scene.h"
+﻿#include "Scene.h"
 
 #include "../FileSystem/FileSystem.h"
 #include "Application.h"
@@ -66,6 +66,10 @@ void Scene::SaveSceneToFile(const std::string& file_name)
     auto& fs = Fuego::Application::Get().FileSystem();
     std::string scene_file_name = file_name + ".fu_scene";
     fs.FUCreateFile(scene_file_name, "Scenes");
+    
+   auto& obj = root->GetSceneObject();
+   FUSON f = SerializeSceneObject(*obj);
+
     fs.WriteToFile(scene_file_name, "Test scene string");
 }
 
@@ -75,11 +79,18 @@ BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
 {
     FU_CORE_INFO("BaseSceneObject: {0} ctor", this->name);
 }
+void BaseSceneObject::SerializeObject(OUT Scene::FUSON& fuson) const
+{
+    fuson.SerializeField<std::string>("name", name);
+    fuson.SerializeField<bool>("enabled", enabled);
+}
+
 SceneFolder::SceneFolder(const std::string& folder_name)
     : BaseSceneObject(folder_name, true)
 {
     FU_CORE_INFO("SceneFolder: {0} ctor", ((BaseSceneObject*)this)->GetName());
 }
+
 SceneObject::SceneObject(const std::string& name, glm::vec3 pos, glm::vec3 rot)
     : BaseSceneObject(name, true)
     , position(pos)
@@ -87,11 +98,24 @@ SceneObject::SceneObject(const std::string& name, glm::vec3 pos, glm::vec3 rot)
 {
     FU_CORE_INFO("SceneObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
 }
+void SceneObject::SerializeObject(OUT Scene::FUSON& fuson) const
+{
+    BaseSceneObject::SerializeObject(fuson);
+
+    fuson.SerializeField<glm::vec3>("position", position);
+    fuson.SerializeField<glm::vec3>("rotation", rotation);
+}
+
 ModelObject::ModelObject(const std::string& name, glm::vec3 pos, glm::vec3 rot, const Material* mat)
     : SceneObject(name, pos, rot)
     , material(mat)
 {
     FU_CORE_INFO("ModelObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
+}
+void ModelObject::SerializeObject(OUT Scene::FUSON& fuson) const
+{
+    SceneObject::SerializeObject(fuson);
+    fuson.SerializeField<std::string>("material", "TODO");
 }
 
 TreeNode::TreeNode(BaseSceneObject* obj, uint16_t node_level)
@@ -215,4 +239,25 @@ void Node::PrintNode() const
         FU_CORE_TRACE("Parent Node is Root node");
     }
 }
+
+template <typename T>
+    requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
+Scene::FUSON Scene::SerializeSceneObject(const T& scene_object)
+{
+    Scene::FUSON f{};
+
+    scene_object.SerializeObject(f);
+
+    return f;
+}
+
+
+
+template <typename T>
+    requires IsFUSONObjectVar<T>
+void Scene::FUSON::SerializeField(std::string&& field_name, T value)
+{
+    fuson_objects_map[field_name] = value;
+}
+
 }  // namespace Fuego::Editor

@@ -5,12 +5,17 @@
 #include <list>
 
 #include "glm/glm.hpp"
+#include <variant>
 
 namespace Fuego::Editor
 {
+class Material;
+class Root;
+class BaseSceneObject;
+class TreeNode;
+class Node;
 
 #pragma region Templates&Concepts
-class BaseSceneObject;
 
 template<typename T>
 concept IsFUSONSceneObject = requires (T arg)
@@ -19,23 +24,14 @@ concept IsFUSONSceneObject = requires (T arg)
 };
 
 template <typename... T>
-concept IsFUSONObjectVar =
-    (
-        (std::is_same_v<T, std::string>     ||
-            std::is_same_v<T, int>          || 
-            std::is_same_v<T, float>        || 
-            std::is_same_v<T, glm::vec3>    ||
-            std::is_same_v<T, bool>)        && 
-        ...);
+concept IsFUSONObjectVar = ( (std::same_as<T, std::string> ||
+                             std::same_as<T, int> ||
+                             std::same_as<T, float> ||
+                             std::same_as<T, glm::vec3> ||
+                             std::same_as<T, bool>) && ...);
 
-
+using FUSONObjectVariant = std::variant<std::string, int, float, glm::vec3, bool>;
 #pragma endregion
-
-class Material;
-class Root;
-class BaseSceneObject;
-class TreeNode;
-class Node;
 
 class Scene
 {
@@ -55,26 +51,36 @@ public:
 
     void SaveSceneToFile(const std::string& file_name);
 
+    struct FUSON
+    {
+    public:
+        /* template<typename T>
+             requires IsFUSONObjectVar<T>
+         T operator[](std::string&& string)
+         {
+             fuson_objects_map.emplace(string);
+             return fuson_objects_map[string];
+         }*/
+        template <typename T>
+            requires IsFUSONObjectVar<T>
+        void SerializeField(std::string&& field_name, T value);
+
+    private:
+        std::unordered_map<std::string, FUSONObjectVariant> fuson_objects_map;
+    };
+
+    template <typename T>
+        requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
+    FUSON SerializeSceneObject(const T& scene_object);
+
 private:
     Root* root;
     std::string scene_name;
     uint16_t objects_amount;
     std::unordered_map<std::string, TreeNode*> objects_map;
 
-    template <typename T>
-    requires IsFUSONObjectVar<T>
-    struct FUSON
-    {
-    public:
-        struct FUSONObject
-        {
-            std::string name;
-            T key;
-        };
-
-        std::unordered_map <std::string, T> fuson_objects_map;
-    };
 };
+
 class BaseSceneObject
 {
 public:
@@ -86,9 +92,11 @@ public:
         return name;
     }
 
+    virtual void SerializeObject(OUT Scene::FUSON& fuson) const;
 private:
     std::string name;
     bool enabled;
+
 };
 class SceneFolder : public BaseSceneObject
 {
@@ -100,6 +108,7 @@ class SceneObject : public BaseSceneObject
 public:
     SceneObject(const std::string& name, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rot = glm::vec3(0.0f));
 
+    virtual void SerializeObject(OUT Scene::FUSON& fuson) const override;
 private:
     glm::vec3 position;
     glm::vec3 rotation;
@@ -109,8 +118,9 @@ class ModelObject : public SceneObject
 public:
     ModelObject(const std::string& name, glm::vec3 pos = glm::vec3(0.0f), glm::vec3 rot = glm::vec3(0.0f), const Material* mat = nullptr);
 
+    virtual void SerializeObject(OUT Scene::FUSON& fuson) const override;
 private:
-    const Material* material;
+    const Fuego::Editor::Material* material;
 };
 
 class TreeNode
@@ -132,7 +142,7 @@ public:
         return children;
     }
     uint16_t GetNodeLevel() const;
-    inline BaseSceneObject* GetSceneObject() const
+    inline auto& GetSceneObject() const
     {
         return object;
     }
