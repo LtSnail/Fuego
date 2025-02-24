@@ -62,9 +62,9 @@ public:
         std::unordered_map<std::string, FUSONObjectVariant> fuson_objects_map;
     };
 
-    template <typename T>
+    /*template <typename T>
         requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
-    FUSON SerializeSceneObject(const T& scene_object);
+    FUSON SerializeSceneObject(const T& scene_object);*/
 
 private:
     Root* root;
@@ -143,6 +143,8 @@ public:
 
     virtual void PrintNode() const;
 
+    virtual void Serialize(Scene::FUSON& f) const;
+
 protected:
     static uint32_t GetID();
     uint16_t node_level;
@@ -164,12 +166,12 @@ public:
         FU_CORE_TRACE("Root dctor");
     }
 
-    Root(Root&& other)
+     Root(Root&& other) noexcept
         : TreeNode(std::move(other))
     {
         FU_CORE_TRACE("Root mode ctor");
     }
-    Root operator=(Root&& other)
+    Root operator=(Root&& other) noexcept
     {
         TreeNode::operator=(std::move(other));
         FU_CORE_TRACE("Root move assigment operator");

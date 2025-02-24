@@ -67,9 +67,21 @@ void Scene::SaveSceneToFile(const std::string& file_name)
     std::string scene_file_name = file_name + ".fu_scene";
     fs.FUCreateFile(scene_file_name, "Scenes");
     
-   auto& obj = root->GetSceneObject();
-   FUSON f = SerializeSceneObject(*obj);
-
+    // -- Pseudo code -- 
+    // FUSON f
+    // root->Serialize(f);
+    // Serialize(f)
+    // {
+    // object->SerializeSceneObject(f);
+    //  for (childten.iterator.begin() it; !it.isdone(); it.next()
+    //  {
+    //      TreeNode node ->Serialize(f);
+    //  }
+    //  
+    FUSON f {};
+    root->Serialize(f);
+    // Нужно чтобы каждый объект сцены возвращал свой FUSON, и затем нужно сериализовать
+    // так чтобы эти FUSON аппендились правильно 
     fs.WriteToFile(scene_file_name, "Test scene string");
 }
 template <typename T>
@@ -78,16 +90,16 @@ void Scene::FUSON::SerializeField(std::string&& field_name, T value)
 {
     fuson_objects_map[field_name] = value;
 }
-template <typename T>
-    requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
-Scene::FUSON Scene::SerializeSceneObject(const T& scene_object)
-{
-    Scene::FUSON f{};
-
-    scene_object.SerializeObject(f);
-
-    return f;
-}
+//template <typename T>
+//    requires IsFUSONSceneObject<T> || std::same_as<T, BaseSceneObject>
+//Scene::FUSON Scene::SerializeSceneObject(const T& scene_object)
+//{
+//    Scene::FUSON f{};
+//
+//    scene_object.SerializeObject(f);
+//
+//    return f;
+//}
 
 BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
     : name(name)
@@ -262,4 +274,14 @@ void Node::PrintNode() const
     }
 }
 
-}  // namespace Fuego::Editor
+
+void TreeNode::Serialize(Scene::FUSON& f) const
+{
+    object->SerializeObject(f);
+
+    for (auto& child : children) 
+    {
+        child.Serialize(f);
+    }
+}
+}// namespace Fuego::Editor
