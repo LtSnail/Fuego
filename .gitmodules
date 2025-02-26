@@ -10,3 +10,6 @@
 [submodule "External/googletest"]
 	path = External/googletest
 	url = https://github.com/google/googletest.git
+[submodule "Engine/External/protobuf"]
+	path = Engine/External/protobuf
+	url = https://github.com/protocolbuffers/protobuf.git
