@@ -6,6 +6,24 @@ set(FUEGO_DYNAMIC_LIB
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+
+# -- Abseil configuration
+set(ABSL_BUILD_TESTING OFF CACHE BOOL "Enable Abseil testing")
+set(ABSL_USE_GOOGLETEST_HEAD OFF CACHE BOOL "Use the latest GoogleTest")
+set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard")
+set(PATH_TO_ABSEIL ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil )
+# -- End Abseil configuration
+
+# -- Protobuf configuration
+set(PATH_TO_PROTOBUF ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf )
+set(CMAKE_PREFIX_PATH ${OUTPUT_DIR})
+set(protobuf_BUILD_TESTS OFF CACHE BOOL "Disable protobuf tests" FORCE)
+set(protobuf_USE_EXTERNAL_GTEST OFF CACHE BOOL "Disable external GTest usage in protobuf" FORCE)
+set(BUILD_TESTING OFF CACHE BOOL "Disable all tests" FORCE)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+# -- End Protobuf configuration --
+
 # Project set up
 set(PROJECT_HEADERS
     Fuego/Application.h
@@ -73,6 +91,8 @@ endif()
 
 add_subdirectory( ${PLATFORM_SUBDIRECTORIES} )
 add_subdirectory( ${RENDERER_PATH} )
+add_subdirectory( ${PATH_TO_ABSEIL} )
+add_subdirectory( ${PATH_TO_PROTOBUF} )
 
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -103,6 +123,21 @@ target_compile_options(FuegoInterface
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
 
 target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
+target_link_libraries(FuegoEngine PRIVATE
+    absl::strings
+    absl::status
+    absl::synchronization
+    absl::flat_hash_map
+    absl::inlined_vector
+    absl::time
+    absl::hash
+    absl::optional
+    absl::span
+    absl::cord
+)
+target_link_libraries(FuegoEngine PRIVATE protobuf::libprotoc)
+target_link_libraries(FuegoEngine PRIVATE protobuf::libprotobuf)
+
 target_include_directories(FuegoEngine
                            PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
 
