@@ -1,27 +1,50 @@
 # Engine
 
+include(ExternalProject)
+
 set(FUEGO_DYNAMIC_LIB
     ON
     CACHE BOOL "Build dynamic library (ON/OFF)")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
-
+#set(ABSEIL_BUILD_DIR ${CMAKE_BINARY_DIR}/Engine/External/Abseil_Build_Folder)
+#set(ABSEIL_INSTALL_DIR ${CMAKE_BINARY_DIR}/install/abseil )
 # -- Abseil configuration
-set(ABSL_BUILD_TESTING OFF CACHE BOOL "Enable Abseil testing")
-set(ABSL_USE_GOOGLETEST_HEAD OFF CACHE BOOL "Use the latest GoogleTest")
-set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard")
-set(PATH_TO_ABSEIL ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil )
+#set(ABSL_BUILD_TESTING OFF CACHE BOOL "Enable Abseil testing")
+#set(ABSL_USE_GOOGLETEST_HEAD OFF CACHE BOOL "Use the latest GoogleTest")
+#set(CMAKE_CXX_STANDARD 20 CACHE STRING "C++ standard")
+#set(CMAKE_CXX_STANDARD 20)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_EXTENSIONS OFF)
+#set(THREADS_PREFER_PTHREAD_FLAG OFF)
+# set(PATH_TO_ABSEIL ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil/ )
+# set(CMAKE_INSTALL_PREFIX "C:/Work/Fuego/build/win/output/Debug" CACHE STRING "Install directory")
+# set(CMAKE_PREFIX_PATH "C:/Work/Fuego/build/win/output/Debug" CACHE STRING "Install directory")
+# find_package(absl REQUIRED)
 # -- End Abseil configuration
 
+# ExternalProject_Add(
+#     abseil
+#     PREFIX "${ABSEIL_BUILD_DIR}/Abseil_Temp"
+#     SOURCE_DIR "${ABSEIL_BUILD_DIR}/../../../../../Engine/External/abseil"
+#     CMAKE_ARGS
+#         -DCMAKE_INSTALL_PREFIX=${ABSEIL_BUILD_DIR}/Install
+#         -DABSL_BUILD_TESTING=OFF
+#         -DABSL_USE_GOOGLETEST_HEAD=OFF
+#         -DCMAKE_CXX_STANDARD=20
+#     BUILD_BYPRODUCTS "${ABSEIL_BUILD_DIR}/Install/lib/cmake/absl/abslConfig.cmake"
+# )
+# set(CMAKE_PREFIX_PATH "${ABSEIL_BUILD_DIR}/Install/abseil" CACHE STRING "Path to installed dependencies" FORCE)
+
+
+
 # -- Protobuf configuration
-set(PATH_TO_PROTOBUF ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf )
-set(CMAKE_PREFIX_PATH ${OUTPUT_DIR})
-set(protobuf_BUILD_TESTS OFF CACHE BOOL "Disable protobuf tests" FORCE)
-set(protobuf_USE_EXTERNAL_GTEST OFF CACHE BOOL "Disable external GTest usage in protobuf" FORCE)
-set(BUILD_TESTING OFF CACHE BOOL "Disable all tests" FORCE)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE STRING "" FORCE)
+#set(PATH_TO_PROTOBUF ${CMAKE_CURRENT_SOURCE_DIR}/Engine/External/protobuf )
+#set(CMAKE_PREFIX_PATH ${OUTPUT_DIR})
+#set(protobuf_BUILD_TESTS OFF CACHE BOOL "Disable protobuf tests" FORCE)
+#set(protobuf_USE_EXTERNAL_GTEST OFF CACHE BOOL "Disable external GTest usage in protobuf" FORCE)
+#set(BUILD_TESTING OFF CACHE BOOL "Disable all tests" FORCE)
 # -- End Protobuf configuration --
 
 # Project set up
@@ -91,9 +114,8 @@ endif()
 
 add_subdirectory( ${PLATFORM_SUBDIRECTORIES} )
 add_subdirectory( ${RENDERER_PATH} )
-add_subdirectory( ${PATH_TO_ABSEIL} )
-add_subdirectory( ${PATH_TO_PROTOBUF} )
-
+#add_subdirectory(${CMAKE_SOURCE_DIR}/Engine/External/protobuf)
+#add_dependencies(protobuf abseil)
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
@@ -118,28 +140,45 @@ target_compile_options(FuegoInterface
 # Uncomment the line bellow after CoreLib refactor
 # target_compile_options(FuegoInterface INTERFACE
 # ${PRIVATE_ENGINE_COMPILE_OPTIONS})
-
+set(CMAKE_PREFIX_PATH "C:\\Work\\Fuego\\build\\win\\output\\Debug" CACHE STRING "Path to installed dependencies" FORCE)
+find_package(Protobuf)
 # An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
-
+find_package(absl REQUIRED)
 target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
-target_link_libraries(FuegoEngine PRIVATE
-    absl::strings
-    absl::status
-    absl::synchronization
-    absl::flat_hash_map
-    absl::inlined_vector
-    absl::time
-    absl::hash
-    absl::optional
-    absl::span
-    absl::cord
+target_link_libraries(FuegoEngine PUBLIC
+   absl::strings
+   absl::base
+   absl::hash
+   absl::status
+   absl::synchronization
+   absl::flat_hash_map
+   absl::inlined_vector
+   absl::time
+   absl::optional
+   absl::span
+   absl::cord
+   absl::log
 )
+#find_package(protobuf REQUIRED)
 target_link_libraries(FuegoEngine PRIVATE protobuf::libprotoc)
+target_link_libraries(FuegoEngine PRIVATE protobuf::libprotobuf-lite)
 target_link_libraries(FuegoEngine PRIVATE protobuf::libprotobuf)
 
-target_include_directories(FuegoEngine
-                           PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
+#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/abseil/Installed/include)
+#message(STATUS "Abseil Include Path: ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/abseil/Installed/include")
+
+#include_directories(${Protobuf_INCLUDE_DIRS})
+
+#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/abseil/Installed/include)
+#message(STATUS "Protobuf Include Path: ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/protobuf/upb/reflection/cmake/google/protobuf")
+
+target_include_directories(FuegoEngine PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
+
+#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/build/win/Engine/External/abseil/Installed/lib)
+
+#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/build/win/Engine/External/abseil/Installed/include/absl)
+#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/build/win/Engine/External/abseil/Installed/include)
 
 target_precompile_headers(FuegoEngine PUBLIC
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
