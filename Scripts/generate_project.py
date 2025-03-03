@@ -6,6 +6,8 @@ import sys
 from pathlib import Path
 import os
 
+build_log           = "[-- BUILD LOG --]"
+build_log_error     = "[-- BUILD LOG ERROR --] --> "
 
 def run_command(command):
     """Run a shell command and handle errors."""
@@ -27,9 +29,10 @@ def generate_project(platform):
         generator = 'Xcode'
     elif platform == 'windows':
         build_dir = build_dir / 'win'
-        generator = 'Visual Studio 17 2022'
+
         preferred_generators = ["Visual Studio 17 2022",
                             "Visual Studio 16 2019"]
+    
         available_cmake_generator = get_cmake_available_generators()
         generator = find_matching_generator(preferred_generators, available_cmake_generator)
         if generator:
@@ -41,17 +44,16 @@ def generate_project(platform):
         print(f"{build_log_error} Unsupported platform: {platform}")
         sys.exit(1)
 
-    print('Initializing and updating git submodules...')
+    print(f'{build_log} Initializing and updating git submodules...')
     run_command(f"git -C {root_folder} submodule init")
     run_command(f"git -C {root_folder} submodule update")
 
     if not build_dir.exists():
-        print(f"Creating build directory: {build_dir}")
+        print(f"{build_log} Creating build directory: {build_dir}")
         build_dir.mkdir(parents=True)
     
-    print(f"Generating Abseil for {platform}...")
-
 #Abseil
+    print(f"{build_log} Generating Abseil for {platform}...")
     #abseil_cxx_flags_debug = "/bigobj /MTd /EHsc"
     abseil_root = os.path.join(root_folder, "Engine", "External", "abseil")
     abseil_build = os.path.join(abseil_root, "abseil_build")
@@ -66,33 +68,31 @@ def generate_project(platform):
                                 f' -DCMAKE_CXX_STANDARD={cxx_language_version}')
     
     print(f"{build_log} Abseil build arguments: {abseil_build_arguments}")
+
     if os.path.exists(abseil_root):
-        print(f"Creating build folder for Abseil: {abseil_build}")
         if not os.path.exists(abseil_build):
+            print(f"{build_log} Creating build folder for Abseil: {abseil_build}")
             os.makedirs(abseil_build)
+        if not os.path.exists(abseil_installed):
+            print(f"{build_log} Creating installed folder for Abseil: {abseil_installed}")
             os.makedirs(abseil_installed)
 
         os.chdir(abseil_root) 
 
         print(f"{build_log} Creating solution for Abseil in: {abseil_build}")
         run_command(f'cmake -B abseil_build -G "{generator}" {abseil_build_arguments}')
-        print(f"Creating solution for Abseil in: {abseil_build}")
-
         print(f"{build_log} Building Abseil from: {abseil_build} to: {abseil_installed}")
         run_command(f'cmake --build abseil_build --target install --parallel 4')
-
-        print(f"abseil_installed to: {abseil_installed}")
+        print(f"{build_log} Abseil installed successfully to: {abseil_installed}")
 #end abseil
 
 #Protobuf
-    print(f"Generating Protobuf project")
+    print(f"{build_log} Generating Protobuf project")
     #protobuf_cxx_flags = "/bigobj /MTd /EHsc"
     protobuf_root = os.path.join(root_folder, "Engine", "External", "protobuf")
     protobuf_build = os.path.join(protobuf_root, "protobuf_build")
     protobuf_installed = os.path.join(protobuf_root, "protobuf_installed")
-    if not os.path.exists(protobuf_build):
-        os.makedirs(protobuf_build)
-        os.makedirs(protobuf_installed)
+
     protobuf_build_arguments = (  f'-Dprotobuf_BUILD_TESTS=OFF'
                                     ' -DCMAKE_SKIP_INSTALL_RPATH=ON'
                                     ' -DENABLE_WPO=OFF'
@@ -107,26 +107,32 @@ def generate_project(platform):
                                     f' -DCMAKE_INSTALL_PREFIX="{protobuf_installed}"'
                                     f' -DCMAKE_PREFIX_PATH="{abseil_installed}"')
     print(f"{build_log} Protobuf build arguments: {protobuf_build_arguments}")
+    if os.path.exists(protobuf_root):
+        if not os.path.exists(protobuf_build):
             print(f"{build_log} Creating build folder for Protobuf: {protobuf_build}")
+            os.makedirs(protobuf_build)
+        if not os.path.exists(protobuf_installed):
             print(f"{build_log} Creating installed folder for Protobuf: {protobuf_installed}")
+            os.makedirs(protobuf_installed)
 
     os.chdir(protobuf_root)
     print(f"{build_log} Creating solution for Protobuf in: {protobuf_build}")
     os.system(f'cmake -B "{protobuf_build}" -G"{generator}" {protobuf_build_arguments}')
     print(f"{build_log} Building Protobuf from: {protobuf_build} to: {protobuf_installed}")
     os.system(f'cmake --build protobuf_build --target install --parallel 4 --verbose')
+    print(f"{build_log} Protobuf installed successfully to: {protobuf_installed}")
 # end protobuf
 
 #Engine    
-    print(f"Engine Project generation...")
+    print(f"{build_log} Engine Project generation...")
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}"')
     run_command(f'cmake --build {build_dir} --target install --parallel 4 --verbose')
-    print(f"Project generation for {platform} completed successfully.")
+    print(f"{build_log} Project generation for {platform} completed successfully.")
 # end engine
 
 def main():
     if len(sys.argv) != 2:
-        print('Usage: generate_project.py <platform>')
+        print(f"{build_log_error} Arguments more\\less than 2, usage: generate_project.py <platform>")
         sys.exit(1)
 
     platform = sys.argv[1].lower()
