@@ -20,6 +20,7 @@ def generate_project(platform):
     """Generate a project based on the specified platform."""
     root_folder = Path(__file__).parent.parent.resolve()
     build_dir = root_folder / 'build'
+    cxx_language_version = "20"
 
     if platform == 'macos':
         build_dir = build_dir / 'macos'
@@ -56,6 +57,15 @@ def generate_project(platform):
     abseil_build = os.path.join(abseil_root, "abseil_build")
     abseil_installed = os.path.join(abseil_root, "abseil_installed")
 
+    abseil_build_arguments = (  f'-DCMAKE_INSTALL_PREFIX="{abseil_installed}" '
+                                ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug '
+                                ' -DBUILD_SHARED_LIBS=ON '
+                                ' -D_ITERATOR_DEBUG_LEVEL=0 '
+                                ' -DABSL_RUN_TESTS=OFF '
+                                ' -DBUILD_TESTING=OFF '
+                                f' -DCMAKE_CXX_STANDARD={cxx_language_version}')
+    
+    print(f"{build_log} Abseil build arguments: {abseil_build_arguments}")
     if os.path.exists(abseil_root):
         print(f"Creating build folder for Abseil: {abseil_build}")
         if not os.path.exists(abseil_build):
@@ -64,9 +74,11 @@ def generate_project(platform):
 
         os.chdir(abseil_root) 
 
+        print(f"{build_log} Creating solution for Abseil in: {abseil_build}")
+        run_command(f'cmake -B abseil_build -G "{generator}" {abseil_build_arguments}')
         print(f"Creating solution for Abseil in: {abseil_build}")
 
-        run_command(f'cmake -B abseil_build -G "{generator}" -DCMAKE_INSTALL_PREFIX="{abseil_installed}" -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DBUILD_SHARED_LIBS=ON -D_ITERATOR_DEBUG_LEVEL=0 -DABSL_RUN_TESTS=OFF -DBUILD_TESTING=OFF -DCMAKE_CXX_STANDARD=20')
+        print(f"{build_log} Building Abseil from: {abseil_build} to: {abseil_installed}")
         run_command(f'cmake --build abseil_build --target install --parallel 4')
 
         print(f"abseil_installed to: {abseil_installed}")
@@ -81,9 +93,27 @@ def generate_project(platform):
     if not os.path.exists(protobuf_build):
         os.makedirs(protobuf_build)
         os.makedirs(protobuf_installed)
+    protobuf_build_arguments = (  f'-Dprotobuf_BUILD_TESTS=OFF'
+                                    ' -DCMAKE_SKIP_INSTALL_RPATH=ON'
+                                    ' -DENABLE_WPO=OFF'
+                                    ' -Dprotobuf_WITH_ZLIB=OFF'
+                                    ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug'
+                                    ' -DBUILD_SHARED_LIBS=ON'
+                                    ' -D_ITERATOR_DEBUG_LEVEL=0'
+                                    ' -DABSL_RUN_TESTS=OFF'
+                                    ' -DBUILD_TESTING=OFF'
+                                    ' -Dprotobuf_ABSL_PROVIDER=package'
+                                    f' -DCMAKE_CXX_STANDARD={cxx_language_version}'
+                                    f' -DCMAKE_INSTALL_PREFIX="{protobuf_installed}"'
+                                    f' -DCMAKE_PREFIX_PATH="{abseil_installed}"')
+    print(f"{build_log} Protobuf build arguments: {protobuf_build_arguments}")
+            print(f"{build_log} Creating build folder for Protobuf: {protobuf_build}")
+            print(f"{build_log} Creating installed folder for Protobuf: {protobuf_installed}")
 
     os.chdir(protobuf_root)
-    os.system(f'cmake -B "{protobuf_build}" -G"{generator}" -Dprotobuf_BUILD_TESTS=OFF -DCMAKE_SKIP_INSTALL_RPATH=ON -DENABLE_WPO=off -Dprotobuf_WITH_ZLIB=OFF -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug -DBUILD_SHARED_LIBS=ON -D_ITERATOR_DEBUG_LEVEL=0 -DABSL_RUN_TESTS=OFF -DBUILD_TESTING=OFF -Dprotobuf_ABSL_PROVIDER=package -DCMAKE_CXX_STANDARD=20 -DCMAKE_INSTALL_PREFIX="{protobuf_installed}" -DCMAKE_PREFIX_PATH="{abseil_installed}"')
+    print(f"{build_log} Creating solution for Protobuf in: {protobuf_build}")
+    os.system(f'cmake -B "{protobuf_build}" -G"{generator}" {protobuf_build_arguments}')
+    print(f"{build_log} Building Protobuf from: {protobuf_build} to: {protobuf_installed}")
     os.system(f'cmake --build protobuf_build --target install --parallel 4 --verbose')
 # end protobuf
 
