@@ -27,8 +27,17 @@ def generate_project(platform):
     elif platform == 'windows':
         build_dir = build_dir / 'win'
         generator = 'Visual Studio 17 2022'
+        preferred_generators = ["Visual Studio 17 2022",
+                            "Visual Studio 16 2019"]
+        available_cmake_generator = get_cmake_available_generators()
+        generator = find_matching_generator(preferred_generators, available_cmake_generator)
+        if generator:
+            print(f"{build_log} Windows generator is: {generator}")
+        else:
+            print(f"{build_log_error} There is no available Windows generator, please install one of {preferred_generators}, {generator}")
+            sys.exit(1)
     else:
-        print(f"Unsupported platform: {platform}")
+        print(f"{build_log_error} Unsupported platform: {platform}")
         sys.exit(1)
 
     print('Initializing and updating git submodules...')
@@ -93,6 +102,42 @@ def main():
     platform = sys.argv[1].lower()
     generate_project(platform)
 
+def get_cmake_available_generators():
+    raw_available_list = subprocess.run(["cmake", "--help"], capture_output=True, text=True).stdout
+    lines = raw_available_list.splitlines()
+
+    generators = []
+    parsing = False
+
+    for line in lines:
+
+        if not parsing:
+            if line.startswith("Generators"):
+                parsing = True
+            continue
+
+        if not line or line.startswith("=") or line.startswith("   "):
+            continue
+        if line.startswith("* "):
+            line = line.lstrip("* ")
+
+        generator_name = line.split("=", 1)[0].strip()
+        generators.append(generator_name)
+
+    return generators
+
+def find_matching_generator(preferred_generators, available_cmake_generators):
+    generator = None
+    for pref_gen in preferred_generators:
+        found = False
+        for available_gen in available_cmake_generators:
+            if pref_gen.lower() == available_gen.lower():
+                generator = available_gen
+                found = True
+                break
+        if found:
+            break
+    return generator
 
 if __name__ == '__main__':
     main()
