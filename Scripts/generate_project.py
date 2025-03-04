@@ -125,7 +125,17 @@ def generate_project(platform):
 
 #Engine    
     print(f"{build_log} Engine Project generation...")
-    run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}"')
+    protobuf_libraries_path = os.path.join(protobuf_installed, "lib")
+    protobuf_includedirs_path = os.path.join(protobuf_installed, "include")
+    protobuf_cmake_path = os.path.join(protobuf_installed, "lib", "cmake", "protobuf")
+
+    engine_build_arguments = () #f'-DProtobuf_LIBRARIES="{protobuf_libraries_path}"'
+                               #f' -DProtobuf_INCLUDE_DIR="{protobuf_includedirs_path}"'
+                               #f' -DProtobuf_DIR="{protobuf_cmake_path}"')
+    
+    print(f"{build_log} Engine build arguments: {engine_build_arguments}")
+
+    run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_build_arguments}')
     run_command(f'cmake --build {build_dir} --target install --parallel 4 --verbose')
     print(f"{build_log} Project generation for {platform} completed successfully.")
 # end engine
