@@ -50,19 +50,19 @@ endif()
 list(APPEND ENGINE_DEPENDENCIES ImGui)
 list(APPEND ENGINE_DEPENDENCIES Renderer)
 
-set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
+set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS ABSL_INTERNAL_HAVE_STD_IS_TRIVIALLY_DESTRUCTIBLE=1)
 
 set(PPIVATE_ENGINE_COMPILE_DEFS ${DLL_COMPILE_DEF} FUEGO_BUILD_LIB)
 
 set(PUBLIC_ENGINE_COMPILE_FEATURES cxx_std_20)
 
 if(MSVC)
-  set(PRIVATE_ENGINE_COMPILE_OPTIONS /W4 /WX /permissive-)
+  set(PRIVATE_ENGINE_COMPILE_OPTIONS /W4 /permissive-)
   set(PUBLIC_ENGINE_COMPILE_OPTIONS /utf-8)
 else()
   set(PRIVATE_ENGINE_COMPILE_OPTIONS -Wall -Wextra -Werror)
 endif()
-
+add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
 # End of common
 if(WIN32)
   list(APPEND ENGINE_DEPENDENCIES WindowsDep)
@@ -73,9 +73,24 @@ elseif(APPLE)
 endif()
 # End Project set up
 
+set( ABSEIL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil/abseil_installed)
+set( CMAKE_CXX_STANDARD 20)
+
 add_subdirectory( ${PLATFORM_SUBDIRECTORIES} )
 add_subdirectory( ${RENDERER_PATH} )
 #add_subdirectory( ${CMAKE_SOURCE_DIR}/Engine/External/protobuf)
+
+set( absl_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil/abseil_installed/lib/cmake/absl)
+message("absl_DIR: ${absl_DIR}")
+find_package(absl REQUIRED)
+
+set(utf8_range_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib/cmake/utf8_range)
+
+set( Protobuf_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib/cmake/protobuf)
+set( Protobuf_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib)
+set( Protobuf_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/include)
+message("Protobuf_DIR: ${Protobuf_DIR}")
+find_package(Protobuf REQUIRED)
 
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -87,6 +102,7 @@ set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
 )
 
 # An interface library to propagate headers to platform implementations
+
 add_library(FuegoInterface INTERFACE)
 target_include_directories(FuegoInterface
                            INTERFACE ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
@@ -104,58 +120,14 @@ target_compile_options(FuegoInterface
 #find_package(Protobuf)
 # An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
-#find_package(absl REQUIRED)
 target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
-# target_link_libraries(FuegoEngine PUBLIC
-#    absl::strings
-#    absl::base
-#    absl::hash
-#    absl::status
-#    absl::synchronization
-#    absl::flat_hash_map
-#    absl::inlined_vector
-#    absl::time
-#    absl::optional
-#    absl::span
-#    absl::cord
-#    absl::log
-# )
-#set(Protobuf_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed)
 
-#include_directories(${Protobuf_DIR}/include)
-#link_directories(${Protobuf_DIR}/lib)
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/output/Debug)
-set(absl_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil/abseil_installed/lib/cmake/absl)
-set(utf8_range_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib/cmake/utf8_range)
-find_package(absl REQUIRED)
-find_package(utf8_range REQUIRED)
-
-set(Protobuf_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib/cmake/protobuf)
-message(${Protobuf_DIR})
-find_package(Protobuf CONFIG REQUIRED)
-target_include_directories(FuegoEngine PRIVATE ${protobuf_INCLUDE_DIRS})  
-message(STATUS "Protobuf include dirs: ${protobuf_INCLUDE_DIRS}")
-message(STATUS "Protobuf libraries: ${protobuf_LIBRARIES}")
-#find_package(Protobuf REQUIRED)
-target_link_libraries(FuegoEngine PRIVATE protobuf::libprotoc)
-target_link_libraries(FuegoEngine PRIVATE protobuf::libprotobuf-lite)
-#target_link_libraries(FuegoEngine PRIVATE protobuf::libprotobuf)
-
-#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/abseil/Installed/include)
-#message(STATUS "Abseil Include Path: ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/abseil/Installed/include")
-
-#include_directories(${Protobuf_INCLUDE_DIRS})
-
-#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/abseil/Installed/include)
-#message(STATUS "Protobuf Include Path: ${CMAKE_CURRENT_SOURCE_DIR}/../build/win/Engine/External/protobuf/upb/reflection/cmake/google/protobuf")
-
-target_include_directories(FuegoEngine PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
-
-#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/build/win/Engine/External/abseil/Installed/lib)
-
-#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/build/win/Engine/External/abseil/Installed/include/absl)
-#target_include_directories(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/build/win/Engine/External/abseil/Installed/include)
-
+target_link_libraries(FuegoEngine PUBLIC  absl::time absl::str_format)
+target_link_libraries(FuegoEngine PUBLIC  C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\lib\\libprotobufd.lib )
+target_include_directories(FuegoEngine
+                           PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
+target_include_directories(FuegoEngine PUBLIC ${ABSEIL_PATH}/include)
+target_include_directories(FuegoEngine PUBLIC C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\include)
 target_precompile_headers(FuegoEngine PUBLIC
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 
