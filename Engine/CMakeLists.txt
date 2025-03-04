@@ -32,6 +32,7 @@ set(PROJECT_HEADERS
     External/stb_image/stb_image.h
     Fuego.h
     fupch.h
+    External/protobuf/protobuf_installed/bin/test.pb.cc
 )
 
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
@@ -122,15 +123,29 @@ target_compile_options(FuegoInterface
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
 target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
 
-target_link_libraries(FuegoEngine PUBLIC  absl::time absl::str_format)
-target_link_libraries(FuegoEngine PUBLIC  C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\lib\\libprotobufd.lib )
-target_include_directories(FuegoEngine
-                           PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
-target_include_directories(FuegoEngine PUBLIC ${ABSEIL_PATH}/include)
-target_include_directories(FuegoEngine PUBLIC C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\include)
-target_precompile_headers(FuegoEngine PUBLIC
-                          ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
+target_link_libraries(FuegoEngine PUBLIC  absl::algorithm
+absl::base
+absl::debugging
+absl::flags
+absl::hash
+absl::memory
+absl::meta
+absl::numeric
+absl::strings
+absl::synchronization
+absl::time
+absl::utility)
 
+target_link_libraries(FuegoEngine PUBLIC  C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\lib\\libprotocd.lib )
+target_link_libraries(FuegoEngine PUBLIC  C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\lib\\libprotobufd.lib )
+
+target_include_directories(FuegoEngine PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
+target_include_directories(FuegoEngine PUBLIC ${ABSEIL_PATH}/include)
+target_include_directories(FuegoEngine PUBLIC C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\bin)
+
+target_include_directories(FuegoEngine PUBLIC C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\include)
+
+target_precompile_headers(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 target_compile_definitions( FuegoEngine PUBLIC  ${PUBLIC_ENGINE_COMPILE_DEFS}     )
 target_compile_definitions( FuegoEngine PRIVATE ${PPIVATE_ENGINE_COMPILE_DEFS}    )
 target_compile_features   ( FuegoEngine PUBLIC  ${PUBLIC_ENGINE_COMPILE_FEATURES} )

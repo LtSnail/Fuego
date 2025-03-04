@@ -1,3 +1,4 @@
+#include <google/protobuf/port_def.inc>
 #include "Application.h"
 
 #include "Camera.h"
@@ -6,6 +7,9 @@
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
+#include "absl/strings/str_format.h"
+#include "test.pb.h"
+#include <google/protobuf/port_undef.inc> 
 
 Fuego::Renderer::Texture* engine_texture;
 int w, h, n;
@@ -16,7 +20,7 @@ std::vector<float> mesh_vector;
 namespace Fuego
 {
 class Application::ApplicationImpl
-{
+{   
     friend class Application;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
@@ -36,13 +40,16 @@ Application::Application()
     d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-
+    std::string s = absl::StrFormat("Welcome to %s, Number %d!", "The Village", 6);
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
-
     FS::FileSystem& fs = Application::Get().FileSystem();
     engine_mesh = new Fuego::Renderer::Mesh();
     mesh_vector = engine_mesh->load(fs.GetFullPathTo("!Model.obj").data());
+
+    google::protobuf::ShutdownProtobufLibrary();
+
+    
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
