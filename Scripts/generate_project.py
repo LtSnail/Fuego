@@ -52,10 +52,10 @@ def generate_project(platform):
     abseil_installed_release        = os.path.join(abseil_root, "abseil_installed_release")
     abseil_installed_release_cmake  = os.path.join(abseil_installed_release, "lib", "cmake", "absl")
 
-    abseil_debug_build_arguments = ( ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug'
+    abseil_debug_build_arguments = ( ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL'
                                     f' -DCMAKE_INSTALL_PREFIX="{abseil_installed_debug}"')
 
-    abseil_release_build_arguments  =   (' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded'
+    abseil_release_build_arguments  =   (' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
                                         f' -DCMAKE_INSTALL_PREFIX="{abseil_installed_release}"')
 
     abseil_common_build_arguments   = ( ' -DBUILD_SHARED_LIBS=OFF'
@@ -63,7 +63,7 @@ def generate_project(platform):
                                         ' -DABSL_RUN_TESTS=OFF'
                                         ' -DBUILD_TESTING=OFF'
                                         f' -DCMAKE_CXX_STANDARD={cxx_language_version}'
-                                        ' -DABSL_MSVC_STATIC_RUNTIME=ON'
+                                        ' -DABSL_MSVC_STATIC_RUNTIME=OFF'
                                         f' -DABSL_BUILD_TESTING=OFF'
                                         f' -DABSL_BUILD_TEST_HELPERS=OFF'
                                         f' -DABSL_USE_EXTERNAL_GOOGLETEST=OFF'
@@ -102,10 +102,10 @@ def generate_project(platform):
         os.chdir(abseil_root) 
         # Release
         print(f"{build_log} Creating release solution for Abseil in: {abseil_build_release}")
-        #run_command(f'cmake -B {abseil_build_release} -G "{generator}" {abseil_common_build_arguments} {abseil_release_build_arguments}')
+        run_command(f'cmake -B {abseil_build_release} -G "{generator}" {abseil_common_build_arguments} {abseil_release_build_arguments}')
 
         print(f"{build_log} Building release Abseil from: {abseil_build_release} to: {abseil_installed_release}")
-        #run_command(f'cmake --build {abseil_build_release} --config Release --target install --parallel 16')
+        run_command(f'cmake --build {abseil_build_release} --config Release --target install --parallel 16')
 
         print(f"{build_log} Release Abseil installed successfully to: {abseil_installed_release}")
 #end Abseil
@@ -126,7 +126,7 @@ def generate_project(platform):
     utf8_installed_debug_cmake = os.path.join(protobuf_installed_debug, "lib", "cmake", "utf8_range")
     utf8_installed_release_cmake = os.path.join(protobuf_installed_release, "lib", "cmake", "utf8_range")
 
-    protobuf_debug_build_arguments =   ( ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug'
+    protobuf_debug_build_arguments =   ( ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL'
                                         f' -Dabsl_DIR="{abseil_installed_debug_cmake}"'
                                         f' -DCMAKE_INSTALL_PREFIX="{protobuf_installed_debug}"'
                                         f' -Dprotobuf_BUILD_LIBPROTOC=OFF'
@@ -134,7 +134,7 @@ def generate_project(platform):
                                         f' -Dprotobuf_BUILD_PROTOBUF_BINARIES=ON'
                                         f' -Dprotobuf_BUILD_EXAMPLES=OFF')
 
-    protobuf_release_build_arguments = ( ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded'
+    protobuf_release_build_arguments = ( ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL'
                                         f' -Dabsl_DIR="{abseil_installed_release_cmake}"'
                                         f' -DCMAKE_INSTALL_PREFIX="{protobuf_installed_release}"'
                                         f' -Dprotobuf_BUILD_LIBPROTOC=ON'
@@ -155,7 +155,7 @@ def generate_project(platform):
                                         f' -Dprotobuf_BUILD_LIBUPB=ON'
                                         f' -Dprotobuf_BUILD_CONFORMANCE=OFF'
                                         f' -Dprotobuf_INSTALL=ON'
-                                        f' -Dprotobuf_MSVC_STATIC_RUNTIME=ON')
+                                        f' -Dprotobuf_MSVC_STATIC_RUNTIME=OFF')
     
     print(f"{build_log} Protobuf build arguments:")
     print(f"{build_log} Common arguments: {protobuf_common_build_arguments}")
@@ -189,12 +189,12 @@ def generate_project(platform):
     os.chdir(protobuf_root) 
     # Release
     print(f"{build_log} Creating release solution for Protobuf in: {protobuf_build_release}")
-    #run_command(f'cmake -B {protobuf_build_release} -G "{generator}" {protobuf_common_build_arguments} {protobuf_release_build_arguments}')
+    run_command(f'cmake -B {protobuf_build_release} -G "{generator}" {protobuf_common_build_arguments} {protobuf_release_build_arguments}')
 
     print(f"{build_log} Building release Protobuf from: {protobuf_build_release} to: {protobuf_installed_release}")
     run_command(f'cmake --build {protobuf_build_release} --config Release --target install --parallel 16')
 
-    #print(f"{build_log} Release Protobuf installed successfully to: {protobuf_installed_release}")
+    print(f"{build_log} Release Protobuf installed successfully to: {protobuf_installed_release}")
 # end protobuf
 
 # Compiling of proto files using protoc compiler
