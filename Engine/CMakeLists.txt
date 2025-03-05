@@ -32,11 +32,17 @@ set(PROJECT_HEADERS
     External/stb_image/stb_image.h
     Fuego.h
     fupch.h
-    External/protobuf/protobuf_installed/bin/message.pb.h
+    ${PROTO_PATH}/message.pb.h
 )
 
-set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
-            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp External/stb_image/stb_image.cpp External/protobuf/protobuf_installed/bin/message.pb.cc)
+set(SOURCES Fuego/Application.cpp
+            Fuego/Log.cpp 
+            Fuego/Layer.cpp
+            Fuego/LayerStack.cpp 
+            Fuego/ImGui/ImGuiLayer.cpp
+            Fuego/FileSystem/FileSystem.cpp
+            External/stb_image/stb_image.cpp
+            ${PROTO_PATH}/message.pb.cc)
 
 set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
 
@@ -51,7 +57,7 @@ endif()
 list(APPEND ENGINE_DEPENDENCIES ImGui)
 list(APPEND ENGINE_DEPENDENCIES Renderer)
 
-set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS ABSL_INTERNAL_HAVE_STD_IS_TRIVIALLY_DESTRUCTIBLE=1)
+set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
 
 set(PPIVATE_ENGINE_COMPILE_DEFS ${DLL_COMPILE_DEF} FUEGO_BUILD_LIB)
 
@@ -67,9 +73,17 @@ add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
 
 # Abseil-Protobuf
 set(external_root ${CMAKE_CURRENT_BINARY_DIR}/../../../Engine/External)
-set(absl_DIR "${external_root}/abseil/abseil_installed/lib/cmake/absl")
-set(protobuf_DIR "${external_root}/protobuf/protobuf_installed/lib/cmake/protobuf")
-set(utf8_range_DIR "${external_root}/protobuf/protobuf_installed/lib/cmake/utf8_range")
+if(CMAKE_CONFIGURATION_TYPES MATCHES "Debug")
+  set(absl_DIR "${ABSEIL_INSTALLED_DEBUG}")
+  set(protobuf_DIR "${PROTOBUF_INSTALLED_DEBUG}")
+  set(utf8_range_DIR "${UTF8_INSTALLED_DEBUG}")
+  message(${utf8_range_DIR})
+elseif(CMAKE_CONFIGURATION_TYPES MATCHES "Release")
+  set(absl_DIR "${ABSEIL_INSTALLED_RELEASE}")
+  set(protobuf_DIR "${PROTOBUF_INSTALLED_RELEASE}")
+  set(utf8_range_DIR "${UTF8_INSTALLED_RELEASE}")
+endif()
+
 
 find_package(absl CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
