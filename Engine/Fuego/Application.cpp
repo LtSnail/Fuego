@@ -6,7 +6,7 @@
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
-#include "External/protobuf/protobuf_installed/bin/message.pb.h"
+#include "ProtoOut/message.pb.h"
 #include <iostream>
 #include <fstream>
 
