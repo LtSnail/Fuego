@@ -32,11 +32,11 @@ set(PROJECT_HEADERS
     External/stb_image/stb_image.h
     Fuego.h
     fupch.h
-    External/protobuf/protobuf_installed/bin/test.pb.cc
+    External/protobuf/protobuf_installed/bin/message.pb.h
 )
 
 set(SOURCES Fuego/Application.cpp Fuego/Log.cpp Fuego/Layer.cpp
-            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp External/stb_image/stb_image.cpp)
+            Fuego/LayerStack.cpp Fuego/ImGui/ImGuiLayer.cpp Fuego/FileSystem/FileSystem.cpp External/stb_image/stb_image.cpp External/protobuf/protobuf_installed/bin/message.pb.cc)
 
 set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
 
@@ -64,6 +64,18 @@ else()
   set(PRIVATE_ENGINE_COMPILE_OPTIONS -Wall -Wextra -Werror)
 endif()
 add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
+
+# Abseil-Protobuf
+set(external_root ${CMAKE_CURRENT_BINARY_DIR}/../../../Engine/External)
+set(absl_DIR "${external_root}/abseil/abseil_installed/lib/cmake/absl")
+set(protobuf_DIR "${external_root}/protobuf/protobuf_installed/lib/cmake/protobuf")
+set(utf8_range_DIR "${external_root}/protobuf/protobuf_installed/lib/cmake/utf8_range")
+
+find_package(absl CONFIG REQUIRED)
+find_package(protobuf CONFIG REQUIRED)
+find_package(utf8_range CONFIG REQUIRED)
+# End of Abseil-Protobuf
+
 # End of common
 if(WIN32)
   list(APPEND ENGINE_DEPENDENCIES WindowsDep)
@@ -79,19 +91,6 @@ set( CMAKE_CXX_STANDARD 20)
 
 add_subdirectory( ${PLATFORM_SUBDIRECTORIES} )
 add_subdirectory( ${RENDERER_PATH} )
-#add_subdirectory( ${CMAKE_SOURCE_DIR}/Engine/External/protobuf)
-
-set( absl_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/abseil/abseil_installed/lib/cmake/absl)
-message("absl_DIR: ${absl_DIR}")
-find_package(absl REQUIRED)
-
-set(utf8_range_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib/cmake/utf8_range)
-
-set( Protobuf_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib/cmake/protobuf)
-set( Protobuf_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/lib)
-set( Protobuf_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/protobuf_installed/include)
-message("Protobuf_DIR: ${Protobuf_DIR}")
-find_package(Protobuf REQUIRED)
 
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -106,7 +105,7 @@ set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
 
 add_library(FuegoInterface INTERFACE)
 target_include_directories(FuegoInterface
-                           INTERFACE ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
+                           INTERFACE ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})                 
 target_precompile_headers(FuegoInterface INTERFACE
                           ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 target_compile_features(FuegoInterface
@@ -118,32 +117,13 @@ target_compile_options(FuegoInterface
 # Uncomment the line bellow after CoreLib refactor
 # target_compile_options(FuegoInterface INTERFACE
 # ${PRIVATE_ENGINE_COMPILE_OPTIONS})
-#find_package(Protobuf)
 # An engine library to be used by clients
 add_library(FuegoEngine ${LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
 target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
-
-target_link_libraries(FuegoEngine PUBLIC  absl::algorithm
-absl::base
-absl::debugging
-absl::flags
-absl::hash
-absl::memory
-absl::meta
-absl::numeric
-absl::strings
-absl::synchronization
-absl::time
-absl::utility)
-
-target_link_libraries(FuegoEngine PUBLIC  C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\lib\\libprotocd.lib )
-target_link_libraries(FuegoEngine PUBLIC  C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\lib\\libprotobufd.lib )
-
+target_link_libraries(FuegoEngine PRIVATE protobuf::libprotobuf)
 target_include_directories(FuegoEngine PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
-target_include_directories(FuegoEngine PUBLIC ${ABSEIL_PATH}/include)
-target_include_directories(FuegoEngine PUBLIC C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\bin)
 
-target_include_directories(FuegoEngine PUBLIC C:\\Work\\Fuego\\Engine\\External\\protobuf\\protobuf_installed\\include)
+target_include_directories(FuegoEngine PRIVATE ${Protobuf_INCLUDE_DIRS})     
 
 target_precompile_headers(FuegoEngine PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 target_compile_definitions( FuegoEngine PUBLIC  ${PUBLIC_ENGINE_COMPILE_DEFS}     )
