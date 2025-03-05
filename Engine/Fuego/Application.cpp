@@ -1,4 +1,3 @@
-#include <google/protobuf/port_def.inc>
 #include "Application.h"
 
 #include "Camera.h"
@@ -7,9 +6,9 @@
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
-#include "absl/strings/str_format.h"
-#include "test.pb.h"
-#include <google/protobuf/port_undef.inc> 
+#include "External/protobuf/protobuf_installed/bin/message.pb.h"
+#include <iostream>
+#include <fstream>
 
 Fuego::Renderer::Texture* engine_texture;
 int w, h, n;
@@ -47,9 +46,17 @@ Application::Application()
     engine_mesh = new Fuego::Renderer::Mesh();
     mesh_vector = engine_mesh->load(fs.GetFullPathTo("!Model.obj").data());
 
-    google::protobuf::ShutdownProtobufLibrary();
-
-    
+    Person person;
+    person.set_name("Oleg");
+    person.set_age(26);
+    std::ofstream out("data.bin", std::ios::binary);
+    person.SerializeToOstream(&out);
+    out.close();
+    Person new_person;
+    std::ifstream in("data.bin", std::ios::binary);
+    new_person.ParseFromIstream(&in);
+    in.close();
+    std::cout << "Name: " << new_person.name() << ", Age: " << new_person.age() << std::endl;
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
