@@ -8,6 +8,7 @@ import os
 
 build_log           = "[-- BUILD LOG --]"
 build_log_error     = "[-- BUILD LOG ERROR --] --> "
+cxx_language_version = "20"
 
 def run_command(command):
     """Run a shell command and handle errors."""
@@ -46,14 +47,15 @@ def generate_project(platform):
     abseil_root = os.path.join(root_folder, "Engine", "External", "abseil")
     abseil_build = os.path.join(abseil_root, "abseil_build")
     abseil_installed = os.path.join(abseil_root, "abseil_installed")
+    abseil_folder_installed_cmake = os.path.join(abseil_installed, "lib", "cmake", "absl")
 
-    abseil_build_arguments = (  f'-DCMAKE_INSTALL_PREFIX="{abseil_installed}" '
-                                ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug '
-                                ' -DBUILD_SHARED_LIBS=OFF '
-                                ' -D_ITERATOR_DEBUG_LEVEL=0 '
-                                ' -DABSL_RUN_TESTS=OFF '
-                                ' -DBUILD_TESTING=OFF '
-                                f' -DCMAKE_CXX_STANDARD=20'
+    abseil_build_arguments = (  f'-DCMAKE_INSTALL_PREFIX="{abseil_installed}"'
+                                ' -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebug'
+                                ' -DBUILD_SHARED_LIBS=OFF'
+                                ' -D_ITERATOR_DEBUG_LEVEL=0'
+                                ' -DABSL_RUN_TESTS=OFF'
+                                ' -DBUILD_TESTING=OFF'
+                                f' -DCMAKE_CXX_STANDARD={cxx_language_version}'
                                 ' -DABSL_MSVC_STATIC_RUNTIME=ON'
                                 f' -DABSL_BUILD_TESTING=OFF'
                                 f' -DABSL_BUILD_TEST_HELPERS=OFF'
@@ -87,7 +89,7 @@ def generate_project(platform):
     protobuf_build = os.path.join(protobuf_root, "protobuf_build")
     protobuf_installed = os.path.join(protobuf_root, "protobuf_installed")
 
-    protobuf_build_arguments = (  f'-Dprotobuf_BUILD_TESTS=OFF'
+    protobuf_build_arguments = (    f'-Dprotobuf_BUILD_TESTS=OFF'
                                     ' -DCMAKE_SKIP_INSTALL_RPATH=ON'
                                     ' -DENABLE_WPO=OFF'
                                     ' -Dprotobuf_WITH_ZLIB=OFF'
@@ -97,9 +99,10 @@ def generate_project(platform):
                                     ' -DABSL_RUN_TESTS=OFF'
                                     ' -DBUILD_TESTING=OFF'
                                     ' -Dprotobuf_ABSL_PROVIDER=package'
-                                    f' -DCMAKE_CXX_STANDARD=20'
+                                    f' -DCMAKE_CXX_STANDARD={cxx_language_version}'
+                                    f' -Dabsl_DIR="{abseil_folder_installed_cmake}"'
                                     f' -DCMAKE_INSTALL_PREFIX="{protobuf_installed}"'
-                                    f' -DCMAKE_PREFIX_PATH="{abseil_installed}"'
+                                    #f' -DCMAKE_PREFIX_PATH="{abseil_installed}"'
                                     f' -Dprotobuf_BUILD_LIBUPB=ON'
                                     f' -Dprotobuf_BUILD_LIBPROTOC=ON'
                                     f' -Dprotobuf_BUILD_PROTOC_BINARIES=ON'
@@ -174,6 +177,7 @@ def generate_project(platform):
                                     f' -DCMAKE_CXX_STANDARD={cxx_language_version}'
                                     f' -DCMAKE_INSTALL_PREFIX="{protobuf_installed}"'
                                     f' -DCMAKE_PREFIX_PATH="{abseil_installed}"')
+
     print(f"{build_log} Protobuf build arguments: {protobuf_build_arguments}")
     if os.path.exists(protobuf_root):
         if not os.path.exists(protobuf_build):
@@ -187,7 +191,7 @@ def generate_project(platform):
     print(f"{build_log} Creating solution for Protobuf in: {protobuf_build}")
     os.system(f'cmake -B "{protobuf_build}" -G"{generator}" {protobuf_build_arguments}')
     print(f"{build_log} Building Protobuf from: {protobuf_build} to: {protobuf_installed}")
-    os.system(f'cmake --build protobuf_build --target install --parallel 4 --verbose')
+    os.system(f'cmake --build protobuf_build --target install --parallel 16 --verbose')
     print(f"{build_log} Protobuf installed successfully to: {protobuf_installed}")
 # end protobuf
 
@@ -204,7 +208,7 @@ def generate_project(platform):
     print(f"{build_log} Engine build arguments: {engine_build_arguments}")
 
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_build_arguments}')
-    run_command(f'cmake --build {build_dir} --target install --parallel 4 --verbose')
+    run_command(f'cmake --build {build_dir} --target install --parallel 16 --verbose')
     print(f"{build_log} Project generation for {platform} completed successfully.")
 # end engine
 
