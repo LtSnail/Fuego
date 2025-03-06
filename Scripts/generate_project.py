@@ -212,6 +212,8 @@ def generate_project(platform):
     for dirpath, dirnames, filenames in os.walk(proto_input):
         for filename in filenames:
             if filename.endswith('.proto'):
+                if not dirnames:
+                    dirnames = "Root Folder"
                 print(f"{protoc_compiler_log} Proto file was found: {filename} in: {dirnames}")
                 run_command(f'.\\protoc.exe --proto_path="{proto_input}" --cpp_out="{proto_output}" {filename}')
     
