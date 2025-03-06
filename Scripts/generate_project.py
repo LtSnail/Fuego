@@ -10,16 +10,18 @@ build_log           = "\n[-- BUILD LOG --]"
 build_log_error     = "\n[-- BUILD LOG ERROR --] --> "
 protoc_compiler_log = "\n[-- PROTOC COMPILER LOG --]"
 cxx_language_version = "20"
+
 def main():
-    if len(sys.argv) != 2:
-        print(f"{build_log_error} Arguments more\\less than 2, usage: generate_project.py <platform>")
+    if len(sys.argv) != 3:
+        print(f"{build_log_error} Arguments more\\less than 3, usage: generate_project.py <platform> <BEnableTests>")
         sys.exit(1)
 
     platform = sys.argv[1].lower()
-    generate_project(platform)
+    enable_test = sys.argv[2].lower()
+    generate_project(platform, enable_test)
 
 
-def generate_project(platform):
+def generate_project(platform, enable_test):
     """Generate a project based on the specified platform."""
     root_folder = Path(__file__).parent.parent.resolve()
     build_dir = os.path.join(root_folder, "build")
@@ -32,6 +34,13 @@ def generate_project(platform):
         generator = 'Visual Studio 17 2022'
     else:
         print(f"{build_log_error} Unsupported platform: {platform}")
+        sys.exit(1)
+    if enable_test == "true":
+        enable_test = "-DENABLE_FUEGO_TEST=ON"
+    elif enable_test == "false":
+        enable_test = "-DENABLE_FUEGO_TEST=OFF"
+    else: 
+        print(f"{build_log_error} Unsupported argument for tests: {enable_test}")
         sys.exit(1)
 
     print('Initializing and updating git submodules...')
@@ -229,7 +238,8 @@ def generate_project(platform):
                         f' -DPROTOBUF_INSTALLED_RELEASE="{protobuf_installed_release_cmake}"'
                         f' -DUTF8_INSTALLED_DEBUG="{utf8_installed_debug_cmake}"'
                         f' -DUTF8_INSTALLED_RELEASE="{utf8_installed_release_cmake}"'
-                        f' -DPROTO_PATH="{proto_output}"')
+                        f' -DPROTO_PATH="{proto_output}"'
+                        f' {enable_test}')
     
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
     run_command(f'cmake --build {build_dir} --target install --parallel 16 --verbose')
