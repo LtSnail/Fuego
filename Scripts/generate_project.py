@@ -10,6 +10,7 @@ build_log           = "\n[-- BUILD LOG --]"
 build_log_error     = "\n[-- BUILD LOG ERROR --] --> "
 protoc_compiler_log = "\n[-- PROTOC COMPILER LOG --]"
 cxx_language_version = "20"
+platfrorm_var = "none"
 
 def main():
     if len(sys.argv) != 3:
@@ -28,9 +29,11 @@ def generate_project(platform, enable_test):
 
     if platform == 'macos':
         build_dir = os.path.join(build_dir, "macos")
+        platfrorm_var = "macos"
         generator = 'Xcode'
     elif platform == 'windows':
         build_dir = os.path.join(build_dir, "win")
+        platfrorm_var = "win"
         generator = 'Visual Studio 17 2022'
     else:
         print(f"{build_log_error} Unsupported platform: {platform}")
@@ -239,7 +242,8 @@ def generate_project(platform, enable_test):
                         f' -DUTF8_INSTALLED_DEBUG="{utf8_installed_debug_cmake}"'
                         f' -DUTF8_INSTALLED_RELEASE="{utf8_installed_release_cmake}"'
                         f' -DPROTO_PATH="{proto_output}"'
-                        f' {enable_test}')
+                        f' {enable_test}'
+                        f' -DPLATFORM={platfrorm_var}')
     
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
     run_command(f'cmake --build {build_dir} --target install --parallel 16 --verbose')
