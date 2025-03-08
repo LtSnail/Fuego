@@ -58,7 +58,7 @@ list(APPEND ENGINE_DEPENDENCIES Renderer)
 set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS)
 
 set(PPIVATE_ENGINE_COMPILE_DEFS ${DLL_COMPILE_DEF} FUEGO_BUILD_LIB)
-
+set(_ITERATOR_DEBUG_LEVEL=0)
 set(PUBLIC_ENGINE_COMPILE_FEATURES cxx_std_20)
 
 if(MSVC)
@@ -67,6 +67,8 @@ if(MSVC)
 else()
   set(PRIVATE_ENGINE_COMPILE_OPTIONS -Wall -Wextra -Werror)
 endif()
+
+# End of common
 
 # Abseil-Protobuf
 set(external_root ${CMAKE_CURRENT_BINARY_DIR}/../../../Engine/External)
@@ -81,13 +83,15 @@ elseif(CMAKE_CONFIGURATION_TYPES MATCHES "Release")
   set(utf8_range_DIR "${UTF8_INSTALLED_RELEASE}")
 endif()
 
-
 find_package(absl CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
 find_package(utf8_range CONFIG REQUIRED)
 # End of Abseil-Protobuf
-
-# End of common
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDebugDLL)
+elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL)
+endif()
 if(WIN32)
   list(APPEND ENGINE_DEPENDENCIES WindowsDep)
   set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
