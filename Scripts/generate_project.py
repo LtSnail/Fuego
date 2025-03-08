@@ -247,9 +247,13 @@ def generate_project(platform, enable_test):
                         f' -DPROTO_PATH="{proto_output}"'
                         f' {enable_test}'
                         f' -DPLATFORM={platfrorm_var}')
-    
+    # Debug
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
-    run_command(f'cmake --build {build_dir} --target install --parallel 16 --verbose')
+    run_command(f'cmake --build {build_dir} --config Debug --target install --parallel 16 --verbose')
+
+    # Release
+    run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
+    run_command(f'cmake --build {build_dir} --config Release --target install --parallel 16 --verbose')
 
     print(f"{build_log} Project generation for {platform} completed successfully.")
 # End Engine
