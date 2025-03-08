@@ -12,6 +12,7 @@ protoc_compiler_log = "\n[-- PROTOC COMPILER LOG --]"
 cxx_language_version = "20"
 platfrorm_var = "none"
 protoc_compiler_name = "none"
+protoc_language = "none"
 
 def main():
     if len(sys.argv) != 3:
@@ -34,11 +35,13 @@ def generate_project(platform, enable_test):
         platfrorm_var = "macos"
         generator = 'Xcode'
         protoc_compiler_name = "protoc"
+        protoc_language = "objc_out"
     elif platform == 'windows':
         build_dir = os.path.join(build_dir, "win")
         platfrorm_var = "win"
         generator = 'Visual Studio 17 2022'
         protoc_compiler_name = ".\\protoc.exe"
+        protoc_language = "cpp_out"
     else:
         print(f"{build_log_error} Unsupported platform: {platform}")
         sys.exit(1)
@@ -234,7 +237,7 @@ def generate_project(platform, enable_test):
                 if not dirnames:
                     dirnames = "Root Folder"
                 print(f"${protoc_compiler_log} Proto file was found: {filename} in: {dirnames}")
-                run_command(f'{protoc_compiler_name} --proto_path="{proto_input}" --cpp_out="{proto_output}" {filename}')
+                run_command(f'{protoc_compiler_name} --proto_path="{proto_input}" --{protoc_language}="{proto_output}" {filename}')
     
 
 # End protoc
