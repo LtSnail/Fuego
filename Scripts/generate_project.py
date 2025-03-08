@@ -26,6 +26,7 @@ def generate_project(platform, enable_test):
     """Generate a project based on the specified platform."""
     root_folder = Path(__file__).parent.parent.resolve()
     build_dir = os.path.join(root_folder, "build")
+    protoc_compiler_name = ".\protoc"
 
     if platform == 'macos':
         build_dir = os.path.join(build_dir, "macos")
@@ -35,6 +36,7 @@ def generate_project(platform, enable_test):
         build_dir = os.path.join(build_dir, "win")
         platfrorm_var = "win"
         generator = 'Visual Studio 17 2022'
+        protoc_compiler_name += ".exe"
     else:
         print(f"{build_log_error} Unsupported platform: {platform}")
         sys.exit(1)
@@ -229,8 +231,8 @@ def generate_project(platform, enable_test):
             if filename.endswith('.proto'):
                 if not dirnames:
                     dirnames = "Root Folder"
-                print(f"{protoc_compiler_log} Proto file was found: {filename} in: {dirnames}")
-                run_command(f'.\\protoc.exe --proto_path="{proto_input}" --cpp_out="{proto_output}" {filename}')
+                print(f"${protoc_compiler_log} Proto file was found: {filename} in: {dirnames}")
+                run_command(f'{protoc_compiler_name} --proto_path="{proto_input}" --cpp_out="{proto_output}" {filename}')
     
 
 # End protoc
