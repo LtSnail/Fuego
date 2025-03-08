@@ -1,7 +1,5 @@
 # Engine
 
-include(ExternalProject)
-
 set(FUEGO_DYNAMIC_LIB
     ON
     CACHE BOOL "Build dynamic library (ON/OFF)")
@@ -69,7 +67,6 @@ if(MSVC)
 else()
   set(PRIVATE_ENGINE_COMPILE_OPTIONS -Wall -Wextra -Werror)
 endif()
-add_definitions(-DNOMINMAX -DWIN32_LEAN_AND_MEAN)
 
 # Abseil-Protobuf
 set(external_root ${CMAKE_CURRENT_BINARY_DIR}/../../../Engine/External)
