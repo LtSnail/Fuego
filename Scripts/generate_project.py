@@ -11,6 +11,7 @@ build_log_error     = "\n[-- BUILD LOG ERROR --] --> "
 protoc_compiler_log = "\n[-- PROTOC COMPILER LOG --]"
 cxx_language_version = "20"
 platfrorm_var = "none"
+protoc_compiler_name = "none"
 
 def main():
     if len(sys.argv) != 3:
@@ -26,17 +27,18 @@ def generate_project(platform, enable_test):
     """Generate a project based on the specified platform."""
     root_folder = Path(__file__).parent.parent.resolve()
     build_dir = os.path.join(root_folder, "build")
-    protoc_compiler_name = ".\protoc"
+
 
     if platform == 'macos':
         build_dir = os.path.join(build_dir, "macos")
         platfrorm_var = "macos"
         generator = 'Xcode'
+        protoc_compiler_name = "protoc"
     elif platform == 'windows':
         build_dir = os.path.join(build_dir, "win")
         platfrorm_var = "win"
         generator = 'Visual Studio 17 2022'
-        protoc_compiler_name += ".exe"
+        protoc_compiler_name = ".\\protoc.exe"
     else:
         print(f"{build_log_error} Unsupported platform: {platform}")
         sys.exit(1)
