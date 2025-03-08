@@ -46,6 +46,9 @@ def generate_project(platform, enable_test):
         print(f"{build_log_error} Unsupported argument for tests: {enable_test}")
         sys.exit(1)
 
+    if os.path.exists(build_dir):
+        os.makedirs(build_dir, exist_ok=True)
+
     print('Initializing and updating git submodules...')
     print(f"Root folder: {root_folder}")
 
