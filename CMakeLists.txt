@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Output folders:
 set(OUTPUT_DIR ${CMAKE_BINARY_DIR}/output)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR})
@@ -41,6 +42,6 @@ endif()
 
 add_subdirectory(Engine)
 add_subdirectory(Sandbox)
-add_subdirectory(CoreLib)
-
-add_subdirectory(External/googletest)
+if(ENABLE_FUEGO_TEST)
+  add_subdirectory(Tests)
+endif()
