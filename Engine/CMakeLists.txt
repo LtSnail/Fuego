@@ -5,6 +5,13 @@ set(FUEGO_DYNAMIC_LIB
     CACHE BOOL "Build dynamic library (ON/OFF)")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ProtoFilesMisc.cmake)
+
+set(PROTO_FILES_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/ProtoIn)
+
+GetProtoFiles(PATHS ${PROTO_FILES_DIRECTORIES})
+GetProtoHeaderFiles(PROTO_OUT ${PROTO_PATH})
+GetProtoSourceFiles(PROTO_OUT ${PROTO_PATH})
 
 # Project set up
 set(PROJECT_HEADERS
@@ -30,7 +37,7 @@ set(PROJECT_HEADERS
     External/stb_image/stb_image.h
     Fuego.h
     fupch.h
-    ${PROTO_PATH}/message.pb.h
+    ${OUT_HEADER_FILES}
 )
 
 set(SOURCES Fuego/Application.cpp
@@ -40,7 +47,7 @@ set(SOURCES Fuego/Application.cpp
             Fuego/ImGui/ImGuiLayer.cpp
             Fuego/FileSystem/FileSystem.cpp
             External/stb_image/stb_image.cpp
-            ${PROTO_PATH}/message.pb.cc)
+            ${OUT_SOURCE_FILES})
 
 set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
 
@@ -71,7 +78,6 @@ endif()
 # End of common
 
 # Abseil-Protobuf
-set(external_root ${CMAKE_CURRENT_BINARY_DIR}/../../../Engine/External)
 if(CMAKE_CONFIGURATION_TYPES MATCHES "Debug")
   set(absl_DIR "${ABSEIL_INSTALLED_DEBUG}")
   set(protobuf_DIR "${PROTOBUF_INSTALLED_DEBUG}")
@@ -110,10 +116,12 @@ add_subdirectory( ${RENDERER_PATH} )
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
+    ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/ProtoOut
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer 
     ${CMAKE_CURRENT_SOURCE_DIR}/External/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/External/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include 
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/src
 )
 
 # An interface library to propagate headers to platform implementations
