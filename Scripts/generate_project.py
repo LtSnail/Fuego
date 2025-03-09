@@ -253,7 +253,7 @@ def generate_project(platform, enable_test):
                         f' -DUTF8_INSTALLED_RELEASE="{utf8_installed_release_cmake}"'
                         f' -DPROTO_PATH="{proto_output}"'
                         f' {enable_test}'
-                        f' -DPLATFORM={platfrorm_var}')
+                        f' -DFUEGO_PLATFORM={platfrorm_var}')
     # Debug
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
     run_command(f'cmake --build {build_dir} --config Debug --target install --parallel 16 --verbose')

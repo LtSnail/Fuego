@@ -5,9 +5,9 @@ message(STATUS "Fuego tests are ENABLED")
 # Googletest configuration
 set( FUEGO_ROOT ${CMAKE_SOURCE_DIR})
 set( GOOGLE_TEST_ROOT ${FUEGO_ROOT}/External/googletest)
-set( GOOGLE_TEST_BUILD ${FUEGO_ROOT}/build/${PLATFORM}/External/googletest)
+set( GOOGLE_TEST_BUILD ${FUEGO_ROOT}/build/${FUEGO_PLATFORM}/External/googletest)
 
-set(GTEST_SOLUTION ${FUEGO_ROOT}/build/${PLATFORM}/External)
+set(GTEST_SOLUTION ${FUEGO_ROOT}/build/${FUEGO_PLATFORM}/External)
 
 set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST ON CACHE BOOL "" FORCE)
@@ -28,7 +28,7 @@ set(COMMON_TARGET_PROPERTIES PROPERTIES FOLDER "Tests")
 
 # CoreLibtests configuration:
 set(CORE_LIB_TESTS_ROOT ${FUEGO_ROOT}/CoreLib )
-set(CORE_LIB_TESTS_BUILD ${FUEGO_ROOT}/build/${PLATFORM}/CoreLibTests )
+set(CORE_LIB_TESTS_BUILD ${FUEGO_ROOT}/build/${FUEGO_PLATFORM}/CoreLibTests )
 # End of CoreLibtests configuration
 
 # Main part:

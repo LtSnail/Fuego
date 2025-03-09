@@ -12,7 +12,7 @@ set(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
      ${ROOT}/CoreLibTests.h)
 
 set(CORELIB_SOURCES ${ROOT}/CoreLibTests.cpp)
-set(CORELIB_BULD ${ROOT}/../build/${PLATFORM}/CoreLibTests)
+set(CORELIB_BULD ${ROOT}/../build/${FUEGO_PLATFORM}/CoreLibTests)
 
 set(OUTPUT_DIR ${CORELIB_BULD}/ )
 
