@@ -11,6 +11,7 @@ build_log_error     = "\n[-- BUILD LOG ERROR --] --> "
 protoc_compiler_log = "\n[-- PROTOC COMPILER LOG --]"
 cxx_language_version = "20"
 platfrorm_var = "none"
+platform_macro_definition = "none"
 protoc_compiler_name = "none"
 protoc_language = "none"
 
@@ -36,12 +37,14 @@ def generate_project(platform, enable_test):
         generator = 'Xcode'
         protoc_compiler_name = "protoc"
         protoc_language = "objc_out"
+        platform_macro_definition = "-DFUEGO_PLATFORM_MACOS=1"
     elif platform == 'windows':
         build_dir = os.path.join(build_dir, "win")
         platfrorm_var = "win"
         generator = 'Visual Studio 17 2022'
         protoc_compiler_name = ".\\protoc.exe"
         protoc_language = "cpp_out"
+        platform_macro_definition = "-DFUEGO_PLATFORM_WIN=1"
     else:
         print(f"{build_log_error} Unsupported platform: {platform}")
         sys.exit(1)
@@ -253,7 +256,8 @@ def generate_project(platform, enable_test):
                         f' -DUTF8_INSTALLED_RELEASE="{utf8_installed_release_cmake}"'
                         f' -DPROTO_PATH="{proto_output}"'
                         f' {enable_test}'
-                        f' -DFUEGO_PLATFORM={platfrorm_var}')
+                        f' -DFUEGO_PLATFORM={platfrorm_var}'
+                        f' {platform_macro_definition}')
     # Debug
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
     run_command(f'cmake --build {build_dir} --config Debug --target install --parallel 16 --verbose')
