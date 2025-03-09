@@ -7,9 +7,11 @@ namespace Fuego::Renderer
 {
 class Surface;
 
-class SwapchainOpenGL : public Swapchain
+class SwapchainOpenGL final : public Swapchain
 {
 public:
+    FUEGO_NON_COPYABLE_NON_MOVABLE(SwapchainOpenGL);
+
     virtual ~SwapchainOpenGL() override;
 
     virtual void Present() override;
@@ -25,6 +27,5 @@ private:
 protected:
     friend class DeviceOpenGL;
     SwapchainOpenGL(const Surface& surface);
-    SwapchainOpenGL(const Surface& surface, float x, float y, float w, float h);
 };
 }  // namespace Fuego::Renderer

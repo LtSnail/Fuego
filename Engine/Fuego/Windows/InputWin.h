@@ -4,7 +4,7 @@
 
 namespace Fuego
 {
-class InputWin : public Input
+class InputWin final : public Input
 {
 protected:
     virtual bool IsKeyPressedImpl(KeyCode keyCode) const override;

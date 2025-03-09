@@ -4,7 +4,7 @@
 
 namespace Fuego::Renderer
 {
-class BufferOpenGL : public Buffer
+class BufferOpenGL final : public Buffer
 {
 public:
     virtual ~BufferOpenGL() override;

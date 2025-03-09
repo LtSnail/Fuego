@@ -56,7 +56,7 @@ public:
     void ShowWireFrame();
     void ToggleWireFrame();
     void ValidateWindow();
-    inline const Viewport& Getviewport() const
+    inline const Viewport& GetViewport() const
     {
         return viewport;
     }

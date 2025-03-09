@@ -4,11 +4,27 @@
 
 #include "ShaderObjectOpenGL.h"
 #include "TextureOpenGL.h"
+#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
+GLint GetShaderType(Shader::ShaderType type)
+{
+    switch (type)
+    {
+    case Shader::Pixel:
+        return GL_FRAGMENT_SHADER;
+    case Shader::Vertex:
+        return GL_VERTEX_SHADER;
+    default:
+        FU_CORE_ASSERT(false, "[Shader] Invalid shader type:")
+        return 0;
+    }
+}
+
 ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
-    : _type(type)
+    : shader_object(0)
+    , _type(type)
 {
     _shaderID = glCreateShader(GetShaderType(type));
     glShaderSource(_shaderID, 1, &shaderCode, nullptr);
@@ -33,23 +49,9 @@ ShaderOpenGL::~ShaderOpenGL()
     glDeleteShader(_shaderID);
 }
 
-GLint ShaderOpenGL::GetShaderType(ShaderType type) const
-{
-    switch (type)
-    {
-    case Pixel:
-        return GL_FRAGMENT_SHADER;
-    case Vertex:
-        return GL_VERTEX_SHADER;
-    default:
-        FU_CORE_ERROR("[Shader] Invalid shader type:");
-        break;
-    }
-}
-
 void ShaderOpenGL::BindToShaderObject(ShaderObject& obj)
 {
-    ShaderObjectOpenGL& obj_gl = static_cast<ShaderObjectOpenGL&>(obj);
+    ShaderObjectOpenGL& obj_gl = dynamic_cast<ShaderObjectOpenGL&>(obj);
     shader_object = obj_gl.GetObjectID();
 }
 
@@ -70,8 +72,7 @@ bool ShaderOpenGL::AddVar(const std::string& uniform)
 
 bool ShaderOpenGL::SetVec3f(const std::string& var, glm::vec3 vector) const
 {
-    auto it = uniforms.find(var);
-    if (it != uniforms.end())
+    if (auto it = uniforms.find(var); it != uniforms.end())
     {
         glUniform3f(it->second, vector.x, vector.y, vector.z);
         return true;
@@ -84,8 +85,7 @@ bool ShaderOpenGL::SetVec3f(const std::string& var, glm::vec3 vector) const
 
 bool ShaderOpenGL::SetMat4f(const std::string& var, glm::mat4 matrix) const
 {
-    auto it = uniforms.find(var);
-    if (it != uniforms.end())
+    if (auto it = uniforms.find(var); it != uniforms.end())
     {
         glUniformMatrix4fv(it->second, 1, GL_FALSE, glm::value_ptr(matrix));
 
@@ -99,9 +99,8 @@ bool ShaderOpenGL::SetMat4f(const std::string& var, glm::mat4 matrix) const
 
 bool ShaderOpenGL::SetText2D(const std::string& var, const Texture& texture) const
 {
-    const TextureOpenGL& text_gl = static_cast<const TextureOpenGL&>(texture);
-    auto it = uniforms.find(var);
-    if (it != uniforms.end())
+    const TextureOpenGL& text_gl = dynamic_cast<const TextureOpenGL&>(texture);
+    if (auto it = uniforms.find(var); it != uniforms.end())
     {
         glUniform1i(it->second, text_gl.GetTextureUnit());
         glActiveTexture(GL_TEXTURE0 + text_gl.GetTextureUnit());

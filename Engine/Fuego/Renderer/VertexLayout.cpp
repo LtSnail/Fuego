@@ -38,17 +38,11 @@ uint32_t VertexLayout::GetAPIDataType(DataType type)
     switch (type)
     {
     case DataType::FLOAT:
-        return VK_FORMAT_R32_SFLOAT;
     case DataType::FLOAT_VEC2:
-        return VK_FORMAT_R32G32_SFLOAT;
     case DataType::FLOAT_VEC3:
-        return VK_FORMAT_R32G32B32_SFLOAT;
     case DataType::FLOAT_VEC4:
-        return VK_FORMAT_R32G32B32A32_SFLOAT;
     case DataType::INSIGNED_BYTE:
-        return VK_FORMAT_R8G8B8A8_UINT;
     case DataType::SHORT:
-        return VK_FORMAT_R16G16_SINT;
     default:
         return 0;
     }

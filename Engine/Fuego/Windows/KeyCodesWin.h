@@ -2,7 +2,7 @@
 
 #include "KeyCodes.h"
 
-static inline Fuego::KeyCode GetKeyCode(int winKey)
+static Fuego::KeyCode GetKeyCode(int winKey)
 {
 #define KEY(x) Fuego::Key::x
 

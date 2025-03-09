@@ -2,9 +2,7 @@
 
 #include <Fuego.h>
 
-#include "Mesh.h"
-
-class SceneLayer : public Fuego::Layer
+class SceneLayer final : public Fuego::Layer
 {
 public:
     SceneLayer();
@@ -17,7 +15,7 @@ public:
     bool OnRenderEvent(Fuego::AppRenderEvent& event);
 
 private:
-    std::vector<Fuego::Renderer::Mesh*> scene_meshes;
+    std::vector<std::unique_ptr<Fuego::Renderer::Mesh>> scene_meshes;
     std::vector<std::vector<float>> mesh_data;
 };
 
@@ -26,5 +24,3 @@ class SandboxApp : public Fuego::Application
 public:
     SandboxApp();
 };
-
-Fuego::Application* Fuego::CreateApplication();

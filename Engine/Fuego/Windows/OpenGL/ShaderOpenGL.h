@@ -4,13 +4,14 @@
 #include <glm/fwd.hpp>
 
 #include "Renderer/Shader.h"
-#include "glad/gl.h"
 
 namespace Fuego::Renderer
 {
-class ShaderOpenGL : public Shader
+class ShaderOpenGL final : public Shader
 {
 public:
+    FUEGO_NON_COPYABLE_NON_MOVABLE(ShaderOpenGL)
+
     virtual ~ShaderOpenGL() override;
 
     inline ShaderType GetType() const
@@ -32,8 +33,6 @@ private:
     uint32_t shader_object;
     uint32_t _shaderID;
     ShaderType _type;
-
-    GLint GetShaderType(ShaderType type) const;
 
     std::unordered_map<std::string, uint32_t> uniforms;
 

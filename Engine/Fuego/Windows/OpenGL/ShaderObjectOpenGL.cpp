@@ -1,5 +1,7 @@
 #include "ShaderObjectOpenGL.h"
 
+#include "glad/gl.h"
+
 namespace Fuego::Renderer
 {
 
@@ -9,12 +11,12 @@ ShaderObject* ShaderObject::CreateShaderObject(Shader& vs, Shader& px)
 }
 
 ShaderObjectOpenGL::ShaderObjectOpenGL(Shader& vs, Shader& px)
-    : vertex_shader(nullptr)
+    : program(glCreateProgram())
+    , vertex_shader(nullptr)
     , pixel_shader(nullptr)
-    , program(glCreateProgram())
 {
-    auto vs_gl = static_cast<ShaderOpenGL*>(&vs);
-    auto px_gl = static_cast<ShaderOpenGL*>(&px);
+    auto vs_gl = dynamic_cast<ShaderOpenGL*>(&vs);
+    auto px_gl = dynamic_cast<ShaderOpenGL*>(&px);
     vertex_shader = vs_gl;
     pixel_shader = px_gl;
 
@@ -48,9 +50,9 @@ void ShaderObjectOpenGL::Use() const
     glUseProgram(program);
 }
 
-void ShaderObjectOpenGL::UploadMaterial(Material& material)
+void ShaderObjectOpenGL::UploadMaterial(Material& material) const
 {
-    MaterialOpenGL& mat_gl = static_cast<MaterialOpenGL&>(material);
+    MaterialOpenGL& mat_gl = dynamic_cast<MaterialOpenGL&>(material);
     pixel_shader->AddVar("material.albedo_text");
     pixel_shader->SetText2D("material.albedo_text", mat_gl.GetAlbedoTexture());
 }

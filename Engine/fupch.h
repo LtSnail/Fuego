@@ -23,5 +23,6 @@
 #import <simd/simd.h>
 #endif
 #elif FUEGO_PLATFORM_WIN
+#define NOMINMAX
 #include <windowsx.h>
 #endif

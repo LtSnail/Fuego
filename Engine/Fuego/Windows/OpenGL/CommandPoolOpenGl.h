@@ -7,18 +7,20 @@ namespace Fuego::Renderer
 class CommandQueue;
 class CommandBufferOpenGL;
 
-class CommandPoolOpenGL : public CommandPool
+class CommandPoolOpenGL final : public CommandPool
 {
 public:
-    virtual ~CommandPoolOpenGL() override;
+    FUEGO_NON_COPYABLE_NON_MOVABLE(CommandPoolOpenGL)
+
+    virtual ~CommandPoolOpenGL() override = default;
 
     virtual CommandBuffer& GetCommandBuffer() override;
 
 protected:
     friend class DeviceOpenGL;
-    CommandPoolOpenGL(const CommandQueue& queue);
+    explicit CommandPoolOpenGL(const CommandQueue& queue);
 
 private:
-    std::vector<CommandBufferOpenGL*> _cmdBuffers;
+    std::vector<std::shared_ptr<CommandBufferOpenGL>> _cmdBuffers;
 };
 }  // namespace Fuego::Renderer

@@ -55,6 +55,14 @@ public:
         return false;
     }
 
+    virtual InteractionMode GetInteractionMode() const override
+    {
+        return InteractionMode::GAMING;
+    }
+    virtual void SwitchInteractionMode() override
+    {
+    }
+
 private:
     void Init(const WindowProps& props, EventQueue& eventQueue);
     void Shutdown();

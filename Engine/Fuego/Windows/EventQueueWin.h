@@ -6,7 +6,7 @@
 
 namespace Fuego
 {
-class EventQueueWin : public EventQueue
+class EventQueueWin final : public EventQueue
 {
     friend class WindowWin;
 

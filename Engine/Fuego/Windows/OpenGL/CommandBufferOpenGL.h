@@ -7,7 +7,7 @@ namespace Fuego::Renderer
 class Surface;
 class VertexLayout;
 
-class CommandBufferOpenGL : public CommandBuffer
+class CommandBufferOpenGL final : public CommandBuffer
 {
 public:
     virtual ~CommandBufferOpenGL() override;
@@ -34,7 +34,6 @@ private:
 
     uint32_t _texture;
 
-protected:
     friend class CommandPoolOpenGL;
     bool _isFree;
     CommandBufferOpenGL();

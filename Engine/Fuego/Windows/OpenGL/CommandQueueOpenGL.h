@@ -4,17 +4,16 @@
 
 namespace Fuego::Renderer
 {
-class CommandQueueOpenGL : public CommandQueue
+class CommandQueueOpenGL final : public CommandQueue
 {
 public:
-    virtual ~CommandQueueOpenGL() = default;
+    FUEGO_NON_COPYABLE_NON_MOVABLE(CommandQueueOpenGL)
 
     virtual void Submit(const CommandBuffer& commandBuffer) override;
     virtual void Wait() override;
 
-
 protected:
     friend class DeviceOpenGL;
-    CommandQueueOpenGL();
+    CommandQueueOpenGL() = default;
 };
 }  // namespace Fuego::Renderer

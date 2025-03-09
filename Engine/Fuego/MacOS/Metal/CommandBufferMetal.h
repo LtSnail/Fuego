@@ -26,11 +26,18 @@ public:
     virtual void Submit() override
     {
     }
+
+    virtual void BindShaderObject(const ShaderObject& obj) override
+    { /* TODO */
+    }
     virtual void BindRenderTarget(const Surface& texture) override;
-    virtual void BindVertexShader(const Shader& vertexShader) override;
-    virtual void BindPixelShader(const Shader& pixelShader) override;
+
+    // TODO: remove
+    virtual void BindVertexShader(const Shader& vertexShader);
+    virtual void BindPixelShader(const Shader& pixelShader);
+
     virtual void BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex) override;
-    virtual void BindVertexBuffer(const Buffer& vertexBuffer) override;
+    virtual void BindVertexBuffer(const Buffer& vertexBuffer, VertexLayout layout) override;
     virtual void BindIndexBuffer(uint32_t indices[], uint32_t size) override
     {
         UNUSED(indices);

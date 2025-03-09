@@ -35,6 +35,6 @@ private:
     ShaderObjectOpenGL(Shader& vs, Shader& px);
 
     friend class MaterialOpenGL;
-    void UploadMaterial(Material& material);
+    void UploadMaterial(Material& material) const;
 };
 }  // namespace Fuego::Renderer

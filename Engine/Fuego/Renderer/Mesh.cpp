@@ -87,6 +87,13 @@ std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
     return vertices;
 }
 
+Fuego::Renderer::Mesh::Face::Face(glm::ivec3 v_ind, glm::vec2 tx_ind, glm::vec3 n_ind)
+    : v_indecies(v_ind)
+    , tx_indecies(tx_ind)
+    , n_indecies(n_ind)
+{
+}
+
 void Fuego::Renderer::Mesh::ParseFace(const std::string_view& line, std::vector<Face>& faces, bool hasTextcoord, bool hasNormals)
 {
     std::vector<int> v_indices, t_indices, n_indices;

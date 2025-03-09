@@ -5,9 +5,7 @@
 
 #include "BufferOpenGL.h"
 #include "Renderer.h"
-#include "Renderer/Surface.h"
 #include "ShaderObjectOpenGL.h"
-#include "ShaderOpenGL.h"
 #include "TextureOpenGL.h"
 #include "VertexLayout.h"
 #include "glad/gl.h"
@@ -15,13 +13,12 @@
 namespace Fuego::Renderer
 {
 CommandBufferOpenGL::CommandBufferOpenGL()
-    : _isFree(true)
-    , _mainVsShader(-1)
+    : _mainVsShader(-1)
     , _pixelShader(-1)
     , _isLinked(false)
-    , _vao(0)
-    , _ebo(0)
     , _isDataAllocated(false)
+    , _texture(0)
+    , _isFree(true)
 {
     glGenBuffers(1, &_ebo);
     glGenVertexArrays(1, &_vao);
@@ -60,7 +57,7 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer, VertexLay
 {
     glBindVertexArray(_vao);
 
-    const BufferOpenGL& buff = static_cast<const BufferOpenGL&>(vertexBuffer);
+    const BufferOpenGL& buff = dynamic_cast<const BufferOpenGL&>(vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
 
     VertexLayout::LayoutIterator* it;

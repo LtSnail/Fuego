@@ -9,7 +9,7 @@ namespace Fuego
 {
 class SurfaceWindows;
 
-class WindowWin : public Window
+class WindowWin final : public Window
 {
 public:
     WindowWin(const WindowProps& props, EventQueue& eventQueue);
@@ -34,7 +34,7 @@ public:
 
     Input::KeyState GetKeyState(KeyCode keyCode) const;
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
-    void GetMousePos(OUT float& xPos, OUT float& yPos) const;
+    void GetMousePos(float& xPos, float& yPos) const;
     virtual inline bool HasMouseMoved(float x, float y) const override
     {
         return !(_cursorPos.x == x && _cursorPos.y == y);
@@ -49,7 +49,7 @@ public:
         return interaction_mode;
     }
 
-    virtual inline bool IsResizing() const
+    virtual inline bool IsResizing() const override
     {
         return isResizing;
     }

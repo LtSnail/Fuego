@@ -3,6 +3,7 @@
 #include "Metal/ShaderMetal.h"
 #include "Metal/SurfaceMetal.h"
 #include "Metal/TextureMetal.h"
+#include "Renderer/VertexLayout.h"
 
 #include <QuartzCore/CAMetalLayer.hpp>
 
@@ -39,8 +40,10 @@ void CommandBufferMetal::BindDescriptorSet(const DescriptorBuffer& descriptorSet
 {
 }
 
-void CommandBufferMetal::BindVertexBuffer(const Buffer& vertexBuffer)
+void CommandBufferMetal::BindVertexBuffer(const Buffer& vertexBuffer, VertexLayout layout)
 {
+    UNUSED(layout);
+
     _buffer = static_cast<const BufferMetal*>(&vertexBuffer);
 }
 

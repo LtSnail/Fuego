@@ -2,10 +2,10 @@
 
 #if defined(FUEGO_PLATFORM_WIN)
 #define EXPORT __declspec(dllexport)
-#define IMPORT __declspec(dllimport)
+#define FUEGO_IMPORT __declspec(dllimport)
 #elif defined(FUEGO_PLATFORM_MACOS)
 #define EXPORT __attribute__((visibility("default")))
-#define IMPORT __attribute__((visibility("default")))
+#define FUEGO_IMPORT __attribute__((visibility("default")))
 #else
 #error Unsupported platform!
 #endif
@@ -15,7 +15,7 @@
     #if defined(FUEGO_BUILD_LIB)
         #define FUEGO_API EXPORT
     #else
-        #define FUEGO_API IMPORT
+        #define FUEGO_API FUEGO_IMPORT
     #endif
 #else
     #define FUEGO_API
