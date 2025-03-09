@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+message Vec3 {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+}
+
+
+
+message ModelObject{
+  BaseSceneObject base = 1;
+  SceneObject location = 2;
+}
+
+message SceneObject{
+  BaseSceneObject base = 1;
+  Vec3 position = 2;
+  Vec3 rotation = 3;
+}
+
+message SceneFolder{
+  BaseSceneObject base = 1;
+}
+
+message BaseSceneObject {
+  string name = 1;
+  bool enabled = 2;
+  uint32 id = 3;
+}
