@@ -66,43 +66,10 @@ void Scene::SaveSceneToFile(const std::string& file_name)
     auto& fs = Fuego::Application::Get().FileSystem();
     std::string scene_file_name = file_name + ".fu_scene";
     fs.FUCreateFile(scene_file_name, "Scenes");
-    fs.WriteToFile(scene_file_name, ParseScene().c_str());
 }
 
-std::string Scene::ParseScene() const
-{
-    return GetFormattedFUSONObject(FUSONObject<std::string>("Scene name", scene_name), FUSONObject<std::string>("Scene version", scene_version),
-                                  FUSONObject<int>("Objects amount", objects_amount));
-}
 
-template <typename... T>
-std::string Scene::GetFormattedFUSONObject(FUSONObject<T>... vars) const
-{
-    if (sizeof...(vars) == 0)
-        return "";
 
-    std::string result = "{\n";
-
-    (ProcessVar(vars, result), ...);
-
-    result.pop_back();
-    result.pop_back();
-    result += "\n}";
-    return result;
-}
-
-template <typename T>
-void Scene::ProcessVar(const FUSONObject<T>& obj, OUT std::string& str) const
-{
-    if constexpr (IsNumber<T>)
-    {
-        str.append("\t\"" + obj.key + "\": " + std::to_string(obj.value) + ",\n");
-    }
-    else if constexpr (StringLike<T>)
-    {
-        str.append("\t\"" + obj.key + "\": \"" + obj.value + "\",\n");
-    }
-}
 
 BaseSceneObject::BaseSceneObject(const std::string& name, bool enabled)
     : name(name)
