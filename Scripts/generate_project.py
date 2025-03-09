@@ -240,7 +240,7 @@ def generate_project(platform, enable_test):
                 if not dirnames:
                     dirnames = "Root Folder"
                 print(f"${protoc_compiler_log} Proto file was found: {filename} in: {dirnames}")
-                run_command(f'{protoc_compiler_name} --proto_path="{proto_input}" --{protoc_language}="{proto_output}" {filename}')
+                run_command(f'{os.path.join(protoc_path, protoc_compiler_name)} --proto_path="{proto_input}" --{protoc_language}="{proto_output}" {filename}')
     
 
 # End protoc
