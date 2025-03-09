@@ -6,9 +6,6 @@
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
-#include "ProtoOut/message.pb.h"
-#include <iostream>
-#include <fstream>
 
 Fuego::Renderer::Texture* engine_texture;
 int w, h, n;
@@ -39,24 +36,11 @@ Application::Application()
     d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-    std::string s = absl::StrFormat("Welcome to %s, Number %d!", "The Village", 6);
     d->_renderer.reset(new Renderer::Renderer());
     d->m_Running = true;
     FS::FileSystem& fs = Application::Get().FileSystem();
     engine_mesh = new Fuego::Renderer::Mesh();
     mesh_vector = engine_mesh->load(fs.GetFullPathTo("!Model.obj").data());
-
-    Person person;
-    person.set_name("Oleg");
-    person.set_age(26);
-    std::ofstream out("data.bin", std::ios::binary);
-    person.SerializeToOstream(&out);
-    out.close();
-    Person new_person;
-    std::ifstream in("data.bin", std::ios::binary);
-    new_person.ParseFromIstream(&in);
-    in.close();
-    std::cout << "Name: " << new_person.name() << ", Age: " << new_person.age() << std::endl;
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
