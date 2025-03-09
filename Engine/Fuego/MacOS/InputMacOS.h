@@ -1,11 +1,14 @@
 #pragma once
 
 #include "Input.h"
+#include "singleton.hpp"
 
 namespace Fuego
 {
-class InputMacOS : public Input
+class InputMacOS : public Input, public singleton<InputWin>
 {
+    friend class singleton<InputWin>;
+
 protected:
     virtual bool IsKeyPressedImpl(KeyCode keyCode) const override;
 
@@ -15,8 +18,5 @@ protected:
     virtual float GetMouseYImpl() const override;
 
     friend class WindowWin;
-
-private:
-    InputMacOS() = default;
 };
 }  // namespace Fuego

@@ -5,8 +5,6 @@
 
 namespace Fuego
 {
-Input* Input::m_Instance = nullptr;
-
 bool InputWin::IsKeyPressedImpl(KeyCode keyCode) const
 {
     const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());
@@ -41,5 +39,10 @@ glm::vec2 InputWin::GetMouseDirImpl() const
 {
     const WindowWin& window = reinterpret_cast<const WindowWin&>(Application::Get().GetWindow());
     return window.GetMouseDir();
+}
+
+Input& Input::platform_instance()
+{
+    return InputWin::instance();
 }
 }  // namespace Fuego
