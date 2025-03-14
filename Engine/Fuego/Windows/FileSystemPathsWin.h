@@ -1,6 +1,7 @@
 #pragma once
 
-static const std::string resource = R"(\..\..\..\..\Sandbox\Resources\)";
-static const std::string shaders = R"(Windows\Shaders\)";
-static const std::string images = R"(Windows\Images\)";
-static const std::string models = R"(Windows\Models\)";
+static std::string resource = "\\..\\..\\..\\..\\Sandbox\\Resources\\";
+static std::string shaders = "Windows\\Shaders\\";
+static std::string images = "Windows\\Images\\";
+static std::string models = "Windows\\Models\\";
+static std::string scenes = "Windows\\Scenes\\";

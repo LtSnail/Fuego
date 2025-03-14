@@ -5,6 +5,7 @@ Engine/Debug
 Engine/Release
 Sandbox/Debug
 Sandbox/Release
+Engine/Fuego/ProtoOut
 
 # PCH
 Engine/SharedPrecompiledHeaders

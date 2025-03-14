@@ -32,7 +32,7 @@ void SceneLayer::OnAttach()
     Fuego::FS::FileSystem& fs = Fuego::Application::Get().FileSystem();
     for (const auto& mesh : scene_meshes)
     {
-        mesh_data.emplace_back((mesh->load(fs.GetFullPathTo("Model.obj").data())));
+        mesh_data.push_back(std::move(mesh->load(fs.GetFullPathToFile("Model.obj").data())));
     }
     texture_data = fs.Load_Image("image.jpg", w, h, n);
 }
