@@ -1,5 +1,4 @@
-#include "gtest/gtest.h"
-#include "CoreLibTests.h"
+#include "Tests.h"
 
 int main(int argc, char** argv)
 {

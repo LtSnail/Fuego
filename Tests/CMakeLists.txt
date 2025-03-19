@@ -1,5 +1,6 @@
 # Tests
-
+#include(${CMAKE_CURRENT_SOURCE_DIR}/../Engine/ProtoFilesMisc.cmake)
+#include(${CMAKE_CURRENT_SOURCE_DIR}/../Engine/protobuf.cmake)
 message(STATUS "Fuego tests are ENABLED")
 
 # Googletest configuration
@@ -35,35 +36,51 @@ set(CORE_LIB_TESTS_BUILD ${FUEGO_ROOT}/build/${FUEGO_PLATFORM}/CoreLibTests )
 set(SRC_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-set(SOURCES ${SRC_FOLDER}/Tests.h)
-set(PROJECT_HEADERS ${INCLUDE_FOLDER}/Tests.cpp)
+set(TESTS_HEADERS
+    ${INCLUDE_FOLDER}/Tests.h
+    ${INCLUDE_FOLDER}/ProtoFilesTests.hpp
+    ${SCENE_GENERATED_PROTO_HDRS}
+)
+
+set(TESTS_SOURCES
+    ${SRC_FOLDER}/Tests.cpp
+    ${SCENE_GENERATED_PROTO_SRCS}
+)
+
 
 set(CMAKE_INSTALL_PREFIX ${GOOGLE_TEST_BUILD} CACHE PATH "Install path prefix" FORCE)
 
 add_subdirectory(${GOOGLE_TEST_ROOT} ${GOOGLE_TEST_BUILD})
+
 set_target_properties(gtest_main gtest PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${GOOGLE_TEST_BUILD}/lib
     LIBRARY_OUTPUT_DIRECTORY ${GOOGLE_TEST_BUILD}/lib
-    RUNTIME_OUTPUT_DIRECTORY ${GOOGLE_TEST_BUILD}/bin )
+    RUNTIME_OUTPUT_DIRECTORY ${GOOGLE_TEST_BUILD}/bin
+)
 
 add_subdirectory(${CORE_LIB_TESTS_ROOT} ${CORE_LIB_TESTS_BUILD})
+
 set_target_properties(CoreLibTests PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/lib
     LIBRARY_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/lib
-    RUNTIME_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/bin )
+    RUNTIME_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/bin
+)
 
-
-add_executable(Tests ${SOURCES} ${PROJECT_HEADERS})
+add_executable(Tests ${TESTS_HEADERS} ${TESTS_SOURCES})
 
 set_target_properties(gtest gtest_main ${COMMON_TARGET_PROPERTIES})
 set_target_properties(Tests CoreLibTests ${COMMON_TARGET_PROPERTIES})
 
 
-target_link_libraries(Tests PUBLIC  CoreLibTests 
-                                    GTest::gtest 
-                                    FuegoEngine )
+target_link_libraries(Tests PUBLIC
+        CoreLibTests 
+        GTest::gtest 
+        FuegoEngine
+        FuegoInterface
+)
 
-target_include_directories(Tests PUBLIC ${GOOGLE_TEST_ROOT}/googletest/include)
-target_include_directories(Tests PUBLIC ${FUEGO_ROOT}/CoreLib)
-
-#add_test(NAME CoreLibTests COMMAND ${OUTPUT_DIR}/$<CONFIG>/Tests)
+target_include_directories(Tests PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${GOOGLE_TEST_ROOT}/googletest/include
+        ${FUEGO_ROOT}/CoreLib
+)

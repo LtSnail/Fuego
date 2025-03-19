@@ -24,7 +24,11 @@ set(PROJECT_HEADERS
     ShaderObject.h
     VertexLayout.h)
 
-set(PROJECT_SOURCES Renderer.cpp Mesh.cpp Camera.cpp VertexLayout.cpp)
+set(PROJECT_SOURCES
+  Renderer.cpp
+  Mesh.cpp
+  Camera.cpp
+  VertexLayout.cpp)
 
 if(FUEGO_PLATFORM_WIN)
   list(APPEND PRIVATE_LINK_LIBRARIES WindowsDep)
@@ -45,7 +49,8 @@ add_library(Renderer STATIC ${PROJECT_HEADERS} ${PROJECT_SOURCES})
 set_target_properties(Renderer PROPERTIES 
                       ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
                       LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-                      RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
+                      RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+)
 
 target_link_libraries(Renderer PRIVATE ${PRIVATE_LINK_LIBRARIES})
 target_link_libraries(Renderer PUBLIC ${PUBLIC_LINK_LIBRARIES})

@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include "Scene.h"
 #include "Camera.h"
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
@@ -13,6 +14,8 @@ unsigned char* texture_data;
 
 Fuego::Renderer::Mesh* engine_mesh;
 std::vector<float> mesh_vector;
+Fuego::Scene* scene;
+
 namespace Fuego
 {
 class Application::ApplicationImpl
@@ -28,7 +31,6 @@ class Application::ApplicationImpl
     static Application* m_Instance;
 };
 Application* Application::ApplicationImpl::m_Instance = nullptr;
-
 Application::Application()
     : d(new ApplicationImpl())
 {
@@ -40,10 +42,17 @@ Application::Application()
     d->m_Running = true;
     FS::FileSystem& fs = Application::Get().FileSystem();
     engine_mesh = new Fuego::Renderer::Mesh();
-    mesh_vector = engine_mesh->load(fs.GetFullPathTo("!Model.obj").data());
+    mesh_vector = engine_mesh->load(fs.GetFullPathToFile("!Model.obj").data());
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
+
+    scene = new Fuego::Scene("First scene");
+}
+Application::~Application()
+{
+    delete d;
+    delete scene;
 }
 
 Renderer::Renderer& Application::Renderer()
@@ -51,17 +60,11 @@ Renderer::Renderer& Application::Renderer()
     return *d->_renderer.get();
 }
 
-Application::~Application()
-{
-    delete d;
-}
-
 void Application::PushLayer(Layer* layer)
 {
     d->m_LayerStack.PushLayer(layer);
     layer->OnAttach();
 }
-
 void Application::PushOverlay(Layer* overlay)
 {
     d->m_LayerStack.PushOverlay(overlay);
@@ -106,26 +109,22 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
     event.SetHandled();
     return true;
 }
-
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
     d->_renderer->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
     event.SetHandled();
     return true;
 }
-
 bool Application::OnStartResizeWindow(WindowStartResizeEvent& event)
 {
     event.SetHandled();
     return true;
 }
-
 bool Application::OnEndResizeWindow(WindowEndResizeEvent& event)
 {
     event.SetHandled();
     return true;
 }
-
 bool Application::OnValidateWindow(WindowValidateEvent& event)
 {
     d->_renderer->ValidateWindow();
@@ -133,7 +132,6 @@ bool Application::OnValidateWindow(WindowValidateEvent& event)
     event.SetHandled();
     return true;
 }
-
 bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 {
     KeyEvent& e = (KeyEvent&)event;
@@ -151,7 +149,6 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
     event.SetHandled();
     return true;
 }
-
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     d->_renderer->ShowWireFrame();
@@ -168,7 +165,6 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
     UNUSED(event);
     return true;
 }
-
 bool Application::OnMouseMoveEvent(MouseMovedEvent& event)
 {
     UNUSED(event);
@@ -183,7 +179,6 @@ Fuego::FS::FileSystem& Application::FileSystem()
 {
     return *d->_fs.get();
 }
-
 Window& Application::GetWindow()
 {
     return *d->m_Window;

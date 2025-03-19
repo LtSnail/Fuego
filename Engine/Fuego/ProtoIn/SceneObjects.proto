@@ -1,16 +1,21 @@
 syntax = "proto3";
 
+package proto.scene;
+
 message Vec3 {
   float x = 1;
   float y = 2;
   float z = 3;
 }
 
+message BaseSceneObject {
+  string name = 1;
+  bool enabled = 2;
+  uint32 id = 3;
+}
 
-
-message ModelObject{
+message SceneFolder{
   BaseSceneObject base = 1;
-  SceneObject location = 2;
 }
 
 message SceneObject{
@@ -19,12 +24,27 @@ message SceneObject{
   Vec3 rotation = 3;
 }
 
-message SceneFolder{
-  BaseSceneObject base = 1;
+message ModelObject{
+  SceneObject scene_base = 1;
+  string material = 2;
 }
 
-message BaseSceneObject {
+message SceneElement {
+  oneof child_type {
+    ModelObject model = 1;
+    SceneObject scene = 2;
+    SceneFolder folder = 3;
+  }
+}
+
+message Node {
+  SceneElement element = 1;
+  repeated Node children = 2;
+}
+
+message Scene {
   string name = 1;
-  bool enabled = 2;
-  uint32 id = 3;
+  string version = 2;
+  uint32 objects = 3;
+  repeated Node scene_children = 4;
 }
