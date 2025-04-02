@@ -18,7 +18,7 @@ set(PROJECT_HEADERS
     Swapchain.h
     Texture.h
     Renderer.h
-    Mesh.h
+    Model.h
     Camera.h
     Material.h
     ShaderObject.h
@@ -26,7 +26,7 @@ set(PROJECT_HEADERS
 
 set(PROJECT_SOURCES
   Renderer.cpp
-  Mesh.cpp
+  Model.cpp
   Camera.cpp
   VertexLayout.cpp)
 
