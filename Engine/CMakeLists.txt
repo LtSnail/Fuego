@@ -10,6 +10,12 @@ set_target_properties(ImGui PROPERTIES FOLDER "3rd party")
 GetProtoHeaderFiles(PROTO_OUT ${PROTO_OUTPUT_FOLDER})
 GetProtoSourceFiles(PROTO_OUT ${PROTO_OUTPUT_FOLDER})
 
+# Assimp
+set(ASSIMP_PATH ${CMAKE_CURRENT_SOURCE_DIR}/External/assimp)
+
+# Renderer
+set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
+
 # Project set up
 set(PROJECT_HEADERS
     Fuego/Application.h
@@ -50,7 +56,7 @@ set(SOURCES
     Fuego/Scene.cpp
 )
 
-set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer )
+
 
 # Common setup
 list(APPEND ENGINE_DEPENDENCIES ImGui Renderer)
@@ -85,6 +91,7 @@ endif()
 
 add_subdirectory( ${PLATFORM_SUBDIRECTORIES} )
 add_subdirectory( ${RENDERER_PATH} )
+add_subdirectory( ${ASSIMP_PATH} )
 
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -95,6 +102,7 @@ set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/External/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include
     ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/src
+    ${ASSIMP_PATH}/include
 )
 
 # An interface library to propagate headers to platform implementations
@@ -114,6 +122,7 @@ add_dependencies(FuegoEngine ProtoGen)
 
 target_link_libraries(FuegoEngine PUBLIC ${ENGINE_DEPENDENCIES} Renderer )
 target_link_libraries(FuegoEngine PUBLIC protobuf::libprotobuf)
+target_link_libraries(FuegoEngine PUBLIC assimp)
 target_include_directories(FuegoEngine PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
 
 target_include_directories(FuegoEngine PRIVATE ${Protobuf_INCLUDE_DIRS})     
