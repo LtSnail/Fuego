@@ -16,3 +16,6 @@
 [submodule "Engine/External/protobuf"]
 	path = Engine/External/protobuf
 	url = https://github.com/protocolbuffers/protobuf.git
+[submodule "Engine/External/assimp"]
+	path = Engine/External/assimp
+	url = https://github.com/assimp/assimp
