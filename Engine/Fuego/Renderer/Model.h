@@ -9,6 +9,28 @@ namespace Fuego::Renderer
 
 class Model
 {
+public:
+    Model() = default;
+    ~Model() = default;
+
+    inline std::string_view GetName() const
+    {
+        return name;
+    }
+    inline uint16_t GetMeshCount() const
+    {
+        return mesh_count;
+    }
+    inline uint16_t GetVertexCount() const
+    {
+        return vertex_count;
+    }
+
+private:
+    std::string name;
+    std::vector<Mesh> meshes;
+    uint16_t mesh_count;
+    uint32_t vertex_count;
 };
 
 class Mesh
