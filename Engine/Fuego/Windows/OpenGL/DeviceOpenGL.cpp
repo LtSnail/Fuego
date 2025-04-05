@@ -1,6 +1,4 @@
 ﻿#include "OpenGL/DeviceOpenGL.h"
-
-#include "Application.h"
 #include "BufferOpenGL.h"
 #include "CommandPoolOpenGL.h"
 #include "CommandQueueOpenGL.h"
@@ -11,6 +9,7 @@
 #include "glad/gl.h"
 // clang-format on
 #include "Renderer.h"
+#include "Application.h"
 
 
 void OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
@@ -101,7 +100,7 @@ DeviceOpenGL::DeviceOpenGL()
     : ctx(nullptr)
     , max_textures_units(0)
 {
-    HWND hwnd = (HWND)Application::Get().GetWindow().GetNativeHandle();
+    HWND hwnd = (HWND)Fuego::Application::Get().GetWindow().GetNativeHandle();
     HDC hdc = GetDC(hwnd);
 
     int pixel_format_attribs[] = {WGL_DRAW_TO_WINDOW_ARB,
@@ -171,7 +170,7 @@ DeviceOpenGL::DeviceOpenGL()
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_textures_units);
     FU_CORE_INFO("  Max texture units: {0}", max_textures_units);
-    Application::Get().Renderer().MAX_TEXTURES_COUNT = static_cast<uint32_t>(max_textures_units);
+    Fuego::Application::Get().Renderer().MAX_TEXTURES_COUNT = static_cast<uint32_t>(max_textures_units);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -213,7 +212,7 @@ std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(const Surface& surface)
 
 std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName, Shader::ShaderType type)
 {
-    const std::string shaderCode = Application::Get().FileSystem().OpenFile(std::string(shaderName) + ".glsl");
+    const std::string shaderCode = Fuego::Application::Get().FileSystem().OpenFile(std::string(shaderName) + ".glsl");
     return std::unique_ptr<Shader>(new ShaderOpenGL(shaderCode.c_str(), type));
 }
 }  // namespace Fuego::Renderer

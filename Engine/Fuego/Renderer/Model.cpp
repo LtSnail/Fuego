@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "Model.h"
 
 #include <filesystem>
 
@@ -15,7 +15,7 @@ Fuego::Renderer::Mesh::Mesh()
 
 std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
 {
-    int condition = 0;
+    /*int condition = 0;
     std::vector<float> vertices;
     std::vector<glm::vec3> vertices_vec;
     std::vector<glm::vec2> textcoords_vec;
@@ -84,7 +84,8 @@ std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
 
     ProcessFaces(faces, vertices_vec, textcoords_vec, normals_vec, vertices);
 
-    return vertices;
+    return vertices;*/
+    return std::vector<float>();
 }
 
 Fuego::Renderer::Mesh::Face::Face(glm::ivec3 v_ind, glm::vec2 tx_ind, glm::vec3 n_ind)

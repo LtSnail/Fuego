@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Application.h"
 #include "Buffer.h"
 #include "Camera.h"
 #include "CommandPool.h"
 #include "CommandQueue.h"
 #include "Device.h"
 #include "Material.h"
-#include "Mesh.h"
+#include "Model.h"
 #include "Shader.h"
 #include "Surface.h"
 #include "Swapchain.h"
@@ -15,11 +14,16 @@
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
 
+namespace Fuego
+{
+    class Application;
+}
+
 namespace Fuego::Renderer
 {
-
-class Renderer
+    class Renderer
 {
+
 public:
     struct Viewport
     {

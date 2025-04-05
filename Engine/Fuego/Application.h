@@ -11,8 +11,13 @@
 namespace Fuego::Renderer
 {
 class Renderer;
-class FileSystem;
+
 }  // namespace Fuego::Renderer
+
+namespace Fuego::FS
+{
+class FileSystem;
+}
 
 namespace Fuego
 {

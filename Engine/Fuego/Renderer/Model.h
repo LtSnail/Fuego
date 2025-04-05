@@ -6,6 +6,7 @@
 
 namespace Fuego::Renderer
 {
+class Mesh;
 
 class Model
 {

@@ -22,7 +22,7 @@ class Application::ApplicationImpl
     friend class Application;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
-    std::unique_ptr<Renderer::Renderer> _renderer;
+    std::unique_ptr<Fuego::Renderer::Renderer> _renderer;
     std::unique_ptr<Fuego::FS::FileSystem> _fs;
 
     bool m_Running;
@@ -37,9 +37,10 @@ Application::Application()
     d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-    d->_renderer.reset(new Renderer::Renderer());
+    d->_renderer.reset(new Fuego::Renderer::Renderer());
     d->m_Running = true;
     FS::FileSystem& fs = Application::Get().FileSystem();
+    fs.LoadModel(fs.GetFullPathToFile("Model.obj"));
     engine_mesh = new Fuego::Renderer::Mesh();
     mesh_vector = engine_mesh->load(fs.GetFullPathToFile("Model.obj").data());
 

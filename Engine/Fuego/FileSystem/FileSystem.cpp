@@ -1,7 +1,7 @@
 #include "FileSystem.h"
 
 #include "External/stb_image/stb_image.h"
-
+#include "Model.h"
 #if defined(FUEGO_PLATFORM_WIN)
 #include "FileSystemPathsWin.h"
 #endif
@@ -32,6 +32,57 @@ FileSystem::FileSystem()
 {
 }
 
+void FileSystem::Processnode(aiNode* node, const aiScene* scene)
+{
+    for (size_t i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        ProcessMesh(mesh, scene);
+    }
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        Processnode(node->mChildren[i], scene);
+    }
+}
+
+void FileSystem::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+{
+    struct Vertex
+    {
+        glm::vec3 position;
+        glm::vec3 normal;
+        glm::vec2 texCoords;
+    };
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
+        Vertex vertex;
+
+        vertex.position = {mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z};
+        if (mesh->HasNormals())
+        {
+            vertex.normal = {mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z};
+        }
+        if (mesh->HasTextureCoords(0))
+        {
+            vertex.texCoords = {mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y};
+        }
+
+        vertices.push_back(vertex);
+    }
+
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    {
+        aiFace face = mesh->mFaces[i];
+        for (unsigned int j = 0; j < face.mNumIndices; j++)
+        {
+            indices.push_back(face.mIndices[j]);
+        }
+    }
+}
+
 std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base::openmode mode)
 {
     std::string path = GetFullPathToFile(file);
@@ -55,6 +106,15 @@ unsigned char* FileSystem::Load_Image(const std::string& file, int& x, int& y, i
     }
     return data;
 }
+
+Fuego::Renderer::Model* FileSystem::LoadModel(std::string_view path)
+{
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path.data(), aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+    Processnode(scene->mRootNode, scene);
+    return new Fuego::Renderer::Model();
+}
+
 std::string FileSystem::FileSystemImpl::GetExecutablePath()
 {
 #if defined(FUEGO_PLATFORM_WIN)
