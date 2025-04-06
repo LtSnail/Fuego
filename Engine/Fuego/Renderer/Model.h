@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Renderer.h"
-#include "glm/ext.hpp"
-#include "glm/glm.hpp"
+
+class aiScene;
 
 namespace Fuego::Renderer
 {
@@ -11,7 +11,7 @@ class Mesh;
 class Model
 {
 public:
-    Model() = default;
+    Model(const aiScene* scene);
     ~Model() = default;
 
     inline std::string_view GetName() const
@@ -27,11 +27,16 @@ public:
         return vertex_count;
     }
 
+    static Model* LoadModel(std::string_view path);
+
 private:
+    
     std::string name;
     std::vector<Mesh> meshes;
     uint16_t mesh_count;
     uint32_t vertex_count;
+
+    static std::vector<Model> models;
 };
 
 class Mesh
@@ -40,7 +45,7 @@ public:
     Mesh();
     ~Mesh() = default;
 
-    std::vector<float> load(const char* name);
+    //std::vector<float> load(const char* name);
     inline unsigned short int GetVertexCount() const
     {
         return vertex_count;

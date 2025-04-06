@@ -40,9 +40,9 @@ Application::Application()
     d->_renderer.reset(new Fuego::Renderer::Renderer());
     d->m_Running = true;
     FS::FileSystem& fs = Application::Get().FileSystem();
-    fs.LoadModel(fs.GetFullPathToFile("Model.obj"));
+    Fuego::Renderer::Model::LoadModel(fs.GetFullPathToFile("Model.obj"));
     engine_mesh = new Fuego::Renderer::Mesh();
-    mesh_vector = engine_mesh->load(fs.GetFullPathToFile("Model.obj").data());
+    Fuego::Renderer::Model::LoadModel(fs.GetFullPathToFile("Model.obj").data());
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
     engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);

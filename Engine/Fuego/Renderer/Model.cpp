@@ -1,9 +1,22 @@
 #include "Model.h"
-
 #include <filesystem>
-
 #include "fstream"
 
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+#define ASSIMP_MODEL_LOAD_FLAGS aiProcess_CalcTangentSpace \
+| aiProcess_Triangulate \
+| aiProcess_JoinIdenticalVertices \
+|aiProcess_SortByPType
+
+std::vector<Fuego::Renderer::Model> Fuego::Renderer::Model::models{};
+
+Fuego::Renderer::Model::Model(const aiScene* scene)
+    : name(scene->mRootNode->mName.C_Str())
+{
+}
 
 Fuego::Renderer::Mesh::Mesh()
     : vertex_count(0)
@@ -13,79 +26,19 @@ Fuego::Renderer::Mesh::Mesh()
 {
 }
 
-std::vector<float> Fuego::Renderer::Mesh::load(const char* name)
+Fuego::Renderer::Model* Fuego::Renderer::Model::LoadModel(std::string_view path)
 {
-    /*int condition = 0;
-    std::vector<float> vertices;
-    std::vector<glm::vec3> vertices_vec;
-    std::vector<glm::vec2> textcoords_vec;
-    std::vector<glm::vec3> normals_vec;
-    std::vector<Face> faces;
-
-    std::filesystem::path ph = name;
-    model_name = ph.filename().string().c_str();
-
-    std::vector<std::string> lines;
-    std::string line;
-
-    std::fstream f;
-    f.open(name);
-    if (!f.is_open())
+    Assimp::Importer importer{};
+    const aiScene* scene = importer.ReadFile(path.data(), ASSIMP_MODEL_LOAD_FLAGS);
+    if (!scene)
     {
-        FU_CORE_ERROR("Cannot open a file");
+        FU_CORE_ERROR("Can't read Model: {0}", path.data());
+        return nullptr;
     }
-    while (std::getline(f, line))
-    {
-        lines.emplace_back(line);
-    }
-    f.close();
 
-    for (std::string_view line : lines)
-    {
-        if (line.size() <= 2)
-            continue;
-        const char first_char = line[0];
+    Model* model = &models.emplace_back(scene);
+    return model;
 
-        switch (first_char)
-        {
-        case '#':
-            break;
-        case 'm':
-        {
-            if (line.starts_with("mtllib"))
-            {
-                const char* ptr = line.data();
-                ptr += 7;
-                char buffer[32] = {0};
-                char* buffer_ptr = buffer;
-                while (*ptr != '\0')
-                {
-                    *buffer_ptr += *ptr;
-                    ptr++;
-                    buffer_ptr++;
-                }
-                *buffer_ptr = '\0';
-                material = std::string(buffer);
-            }
-            break;
-        }
-
-        case 'v':
-            ParseVertices(line, vertices_vec, textcoords_vec, normals_vec);
-            break;
-        case 'f':
-            ParseFace(line, faces, textcoords_vec.size() > 0, normals_vec.size() > 0);
-            break;
-        }
-    }
-    polygons = faces.size();
-
-    vertices.reserve(vertex_count);
-
-    ProcessFaces(faces, vertices_vec, textcoords_vec, normals_vec, vertices);
-
-    return vertices;*/
-    return std::vector<float>();
 }
 
 Fuego::Renderer::Mesh::Face::Face(glm::ivec3 v_ind, glm::vec2 tx_ind, glm::vec3 n_ind)

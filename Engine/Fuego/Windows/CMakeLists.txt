@@ -59,4 +59,3 @@ target_include_directories(WindowsDep PUBLIC
 
 target_link_libraries(WindowsDep PUBLIC Glad)
 target_link_libraries(WindowsDep PRIVATE FuegoInterface)
-target_link_libraries(WindowsDep PUBLIC assimp)

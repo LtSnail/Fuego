@@ -1,14 +1,21 @@
 # ImGui
 
 set(PROJECT_HEADERS
-    External/imgui/imgui.h External/imgui/imconfig.h
-    External/imgui/imgui_internal.h External/imgui/imstb_rectpack.h
-    External/imgui/imstb_textedit.h External/imgui/imstb_truetype.h)
+    External/imgui/imgui.h
+    External/imgui/imconfig.h
+    External/imgui/imgui_internal.h
+    External/imgui/imstb_rectpack.h
+    External/imgui/imstb_textedit.h
+    External/imgui/imstb_truetype.h
+)
 
 set(SOURCES
-    External/imgui/imgui_demo.cpp External/imgui/imgui_draw.cpp
-    External/imgui/imgui_tables.cpp External/imgui/imgui_widgets.cpp
-    External/imgui/imgui.cpp)
+    External/imgui/imgui_demo.cpp
+    External/imgui/imgui_draw.cpp
+    External/imgui/imgui_tables.cpp
+    External/imgui/imgui_widgets.cpp
+    External/imgui/imgui.cpp
+)
 
 if(APPLE)
   set(PROJECT_HEADERS

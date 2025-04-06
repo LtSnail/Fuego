@@ -32,8 +32,7 @@ void SceneLayer::OnUpdate()
 void SceneLayer::OnAttach()
 {
     Fuego::FS::FileSystem& fs = Fuego::Application::Get().FileSystem();
-    sandbox_mesh = new Fuego::Renderer::Mesh();
-    sandbox_mesh_vector = sandbox_mesh->load(fs.GetFullPathToFile("Model_2.obj").data());
+    Fuego::Renderer::Model::LoadModel(fs.GetFullPathToFile("Model_2.obj").data());
 
     sanbox_texture_data = fs.Load_Image("image.jpg", sanbox_w, sanbox_h, sanbox_n);
     sandbox_texture = Fuego::Renderer::Texture::CreateTexture(sanbox_texture_data, sanbox_w, sanbox_h);
