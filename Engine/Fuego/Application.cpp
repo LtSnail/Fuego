@@ -1,15 +1,15 @@
 #include "Application.h"
 
-#include "Scene.h"
 #include "Camera.h"
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
+#include "Scene.h"
 
 Fuego::Scene* scene;
-Fuego::Renderer::Texture* engine_texture;
+std::unique_ptr<Fuego::Renderer::Texture> engine_texture;
 int w, h, n;
 unsigned char* texture_data;
 
@@ -18,7 +18,7 @@ std::vector<float> mesh_vector;
 namespace Fuego
 {
 class Application::ApplicationImpl
-{   
+{
     friend class Application;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
@@ -44,7 +44,7 @@ Application::Application()
     mesh_vector = engine_mesh->load(fs.GetFullPathToFile("Model.obj").data());
 
     texture_data = fs.Load_Image("image.jpg", w, h, n);
-    engine_texture = Fuego::Renderer::Texture::CreateTexture(texture_data, w, h);
+    engine_texture = d->_renderer->CreateTexture(texture_data, w, h);
 
     scene = new Fuego::Scene("First scene");
 }
@@ -151,11 +151,11 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     d->_renderer->ShowWireFrame();
-    Fuego::Renderer::Material* material = Fuego::Renderer::Material::CreateMaterial(engine_texture);
+    Fuego::Renderer::Material* material = Fuego::Renderer::Material::CreateMaterial(engine_texture.get());
 
     d->_renderer->DrawMesh(mesh_vector, engine_mesh->GetVertexCount(), material, glm::mat4(1.0f), Fuego::Renderer::Camera::GetActiveCamera()->GetView(),
                            Fuego::Renderer::Camera::GetActiveCamera()->GetProjection());
-    
+
 
     // event.SetHandled();
     UNUSED(event);

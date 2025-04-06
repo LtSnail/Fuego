@@ -25,5 +25,6 @@ public:
 
     virtual std::unique_ptr<Shader> CreateShader(std::string_view shaderName, Shader::ShaderType type) = 0;
     virtual std::unique_ptr<Surface> CreateSurface(const void* window) = 0;
+    virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) = 0;
 };
 }  // namespace Fuego::Renderer

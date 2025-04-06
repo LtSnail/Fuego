@@ -4,11 +4,6 @@
 
 namespace Fuego::Renderer
 {
-Texture* Texture::CreateTexture(unsigned char* buffer, int width, int heigth)
-{
-    return new TextureOpenGL(buffer, width, heigth);
-}
-
 TextureOpenGL::TextureOpenGL(unsigned char* buffer, int width, int heigth)
     : texture_unit(0)
     , texture_id(0)

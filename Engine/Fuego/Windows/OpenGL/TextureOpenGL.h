@@ -23,7 +23,8 @@ public:
 private:
     uint16_t texture_unit;
     uint32_t texture_id;
-    friend class Texture;
+    friend class DeviceOpenGL;
+
     TextureOpenGL(unsigned char* buffer, int width, int heigth);
 };
 

@@ -117,6 +117,11 @@ void Renderer::ValidateWindow()
     _swapchain->ValidateWindow();
 }
 
+std::unique_ptr<Texture> Renderer::CreateTexture(unsigned char* buffer, int width, int height) const
+{
+    return _device->CreateTexture(buffer, width, height);
+}
+
 void Renderer::ChangeViewport(float x, float y, float w, float h)
 {
     viewport.x = x;

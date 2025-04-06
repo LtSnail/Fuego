@@ -1,8 +1,9 @@
 ﻿#include "SandboxApp.h"
+
 #include "Camera.h"
 #include "Renderer.h"
 
-Fuego::Renderer::Texture* sandbox_texture;
+std::unique_ptr<Fuego::Renderer::Texture> sandbox_texture;
 int sanbox_w, sanbox_h, sanbox_n;
 unsigned char* sanbox_texture_data;
 
@@ -36,7 +37,8 @@ void SceneLayer::OnAttach()
     sandbox_mesh_vector = sandbox_mesh->load(fs.GetFullPathToFile("Model_2.obj").data());
 
     sanbox_texture_data = fs.Load_Image("image.jpg", sanbox_w, sanbox_h, sanbox_n);
-    sandbox_texture = Fuego::Renderer::Texture::CreateTexture(sanbox_texture_data, sanbox_w, sanbox_h);
+    Fuego::Renderer::Renderer& renderer = Fuego::Application::Get().Renderer();
+    sandbox_texture = renderer.CreateTexture(sanbox_texture_data, sanbox_w, sanbox_h);
 }
 
 void SceneLayer::OnDetach()
@@ -58,10 +60,10 @@ bool SceneLayer::OnRenderEvent(Fuego::AppRenderEvent& event)
     glm::mat4 model_pos = glm::translate(glm::mat4(1.0f), glm::vec3(15.0f, 0.0f, -5.0f));
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1280.0F / 720.0F, 0.1f, 100.0f);
 
-    Fuego::Renderer::Material* material = Fuego::Renderer::Material::CreateMaterial(sandbox_texture);
+    Fuego::Renderer::Material* material = Fuego::Renderer::Material::CreateMaterial(sandbox_texture.get());
     Fuego::Renderer::Renderer& renderer = Fuego::Application::Get().Renderer();
     renderer.DrawMesh(sandbox_mesh_vector, sandbox_mesh->GetVertexCount(), material, glm::mat4(1.0f), Fuego::Renderer::Camera::GetActiveCamera()->GetView(),
-                           Fuego::Renderer::Camera::GetActiveCamera()->GetProjection());
+                      Fuego::Renderer::Camera::GetActiveCamera()->GetProjection());
     UNUSED(event);
     return true;
 }

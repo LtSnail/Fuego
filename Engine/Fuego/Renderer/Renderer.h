@@ -61,6 +61,8 @@ public:
         return viewport;
     }
 
+    std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
+
     Renderer(const Renderer&&) = delete;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;

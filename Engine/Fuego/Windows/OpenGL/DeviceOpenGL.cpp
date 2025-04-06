@@ -11,6 +11,7 @@
 #include "glad/gl.h"
 // clang-format on
 #include "Renderer.h"
+#include "TextureOpenGL.h"
 
 
 void OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
@@ -189,6 +190,11 @@ std::unique_ptr<Device> Device::CreateDevice()
 std::unique_ptr<Surface> DeviceOpenGL::CreateSurface(const void* window)
 {
     return std::make_unique<SurfaceOpenGL>(window);
+}
+
+std::unique_ptr<Texture> DeviceOpenGL::CreateTexture(unsigned char* buffer, int width, int height)
+{
+    return std::unique_ptr<TextureOpenGL>(new TextureOpenGL(buffer, width, height));
 }
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)

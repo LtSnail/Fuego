@@ -67,6 +67,11 @@ std::unique_ptr<Surface> DeviceMetal::CreateSurface(const void* window)
     return std::make_unique<SurfaceMetal>(window, _device);
 }
 
+std::unique_ptr<Texture> DeviceMetal::CreateTexture(unsigned char* buffer, int width, int height)
+{
+    return std::make_unique<TextureMetal>();
+}
+
 std::unique_ptr<Device> Device::CreateDevice()
 {
     return std::make_unique<DeviceMetal>();
