@@ -34,6 +34,19 @@ void Camera::Activate()
     active_camera = this;
 }
 
+const mat4* Camera::GetViewPtr() const
+{
+    return &view;
+}
+vec3 Camera::GetDir() const
+{
+    return dir;
+}
+Camera* Camera::GetActiveCamera()
+{
+    return active_camera;
+}
+
 void Camera::Update()
 {
     if (Input::IsKeyPressed(Key::W))

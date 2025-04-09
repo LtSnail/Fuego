@@ -11,7 +11,7 @@
 #endif
 
 // clang-format off
-#if defined(FUEGO_DYNAMIC_LIB)
+#if defined(FUEGO_DLL_LIB)
     #if defined(FUEGO_BUILD_LIB)
         #define FUEGO_API EXPORT
     #else

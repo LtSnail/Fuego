@@ -3,22 +3,25 @@
 #include "Application.h"
 #include "Buffer.h"
 #include "Camera.h"
+#include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "CommandQueue.h"
 #include "Device.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "ShaderObject.h"
 #include "Surface.h"
 #include "Swapchain.h"
 #include "Texture.h"
+#include "VertexLayout.h"
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
 
 namespace Fuego::Renderer
 {
 
-class Renderer
+class FUEGO_API Renderer
 {
 public:
     struct Viewport

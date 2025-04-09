@@ -2,12 +2,6 @@
 
 #include <span>
 
-#include "Camera.h"
-#include "CommandBuffer.h"
-#include "ShaderObject.h"
-#include "VertexLayout.h"
-
-
 namespace Fuego::Renderer
 {
 

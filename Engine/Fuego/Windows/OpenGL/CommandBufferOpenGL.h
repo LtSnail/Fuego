@@ -5,7 +5,7 @@
 namespace Fuego::Renderer
 {
 class Surface;
-class VertexLayout;
+struct VertexLayout;
 
 class CommandBufferOpenGL final : public CommandBuffer
 {

@@ -7,7 +7,7 @@ namespace Fuego::Renderer
 class ShaderObject;
 class Texture;
 
-class Material
+class FUEGO_API Material
 {
 public:
     static Material* CreateMaterial(Texture* albedo);

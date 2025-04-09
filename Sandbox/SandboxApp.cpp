@@ -1,6 +1,5 @@
 ﻿#include "SandboxApp.h"
 
-#include "Camera.h"
 #include "Renderer.h"
 
 std::unique_ptr<Fuego::Renderer::Texture> sandbox_texture;

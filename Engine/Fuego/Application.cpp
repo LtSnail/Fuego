@@ -1,12 +1,11 @@
 #include "Application.h"
-
-#include "Camera.h"
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
 #include "Scene.h"
+
 
 Fuego::Scene* scene;
 std::unique_ptr<Fuego::Renderer::Texture> engine_texture;

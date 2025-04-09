@@ -25,10 +25,11 @@ set(PROJECT_HEADERS
     VertexLayout.h)
 
 set(PROJECT_SOURCES
-  Renderer.cpp
-  Mesh.cpp
-  Camera.cpp
-  VertexLayout.cpp)
+    Renderer.cpp
+    Mesh.cpp
+    Camera.cpp
+    VertexLayout.cpp
+)
 
 if(FUEGO_PLATFORM_WIN)
   list(APPEND PRIVATE_LINK_LIBRARIES WindowsDep)

@@ -8,7 +8,7 @@ class DescriptorBuffer;
 class Buffer;
 class ShaderObject;
 class Texture;
-class VertexLayout;
+struct VertexLayout;
 
 class CommandBuffer
 {

@@ -83,7 +83,8 @@ def generate_project(platform, enable_test, build_dll):
 
     engine_arguments = (f' {enable_test}'
                         f' -DFUEGO_PLATFORM={platfrorm_var}'
-                        f' {platform_macro_definition}')
+                        f' {platform_macro_definition}'
+                        f' {build_dll}')
     
     run_command(f'cmake -S "{root_folder}" -B "{build_dir}" -G "{generator}" {engine_arguments}')
     print(f"{build_log} Project generation for {platform} completed successfully.")

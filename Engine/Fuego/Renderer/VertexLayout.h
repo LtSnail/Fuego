@@ -51,7 +51,7 @@ public:
         bool IsDone();
 
     private:
-        friend class VertexLayout;
+        friend struct VertexLayout;
         VertexAttribute* _attrib;
         VertexLayout* _master;
         bool is_done;

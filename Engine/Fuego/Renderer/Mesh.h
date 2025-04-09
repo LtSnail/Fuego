@@ -6,7 +6,7 @@
 
 namespace Fuego::Renderer
 {
-class Mesh
+class FUEGO_API Mesh
 {
 public:
     Mesh();
