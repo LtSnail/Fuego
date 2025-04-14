@@ -2,8 +2,6 @@
 
 #include <span>
 
-#include "Renderer.h"
-
 namespace Fuego::Renderer
 {
 

@@ -23,11 +23,11 @@ Fuego::Renderer::Model::Model(const aiScene* scene)
         Fuego::Renderer::Model::Mesh* mesh = meshes.back().get();
         vertex_count += mesh->GetVertexCount();
         indices_count += mesh->GetIndicesCount();
-        if (!Application::Get().IsTextureLoaded(mesh->GetTextureName()))
+        if (!Application::instance().IsTextureLoaded(mesh->GetTextureName()))
         {
-            Application::Get().AddTexture(mesh->GetTextureName());
+            Application::instance().AddTexture(mesh->GetTextureName());
         }
-        mesh->SetMaterial(Material::CreateMaterial(Application::Get().GetLoadedTexture(mesh->GetTextureName())));
+        mesh->SetMaterial(Material::CreateMaterial(Application::instance().GetLoadedTexture(mesh->GetTextureName())));
     }
 }
 

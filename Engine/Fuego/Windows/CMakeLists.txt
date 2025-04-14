@@ -49,9 +49,12 @@ target_include_directories(WindowsDep PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${GLAD_PATH}/include
 )
+target_include_directories(WindowsDep PRIVATE 
+        
+)
 
 target_link_libraries(WindowsDep 
-        PUBLIC Glad
+        PUBLIC Glad 
         PRIVATE FuegoInterface
 )
 

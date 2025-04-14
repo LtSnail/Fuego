@@ -39,6 +39,7 @@ set(INCLUDE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(TESTS_HEADERS
     ${INCLUDE_FOLDER}/Tests.h
     ${INCLUDE_FOLDER}/ProtoFilesTests.hpp
+    ${INCLUDE_FOLDER}/CoreLibTests.hpp
     ${SCENE_GENERATED_PROTO_HDRS}
 )
 
@@ -60,26 +61,18 @@ set_target_properties(gtest_main gtest PROPERTIES
 
 add_subdirectory(${CORE_LIB_TESTS_ROOT} ${CORE_LIB_TESTS_BUILD})
 
-set_target_properties(CoreLibTests PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/lib
-    LIBRARY_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/lib
-    RUNTIME_OUTPUT_DIRECTORY ${CORE_LIB_TESTS_BUILD}/bin
-)
+add_executable(FuegoTests ${TESTS_HEADERS} ${TESTS_SOURCES})
 
-add_executable(Tests ${TESTS_HEADERS} ${TESTS_SOURCES})
+set_target_properties(gtest gtest_main FuegoTests ${COMMON_TARGET_PROPERTIES})
 
-set_target_properties(gtest gtest_main ${COMMON_TARGET_PROPERTIES})
-set_target_properties(Tests CoreLibTests ${COMMON_TARGET_PROPERTIES})
-
-
-target_link_libraries(Tests PUBLIC
-        CoreLibTests 
+target_link_libraries(FuegoTests PUBLIC
+        CoreLib 
         GTest::gtest 
         FuegoEngine
         FuegoInterface
 )
 
-target_include_directories(Tests PUBLIC 
+target_include_directories(FuegoTests PUBLIC 
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${GOOGLE_TEST_ROOT}/googletest/include
         ${FUEGO_ROOT}/CoreLib

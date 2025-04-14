@@ -90,6 +90,7 @@ add_subdirectory(${RENDERER_PATH})
 
 set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../CoreLib
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/ProtoOut
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer
@@ -121,8 +122,9 @@ add_dependencies(FuegoEngine ProtoGen)
 target_link_libraries(FuegoEngine PUBLIC
     ${ENGINE_DEPENDENCIES}
     protobuf::libprotobuf
+    CoreLib
 )
-target_link_libraries(FuegoEngine PRIVATE Renderer)
+target_link_libraries(FuegoEngine PRIVATE Renderer )
 
 target_include_directories(FuegoEngine
     PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES}

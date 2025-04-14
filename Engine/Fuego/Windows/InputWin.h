@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Input.h"
-#include "singltone.hpp"
+#include "singleton.hpp"
 
 namespace Fuego
 {
