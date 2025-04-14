@@ -26,27 +26,14 @@ class Application::ApplicationImpl
     std::vector<std::unique_ptr<Fuego::Renderer::Model>> _models;
     std::unordered_map<std::string, std::unique_ptr<Fuego::Renderer::Texture>> _textures;
 
+    bool initialized = false;
     bool m_Running;
     LayerStack m_LayerStack;
-    static Application* m_Instance;
 };
-
-Application* Application::ApplicationImpl::m_Instance = nullptr;
 
 Application::Application()
     : d(new ApplicationImpl())
 {
-    ApplicationImpl::m_Instance = this;
-    d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
-    d->m_EventQueue = EventQueue::CreateEventQueue();
-    d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-    d->_renderer.reset(new Renderer::Renderer());
-    d->m_Running = true;
-    d->_models.reserve(10);
-    FS::FileSystem& fs = Application::Get().FileSystem();
-    AddTexture("fallback.png");
-    LoadModel("Shotgun/Shotgun.obj");
-    LoadModel("WaterCooler/WaterCooler.obj");
 }
 
 Application::~Application()
@@ -173,9 +160,20 @@ bool Application::OnMouseMoveEvent(MouseMovedEvent& event)
     return true;
 }
 
-Application& Application::Get()
+void Application::Init()
 {
-    return *Application::ApplicationImpl::m_Instance;
+    d->_fs = std::unique_ptr<Fuego::FS::FileSystem>(new Fuego::FS::FileSystem());
+    d->m_EventQueue = EventQueue::CreateEventQueue();
+    d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+    d->_renderer.reset(new Renderer::Renderer());
+    d->m_Running = true;
+    FS::FileSystem& fs = Application::instance().FileSystem();
+
+    AddTexture("fallback.png");
+    LoadModel("Shotgun/Shotgun.obj");
+    LoadModel("WaterCooler/WaterCooler.obj");
+
+    d->initialized = true;
 }
 
 Fuego::FS::FileSystem& Application::FileSystem()
@@ -231,6 +229,11 @@ const Fuego::Renderer::Texture* Application::GetLoadedTexture(std::string_view n
 
 void Application::Run()
 {
+    if (!d->initialized)
+    {
+        Init();
+    }
+
     while (d->m_Running)
     {
         d->_renderer->Clear();

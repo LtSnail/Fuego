@@ -9,7 +9,9 @@ set(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
      ${ROOT}/Uptr.h 
      ${ROOT}/Sptr.h
      ${ROOT}/DefaultAllocator.h
-     ${ROOT}/CoreLibTests.h)
+     ${ROOT}/CoreLibTests.h
+     ${ROOT}/singleton.hpp
+)
 
 set(CORELIB_SOURCES ${ROOT}/CoreLibTests.cpp)
 set(CORELIB_BULD ${ROOT}/../build/${FUEGO_PLATFORM}/CoreLibTests)

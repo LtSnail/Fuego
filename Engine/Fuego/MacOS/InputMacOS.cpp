@@ -5,8 +5,6 @@
 
 namespace Fuego
 {
-Input* Input::m_Instance = nullptr;
-
 bool InputMacOS::IsKeyPressedImpl(KeyCode keyCode) const
 {
     UNUSED(keyCode);
@@ -32,5 +30,15 @@ float InputMacOS::GetMouseXImpl() const
 float InputMacOS::GetMouseYImpl() const
 {
     return 0.0f;
+}
+
+glm::vec2 InputMacOS::GetMouseDirImpl() const
+{
+    return {0.0f, 0.0f};
+}
+
+Input& Input::platform_instance()
+{
+    return InputMacOS::instance();
 }
 }  // namespace Fuego

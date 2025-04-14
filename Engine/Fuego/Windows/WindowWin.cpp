@@ -59,7 +59,6 @@ DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 
     ShowWindow(window->_hwnd, SW_SHOW);
 
-    FU_CORE_ASSERT(Input::Init(new InputWin()), "[Input] hasn't been initialized!");
     SetEvent(window->_onThreadCreated);
 
     MSG msg{};

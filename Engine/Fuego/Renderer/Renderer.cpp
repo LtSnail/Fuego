@@ -22,7 +22,7 @@ Renderer::Renderer()
     _commandQueue = _device->CreateCommandQueue();
 
     // Temporary: we're creating surface for main Application window
-    _surface = _device->CreateSurface(Fuego::Application::Get().GetWindow().GetNativeHandle());
+    _surface = _device->CreateSurface(Fuego::Application::instance().GetWindow().GetNativeHandle());
     _swapchain = _device->CreateSwapchain(*_surface);
     _commandPool = _device->CreateCommandPool(*_commandQueue);
 
@@ -119,7 +119,7 @@ void Renderer::ChangeViewport(float x, float y, float w, float h)
 void Renderer::UpdateViewport()
 {
     _surface.release();
-    _surface = _device->CreateSurface(Fuego::Application::Get().GetWindow().GetNativeHandle());
+    _surface = _device->CreateSurface(Fuego::Application::instance().GetWindow().GetNativeHandle());
     _swapchain.release();
     _swapchain = _device->CreateSwapchain(*_surface);
 }

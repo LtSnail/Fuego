@@ -14,12 +14,9 @@ int APIENTRY FuegoMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int c
     assert(freopen_s(&stream, "CONOUT$", "w", stderr) == 0);
 
     Fuego::Log::Init();
-
-    Fuego::Application* app = Fuego::CreateApplication();
-    app->Run();
-
+    Fuego::Application::instance().Init();
+    Fuego::Application::instance().Run();
     FreeConsole();
-    delete app;
 
     return 0;
 }

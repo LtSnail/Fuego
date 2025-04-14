@@ -33,42 +33,32 @@ public:
 
     static inline bool IsKeyPressed(KeyCode keyCode)
     {
-        return m_Instance->IsKeyPressedImpl(keyCode);
+        return platform_instance().IsKeyPressedImpl(keyCode);
     }
 
     static inline bool IsMouseButtonPressed(MouseCode mouseCode)
     {
-        return m_Instance->IsMouseButtonPressedImpl(mouseCode);
+        return platform_instance().IsMouseButtonPressedImpl(mouseCode);
     }
 
     static inline float GetMouseX()
     {
-        return m_Instance->GetMouseXImpl();
+        return platform_instance().GetMouseXImpl();
     }
 
     static inline float GetMouseY()
     {
-        return m_Instance->GetMouseYImpl();
+        return platform_instance().GetMouseYImpl();
     }
 
     static inline std::pair<float, float> GetMousePosition()
     {
-        return m_Instance->GetMousePositionImpl();
+        return platform_instance().GetMousePositionImpl();
     }
 
     static inline glm::vec2 GetMouseDir()
     {
-        return m_Instance->GetMouseDirImpl();
-    }
-
-    static inline bool Init(Input* input)
-    {
-        if (!m_Instance && input != nullptr)
-        {
-            m_Instance = input;
-            return true;
-        }
-        return false;
+        return platform_instance().GetMouseDirImpl();
     }
 
     struct MouseInfo
@@ -87,6 +77,6 @@ protected:
     [[nodiscard]] virtual glm::vec2 GetMouseDirImpl() const = 0;
 
 private:
-    static Input* m_Instance;
+    static Input& platform_instance();
 };
 }  // namespace Fuego

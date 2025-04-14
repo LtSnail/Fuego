@@ -61,7 +61,6 @@ void Scene::RemoveObject(std::string_view object_name)
     object_to_node_map.erase(obj);
     string_to_object_map.erase(object_name);
     objects_amount--;
-
 }
 
 BaseSceneObject* Scene::Root()
@@ -70,7 +69,7 @@ BaseSceneObject* Scene::Root()
 }
 void Scene::SaveSceneToFile(const std::string& file_name)
 {
-    auto& fs = Fuego::Application::Get().FileSystem();
+    auto& fs = Fuego::Application::instance().FileSystem();
     std::string scene_file_name = file_name + ".fu_scene";
     fs.FUCreateFile(scene_file_name, "Scenes");
 }
@@ -108,10 +107,10 @@ ModelObject::ModelObject(Scene* master_scene, const std::string& name, glm::vec3
 {
     FU_CORE_INFO("ModelObject: {0} ctor", ((BaseSceneObject*)this)->GetName());
 }
-    
+
 void Node::PrintNode() const
 {
     // TODO
 }
 
-}  // namespace Fuego::Editor
+}  // namespace Fuego
