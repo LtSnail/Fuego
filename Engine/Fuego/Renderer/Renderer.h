@@ -33,7 +33,7 @@ struct VertexData
 };
 #pragma pack(pop)
 
-class FUEGO_API Renderer : public IRendererService, public IEngineSubSystem
+class FUEGO_API Renderer : public IRendererService, public IEngineSubsystem
 {
 public:
     struct Viewport
@@ -59,7 +59,7 @@ public:
     virtual void ChangeViewport(float x, float y, float w, float h) override;
     virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const override;
 
-    // IEngineSubSystem
+    // IEngineSubsystem
     virtual void Update(float dlTime) override {};
     virtual void PostUpdate(float dlTime) override {};
     virtual bool Init() override;

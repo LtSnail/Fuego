@@ -23,7 +23,7 @@ struct IFileSystemService
     virtual void WriteToFile(std::string_view file_name, const char* buffer) = 0;
 };
 
-struct IEngineSubSystem
+struct IEngineSubsystem
 {
     virtual void Update(float dlTime) = 0;
     virtual void PostUpdate(float dlTime) = 0;
