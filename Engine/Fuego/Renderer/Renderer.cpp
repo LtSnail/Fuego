@@ -2,8 +2,6 @@
 
 #include <span>
 
-#include "Renderer.h"
-
 namespace Fuego::Renderer
 {
 
@@ -13,9 +11,14 @@ uint32_t Renderer::MAX_TEXTURES_COUNT = 0;
 
 Renderer::Renderer()
     : show_wireframe(false)
-    , _camera(std::unique_ptr<Camera>(new Camera()))
+    , _camera(nullptr)
     , current_shader_obj(nullptr)
 {
+}
+
+bool Renderer::Init()
+{
+    _camera.reset(new Camera());
     _camera->Activate();
 
     _device = Device::CreateDevice();
@@ -33,6 +36,7 @@ Renderer::Renderer()
     opaque_shader->GetVertexShader()->AddVar("model");
     opaque_shader->GetVertexShader()->AddVar("view");
     opaque_shader->GetVertexShader()->AddVar("projection");
+    return true;
 }
 
 void Renderer::DrawModel(const Model* model, glm::mat4 model_pos)
@@ -113,7 +117,7 @@ void Renderer::ChangeViewport(float x, float y, float w, float h)
     viewport.x = x;
     viewport.y = y;
     viewport.width = w;
-    viewport.heigth = h;
+    viewport.height = h;
     UpdateViewport();
 }
 

@@ -69,9 +69,9 @@ BaseSceneObject* Scene::Root()
 }
 void Scene::SaveSceneToFile(const std::string& file_name)
 {
-    auto& fs = Fuego::Application::instance().FileSystem();
+    auto fs = ServiceLocator::instance().GetService<Fuego::FS::FileSystem>();
     std::string scene_file_name = file_name + ".fu_scene";
-    fs.FUCreateFile(scene_file_name, "Scenes");
+    fs->FUCreateFile(scene_file_name, "Scenes");
 }
 
 std::list<Node>::iterator Scene::GetNodeIt(BaseSceneObject* obj)

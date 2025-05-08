@@ -9,6 +9,7 @@
 #include "Device.h"
 #include "Material.h"
 #include "Model.h"
+#include "Services/ServiceInterfaces.hpp"
 #include "Shader.h"
 #include "ShaderObject.h"
 #include "Surface.h"
@@ -32,13 +33,13 @@ struct VertexData
 };
 #pragma pack(pop)
 
-class FUEGO_API Renderer
+class FUEGO_API Renderer : public IRendererService, public IEngineSubSystem
 {
 public:
     struct Viewport
     {
         float width = 0.0f;
-        float heigth = 0.0f;
+        float height = 0.0f;
         float x = 0.0f;
         float y = 0.0f;
     };
@@ -53,7 +54,17 @@ public:
     Renderer();
     ~Renderer() = default;
 
-    void DrawModel(const Model* model, glm::mat4 model_pos);
+    // IRendererService
+    virtual void DrawModel(const Model* model, glm::mat4 model_pos) override;
+    virtual void ChangeViewport(float x, float y, float w, float h) override;
+    virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const override;
+
+    // IEngineSubSystem
+    virtual void Update(float dlTime) override {};
+    virtual void PostUpdate(float dlTime) override {};
+    virtual bool Init() override;
+    virtual void Release() override {};
+
     void Clear();
     void Present();
 
@@ -65,11 +76,12 @@ public:
         return viewport;
     }
 
-    std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
 
-    Renderer(const Renderer&&) = delete;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
+
+    Renderer(Renderer&&) noexcept = default;
+    Renderer& operator=(Renderer&&) noexcept = default;
 
     static uint32_t MAX_TEXTURES_COUNT;
 
@@ -82,7 +94,6 @@ public:
         current_shader_obj = obj;
     }
 
-    void ChangeViewport(float x, float y, float w, float h);
 
     std::unique_ptr<ShaderObject> opaque_shader;
 

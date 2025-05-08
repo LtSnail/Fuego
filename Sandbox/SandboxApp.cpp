@@ -20,7 +20,6 @@ void SceneLayer::OnUpdate()
 
 void SceneLayer::OnAttach()
 {
-    Fuego::FS::FileSystem& fs = Fuego::Application::instance().FileSystem();
 }
 
 void SceneLayer::OnDetach()

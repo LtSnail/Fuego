@@ -5,6 +5,7 @@
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
 #include "Layer.h"
+#include "Services/ServiceLocator.h"
 #include "Window.h"
 #include "singleton.hpp"
 
@@ -20,6 +21,7 @@ class Renderer;
 class Model;
 class Texture;
 }  // namespace Fuego::Renderer
+
 
 namespace Fuego
 {
@@ -51,8 +53,6 @@ public:
     // Input events
     bool OnMouseMoveEvent(MouseMovedEvent& event);
 
-    Fuego::Renderer::Renderer& Renderer();
-    Fuego::FS::FileSystem& FileSystem();
     Window& GetWindow();
 
     bool IsTextureLoaded(std::string_view) const;
@@ -63,5 +63,7 @@ protected:
     Application();
     virtual ~Application() override;
     Renderer::Model* LoadModel(std::string_view path);
+
+    // template<class >
 };
 }  // namespace Fuego
