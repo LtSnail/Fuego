@@ -163,12 +163,10 @@ void Application::Init()
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
 
-    auto fs = ServiceLocator::instance().AddService<Fuego::FS::FileSystem>();
-    if (fs)
-        fs.value()->FUCreateFile("test", "test");
-    auto renderer = ServiceLocator::instance().AddService<Fuego::Graphics::Renderer>();
-    if (renderer)
-        renderer.value()->Init();
+    auto fs = ServiceLocator::instance().Register<Fuego::FS::FileSystem>();
+    fs.value()->FUCreateFile("test", "test");
+    auto renderer = ServiceLocator::instance().Register<Fuego::Graphics::Renderer>();
+    renderer.value()->Init();
 
     d->_models.reserve(10);
 

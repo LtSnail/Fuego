@@ -1,11 +1,10 @@
 #pragma once
 #include <typeindex>
 #include <unordered_map>
-//#include <variant>
 
 #include "FileSystem/FileSystem.h"
 #include "Renderer.h"
-#include "Services/ServiceInterfaces.hpp"
+#include "ServiceInterfaces.hpp"
 #include "singleton.hpp"
 
 namespace Fuego
@@ -14,16 +13,6 @@ namespace Fuego
 #pragma region Templates
 using service_variant = std::variant<std::unique_ptr<Fuego::Graphics::Renderer>, std::unique_ptr<Fuego::FS::FileSystem>>;
 
-
-template <class T>
-concept is_renderer_service = std::derived_from<T, IRendererService>;
-
-template <class T>
-concept is_file_system_service = std::derived_from<T, IFileSystemService>;
-
-template <class T>
-concept is_one_of = is_renderer_service<T> || is_file_system_service<T>;
-
 #pragma endregion
 
 class ServiceLocator : public singleton<ServiceLocator>
@@ -31,8 +20,8 @@ class ServiceLocator : public singleton<ServiceLocator>
     friend class singleton<ServiceLocator>;
 
 public:
-    template <is_one_of T>
-    std::optional<T*> AddService()
+    template <is_service_interface T>
+    std::optional<T*> Register()
     {
         auto ptr = std::make_unique<T>();
         service_variant variant = std::move(ptr);

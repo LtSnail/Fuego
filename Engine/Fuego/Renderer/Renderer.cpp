@@ -16,7 +16,7 @@ Renderer::Renderer()
 {
 }
 
-bool Renderer::Init()
+void Renderer::Init()
 {
     _camera.reset(new Camera());
     _camera->Activate();
@@ -36,7 +36,6 @@ bool Renderer::Init()
     opaque_shader->GetVertexShader()->AddVar("model");
     opaque_shader->GetVertexShader()->AddVar("view");
     opaque_shader->GetVertexShader()->AddVar("projection");
-    return true;
 }
 
 void Renderer::DrawModel(const Model* model, glm::mat4 model_pos)

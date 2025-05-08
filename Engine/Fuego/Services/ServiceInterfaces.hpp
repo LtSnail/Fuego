@@ -10,11 +10,13 @@ class Renderer;
 
 namespace Fuego
 {
+
+
 struct IRendererService
 {
-    virtual void DrawModel(const Fuego::Graphics::Model* model, glm::mat4 model_pos) = 0;
-    virtual void ChangeViewport(float x, float y, float w, float h) = 0;
-    virtual std::unique_ptr<Fuego::Graphics::Texture> CreateTexture(unsigned char* buffer, int width, int height) const = 0;
+    void DrawModel(const Fuego::Graphics::Model* model, glm::mat4 model_pos);
+    void ChangeViewport(float x, float y, float w, float h);
+    std::unique_ptr<Fuego::Graphics::Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
 };
 
 struct IFileSystemService
@@ -23,11 +25,28 @@ struct IFileSystemService
     virtual void WriteToFile(std::string_view file_name, const char* buffer) = 0;
 };
 
-struct IEngineSubsystem
-{
-    virtual void Update(float dlTime) = 0;
-    virtual void PostUpdate(float dlTime) = 0;
-    virtual bool Init() = 0;
-    virtual void Release() = 0;
+template <typename Derived>
+concept is_service_interface = requires(Derived t) {
+    { t.Init() } -> std::same_as<void>;
+    { t.Shutdown() } -> std::same_as<void>;
 };
+
+struct IUpdatable
+{
+    void Update(float dlTime);
+    void PostUpdate(float dlTime);
+    void FixedUpdate();
+};
+
+struct IInitializable
+{
+    void Init();
+    void Shutdown();
+};
+
+template <class Derived, class... Interfaces>
+struct Service : public IInitializable
+{
+};
+
 }  // namespace Fuego

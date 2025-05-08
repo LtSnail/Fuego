@@ -15,7 +15,7 @@ namespace Fuego::FS
 
 class Application;
 
-class FUEGO_API FileSystem : public IFileSystemService
+class FUEGO_API FileSystem : public Service<FileSystem, IFileSystemService>
 {
 public:
     FileSystem(FileSystem&&) noexcept = default;
@@ -26,9 +26,10 @@ public:
     const std::string GetFullPathToFile(std::string_view file_name) const;
     std::string GetFullPathToFolder(std::string_view folder_name) const;
 
-    virtual void FUCreateFile(const std::string& file_name, std::string_view folder) const override;
-    virtual void WriteToFile(std::string_view file_name, const char* buffer) override;
-
+    void FUCreateFile(const std::string& file_name, std::string_view folder) const;
+    void WriteToFile(std::string_view file_name, const char* buffer);
+    void Init() { /* TODO */ };
+    void Shutdown() { /* TODO */ };
 
     friend class Application;
     FileSystem();

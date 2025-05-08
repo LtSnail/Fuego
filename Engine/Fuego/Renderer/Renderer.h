@@ -33,7 +33,7 @@ struct VertexData
 };
 #pragma pack(pop)
 
-class FUEGO_API Renderer : public IRendererService, public IEngineSubsystem
+class FUEGO_API Renderer : public Service<Renderer, IRendererService, IUpdatable>
 {
 public:
     struct Viewport
@@ -54,16 +54,18 @@ public:
     Renderer();
     ~Renderer() = default;
 
-    // IRendererService
-    virtual void DrawModel(const Model* model, glm::mat4 model_pos) override;
-    virtual void ChangeViewport(float x, float y, float w, float h) override;
-    virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const override;
+    // IRende;
+    void DrawModel(const Model* model, glm::mat4 model_pos);
+    void ChangeViewport(float x, float y, float w, float h);
+    std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
 
     // IEngineSubsystem
-    virtual void Update(float dlTime) override {};
-    virtual void PostUpdate(float dlTime) override {};
-    virtual bool Init() override;
-    virtual void Release() override {};
+    void Update(float dlTime) {};
+    void PostUpdate(float dlTime) {};
+
+    // Service
+    void Init();
+    void Shutdown() { /* TODO */ };
 
     void Clear();
     void Present();
