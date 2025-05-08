@@ -2,7 +2,7 @@
 
 #include "glad/gl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 ShaderObject* ShaderObject::CreateShaderObject(Shader& vs, Shader& px)
@@ -58,4 +58,4 @@ void ShaderObjectOpenGL::BindMaterial(Material* material)
     pixel_shader->SetText2D("material.albedo_text", this->material->GetAlbedoTexture());
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

@@ -2,7 +2,7 @@
 
 #include "glad/gl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 TextureOpenGL::TextureOpenGL(unsigned char* buffer, int width, int heigth)
     : texture_unit(0)
@@ -46,4 +46,4 @@ TextureFormat TextureOpenGL::GetTextureFormat() const
 {
     return TextureFormat::R16F;
 }
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

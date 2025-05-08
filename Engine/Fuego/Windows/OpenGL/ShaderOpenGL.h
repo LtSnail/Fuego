@@ -5,7 +5,7 @@
 
 #include "Renderer/Shader.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class ShaderOpenGL final : public Shader
 {
@@ -40,4 +40,4 @@ protected:
     friend class DeviceOpenGL;
     ShaderOpenGL(const char* shaderCode, ShaderType type);
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

@@ -2,7 +2,7 @@
 
 #include "Renderer/Device.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class DeviceOpenGL final : public Device
 {
@@ -30,4 +30,4 @@ private:
     HGLRC ctx;
     int max_textures_units;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

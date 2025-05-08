@@ -2,7 +2,7 @@
 
 #include "Shader.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Buffer;
 class CommandQueue;
@@ -29,4 +29,4 @@ public:
     virtual std::unique_ptr<Surface> CreateSurface(const void* window) = 0;
     virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

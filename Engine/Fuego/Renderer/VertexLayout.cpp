@@ -4,7 +4,7 @@
 #include "glad/gl.h"
 #elif defined(FUEGO_PLATFORM_MACOS)
 #endif
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 // Layout:
 VertexLayout::VertexLayout()
@@ -148,4 +148,4 @@ void VertexLayout::ReleaseIterator()
     _it = nullptr;
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

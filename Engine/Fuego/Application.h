@@ -15,12 +15,12 @@ namespace Fuego::FS
 class FileSystem;
 }
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Renderer;
 class Model;
 class Texture;
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics
 
 
 namespace Fuego
@@ -57,12 +57,12 @@ public:
 
     bool IsTextureLoaded(std::string_view) const;
     bool AddTexture(std::string_view);
-    const Fuego::Renderer::Texture* GetLoadedTexture(std::string_view name) const;
+    const Fuego::Graphics::Texture* GetLoadedTexture(std::string_view name) const;
 
 protected:
     Application();
     virtual ~Application() override;
-    Renderer::Model* LoadModel(std::string_view path);
+    Graphics::Model* LoadModel(std::string_view path);
 
     // template<class >
 };

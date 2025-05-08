@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 SurfaceOpenGL::SurfaceOpenGL(const void* window)
 {
@@ -41,4 +41,4 @@ void SurfaceOpenGL::Clear() const
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

@@ -3,7 +3,7 @@
 #include "Material.h"
 #include "TextureOpenGL.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class MaterialOpenGL : public Material
 {
@@ -22,4 +22,4 @@ private:
     friend class Material;
     MaterialOpenGL(const Texture* albedo);
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

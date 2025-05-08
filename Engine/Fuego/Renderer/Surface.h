@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Surface
 {
@@ -17,4 +17,4 @@ public:
 
     virtual void Clear() const = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

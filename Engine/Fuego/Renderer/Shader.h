@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class ShaderObject;
 class Texture;
@@ -26,4 +26,4 @@ public:
 
     virtual ~Shader() = default;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

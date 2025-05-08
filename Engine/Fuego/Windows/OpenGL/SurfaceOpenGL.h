@@ -2,7 +2,7 @@
 
 #include "Renderer/Surface.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class SurfaceOpenGL final : public Surface
 {
@@ -20,4 +20,4 @@ private:
     HWND _window;  // shouldn't be here
     HDC _hdc;      // WIN32: Handle to Device Context
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

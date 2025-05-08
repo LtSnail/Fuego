@@ -100,7 +100,7 @@ void OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum sever
     FU_CORE_ERROR("Message: {0}, Source: {1}, Type: {2}, ID: {3}, Severity: {4}\n", (const char*)message, source, type, id, severity);
 }
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 DeviceOpenGL::DeviceOpenGL()
@@ -177,7 +177,7 @@ DeviceOpenGL::DeviceOpenGL()
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_textures_units);
     FU_CORE_INFO("  Max texture units: {0}", max_textures_units);
-    ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>()->MAX_TEXTURES_COUNT = static_cast<uint32_t>(max_textures_units);
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->MAX_TEXTURES_COUNT = static_cast<uint32_t>(max_textures_units);
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -232,4 +232,4 @@ std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName, 
     const std::string shaderCode = ServiceLocator::instance().GetService<Fuego::FS::FileSystem>()->OpenFile(std::string(shaderName) + ".glsl");
     return std::unique_ptr<Shader>(new ShaderOpenGL(shaderCode.c_str(), type));
 }
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

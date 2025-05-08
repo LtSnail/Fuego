@@ -19,7 +19,7 @@
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 #pragma pack(push, 1)
@@ -115,4 +115,4 @@ private:
 
     Viewport viewport;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

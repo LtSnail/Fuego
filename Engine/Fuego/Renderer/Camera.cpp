@@ -2,7 +2,7 @@
 
 #include "Input.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 Camera* Camera::active_camera = nullptr;
@@ -84,4 +84,4 @@ void Camera::RotateCamera()
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     camera_forward = glm::normalize(direction);
 }
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

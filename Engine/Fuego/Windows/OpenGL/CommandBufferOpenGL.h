@@ -2,7 +2,7 @@
 
 #include "Renderer/CommandBuffer.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Surface;
 struct VertexLayout;
@@ -44,4 +44,4 @@ private:
 
 public:
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

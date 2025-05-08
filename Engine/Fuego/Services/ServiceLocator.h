@@ -13,7 +13,7 @@ namespace Fuego
 {
 
 #pragma region Templates
-using service_variant = std::variant<std::unique_ptr<Fuego::Renderer::Renderer>, std::unique_ptr<Fuego::FS::FileSystem>>;
+using service_variant = std::variant<std::unique_ptr<Fuego::Graphics::Renderer>, std::unique_ptr<Fuego::FS::FileSystem>>;
 
 
 template <class T>

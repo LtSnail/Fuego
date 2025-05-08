@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 struct VertexLayout
 {
@@ -80,4 +80,4 @@ private:
     uint16_t layout_size;
     LayoutIterator* _it;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

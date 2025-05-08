@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Surface;
 class Shader;
@@ -51,4 +51,4 @@ protected:
     uint16_t push_debug_group_commands;
 };
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

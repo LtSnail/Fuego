@@ -10,7 +10,7 @@
 #include "VertexLayout.h"
 #include "glad/gl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 CommandBufferOpenGL::CommandBufferOpenGL()
     : _mainVsShader(-1)
@@ -160,13 +160,13 @@ void CommandBufferOpenGL::SetLabel(ObjectLabel id, uint32_t name, const char* me
     GLenum identifier = GL_BUFFER;
     switch (id)
     {
-    case Fuego::Renderer::CommandBuffer::LABEL_BUFFER:
+    case Fuego::Graphics::CommandBuffer::LABEL_BUFFER:
         identifier = GL_BUFFER;
         break;
-    case Fuego::Renderer::CommandBuffer::LABEL_SHADER:
+    case Fuego::Graphics::CommandBuffer::LABEL_SHADER:
         identifier = GL_SHADER;
         break;
-    case Fuego::Renderer::CommandBuffer::LABEL_TEXTURE:
+    case Fuego::Graphics::CommandBuffer::LABEL_TEXTURE:
         identifier = GL_TEXTURE;
         break;
     }
@@ -186,4 +186,4 @@ void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSe
     FU_CORE_INFO("[OpenGL unused function: BindDescriptorSet]");
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

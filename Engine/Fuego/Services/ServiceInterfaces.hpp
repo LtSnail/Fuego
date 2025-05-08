@@ -1,20 +1,20 @@
 #pragma once
 #include <glm/ext/matrix_float4x4.hpp>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Model;
 class Texture;
 class Renderer;
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics
 
 namespace Fuego
 {
 struct IRendererService
 {
-    virtual void DrawModel(const Fuego::Renderer::Model* model, glm::mat4 model_pos) = 0;
+    virtual void DrawModel(const Fuego::Graphics::Model* model, glm::mat4 model_pos) = 0;
     virtual void ChangeViewport(float x, float y, float w, float h) = 0;
-    virtual std::unique_ptr<Fuego::Renderer::Texture> CreateTexture(unsigned char* buffer, int width, int height) const = 0;
+    virtual std::unique_ptr<Fuego::Graphics::Texture> CreateTexture(unsigned char* buffer, int width, int height) const = 0;
 };
 
 struct IFileSystemService

@@ -5,7 +5,7 @@
 
 #include "Services/ServiceInterfaces.hpp"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Model;
 }

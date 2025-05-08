@@ -6,7 +6,7 @@
 #include "TextureOpenGL.h"
 #include "glad/gl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 GLint GetShaderType(Shader::ShaderType type)
 {
@@ -114,4 +114,4 @@ bool ShaderOpenGL::SetText2D(const std::string& var, const Texture& texture) con
     }
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

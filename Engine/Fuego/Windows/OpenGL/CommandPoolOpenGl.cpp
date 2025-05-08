@@ -2,7 +2,7 @@
 
 #include "CommandBufferOpenGL.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 CommandPoolOpenGL::CommandPoolOpenGL(const CommandQueue& queue)
@@ -10,4 +10,4 @@ CommandPoolOpenGL::CommandPoolOpenGL(const CommandQueue& queue)
     UNUSED(queue);
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

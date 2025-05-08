@@ -29,8 +29,8 @@ class Application::ApplicationImpl
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
     std::unique_ptr<Fuego::FS::FileSystem> _fs;
-    std::vector<std::unique_ptr<Fuego::Renderer::Model>> _models;
-    std::unordered_map<std::string, std::unique_ptr<Fuego::Renderer::Texture>> _textures;
+    std::vector<std::unique_ptr<Fuego::Graphics::Model>> _models;
+    std::unordered_map<std::string, std::unique_ptr<Fuego::Graphics::Texture>> _textures;
 
     bool initialized = false;
     bool m_Running;
@@ -91,7 +91,7 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 }
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
     event.SetHandled();
     return true;
 }
@@ -107,7 +107,7 @@ bool Application::OnEndResizeWindow(WindowEndResizeEvent& event)
 }
 bool Application::OnValidateWindow(WindowValidateEvent& event)
 {
-    ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>()->ValidateWindow();
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->ValidateWindow();
     d->m_Window->SetPainted();
     event.SetHandled();
     return true;
@@ -119,7 +119,7 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
     switch (crossplatform_key)
     {
     case Key::D1:
-        ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>()->ToggleWireFrame();
+        ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->ToggleWireFrame();
         break;
     case Key::D2:
         d->m_Window->SwitchInteractionMode();
@@ -130,16 +130,16 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 }
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    auto renderer = ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>();
+    auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
     renderer->ShowWireFrame();
     // TODO: As for now we use just one opaque shader, but we must think about different passes
     // using different shaders with blending and probably using pre-passes
-    ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>()->SetShaderObject(renderer->opaque_shader.get());
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->SetShaderObject(renderer->opaque_shader.get());
     renderer->CurrentShaderObject()->Use();
     float counter = 1.f;
     for (auto it = d->_models.begin(); it != d->_models.end(); ++it)
     {
-        Fuego::Renderer::Model* model_ptr = it->get();
+        Fuego::Graphics::Model* model_ptr = it->get();
         renderer->DrawModel(model_ptr, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, counter)));
         counter += 10.f;
     }
@@ -166,7 +166,7 @@ void Application::Init()
     auto fs = ServiceLocator::instance().AddService<Fuego::FS::FileSystem>();
     if (fs)
         fs.value()->FUCreateFile("test", "test");
-    auto renderer = ServiceLocator::instance().AddService<Fuego::Renderer::Renderer>();
+    auto renderer = ServiceLocator::instance().AddService<Fuego::Graphics::Renderer>();
     if (renderer)
         renderer.value()->Init();
 
@@ -180,14 +180,14 @@ void Application::Init()
     d->m_Running = true;
 }
 
-Fuego::Renderer::Model* Application::LoadModel(std::string_view path)
+Fuego::Graphics::Model* Application::LoadModel(std::string_view path)
 {
     Assimp::Importer importer{};
     const aiScene* scene = importer.ReadFile(d->_fs->GetFullPathToFile(path.data()), ASSIMP_LOAD_FLAGS);
     if (!scene)
         return nullptr;
-    d->_models.emplace_back(std::make_unique<Fuego::Renderer::Model>(scene));
-    Fuego::Renderer::Model* model = d->_models.back().get();
+    d->_models.emplace_back(std::make_unique<Fuego::Graphics::Model>(scene));
+    Fuego::Graphics::Model* model = d->_models.back().get();
     return model;
 }
 
@@ -207,11 +207,11 @@ bool Application::AddTexture(std::string_view path)
         res = d->_fs->Load_Image(path.data(), bits, data, width, height);
     if (res)
         d->_textures.emplace(std::string(path.data()),
-                             std::move(ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>()->CreateTexture(data, width, height)));
+                             std::move(ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->CreateTexture(data, width, height)));
     return res;
 }
 
-const Fuego::Renderer::Texture* Application::GetLoadedTexture(std::string_view name) const
+const Fuego::Graphics::Texture* Application::GetLoadedTexture(std::string_view name) const
 {
     if (name.empty())
         return d->_textures.find("fallback.png")->second.get();
@@ -231,11 +231,11 @@ void Application::Run()
 
     while (d->m_Running)
     {
-        auto renderer = ServiceLocator::instance().GetService<Fuego::Renderer::Renderer>();
+        auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
         renderer->Clear();
         d->m_EventQueue->Update();
         d->m_Window->Update();
-        Fuego::Renderer::Camera::GetActiveCamera()->Update();
+        Fuego::Graphics::Camera::GetActiveCamera()->Update();
 
         for (auto layer : d->m_LayerStack)
         {

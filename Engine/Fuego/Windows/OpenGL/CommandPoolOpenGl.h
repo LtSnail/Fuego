@@ -2,7 +2,7 @@
 
 #include "Renderer/CommandPool.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class CommandQueue;
 class CommandBufferOpenGL;
@@ -18,4 +18,4 @@ protected:
     friend class DeviceOpenGL;
     explicit CommandPoolOpenGL(const CommandQueue& queue);
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

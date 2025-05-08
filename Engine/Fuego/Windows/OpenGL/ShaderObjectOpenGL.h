@@ -4,7 +4,7 @@
 #include "ShaderObject.h"
 #include "ShaderOpenGl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class ShaderObjectOpenGL : public ShaderObject
 {
@@ -36,4 +36,4 @@ private:
     friend class ShaderObject;
     ShaderObjectOpenGL(Shader& vs, Shader& px);
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

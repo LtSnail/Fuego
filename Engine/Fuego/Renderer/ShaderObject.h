@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Shader;
 
@@ -15,4 +15,4 @@ public:
     virtual void Use() const = 0;
     virtual void BindMaterial(Material* material) = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

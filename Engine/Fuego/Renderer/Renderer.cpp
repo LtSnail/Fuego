@@ -2,7 +2,7 @@
 
 #include <span>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 ShaderObject* shader_object;
@@ -136,4 +136,4 @@ VertexData::VertexData(glm::vec3 pos, glm::vec3 text_coord, glm::vec3 normal)
 {
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics
