@@ -47,6 +47,8 @@ struct IInitializable
 template <class Derived, class... Interfaces>
 struct Service : public IInitializable
 {
+protected:
+    inline static bool is_initialized = false;
 };
 
 }  // namespace Fuego
