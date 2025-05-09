@@ -39,8 +39,17 @@ void Renderer::Init()
     opaque_shader->GetVertexShader()->AddVar("model");
     opaque_shader->GetVertexShader()->AddVar("view");
     opaque_shader->GetVertexShader()->AddVar("projection");
+void Renderer::OnShutdown()
+{
+    _device->Release();
+    _device.release();
+
+    _surface->Release();
+    _surface.release();
 
     is_initialized = true;
+    opaque_shader->Release();
+    opaque_shader.reset();
 }
 
 void Renderer::DrawModel(const Model* model, glm::mat4 model_pos)

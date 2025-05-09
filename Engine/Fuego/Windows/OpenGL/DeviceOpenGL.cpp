@@ -183,8 +183,7 @@ DeviceOpenGL::DeviceOpenGL()
 
 DeviceOpenGL::~DeviceOpenGL()
 {
-    wglMakeCurrent(nullptr, nullptr);
-    wglDeleteContext(ctx);
+    Release();
 }
 
 std::unique_ptr<Device> Device::CreateDevice()
@@ -200,6 +199,16 @@ std::unique_ptr<Surface> DeviceOpenGL::CreateSurface(const void* window)
 std::unique_ptr<Texture> DeviceOpenGL::CreateTexture(unsigned char* buffer, int width, int height)
 {
     return std::unique_ptr<TextureOpenGL>(new TextureOpenGL(buffer, width, height));
+}
+
+void DeviceOpenGL::Release()
+{
+    if (ctx)
+    {
+        wglMakeCurrent(nullptr, nullptr);
+        wglDeleteContext(ctx);
+        ctx = nullptr;
+    }
 }
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)

@@ -16,5 +16,7 @@ public:
     virtual const void* GetNativeHandle() const = 0;
 
     virtual void Clear() const = 0;
+
+    virtual void Release() = 0;
 };
 }  // namespace Fuego::Graphics

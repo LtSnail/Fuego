@@ -51,6 +51,7 @@ public:
         SPECULAR = 2
     };
 
+    friend struct Service<Renderer, IRendererService, IUpdatable>;
     Renderer();
     ~Renderer() = default;
 

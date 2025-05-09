@@ -41,9 +41,7 @@ ShaderObjectOpenGL::ShaderObjectOpenGL(Shader& vs, Shader& px)
 
 ShaderObjectOpenGL::~ShaderObjectOpenGL()
 {
-    glDeleteProgram(program);
-    glDeleteShader(vertex_shader->GetID());
-    glDeleteShader(pixel_shader->GetID());
+    Release();
 }
 
 void ShaderObjectOpenGL::Use() const
@@ -56,6 +54,25 @@ void ShaderObjectOpenGL::BindMaterial(Material* material)
     this->material = static_cast<MaterialOpenGL*>(material);
     pixel_shader->AddVar("material.albedo_text");
     pixel_shader->SetText2D("material.albedo_text", this->material->GetAlbedoTexture());
+}
+
+void ShaderObjectOpenGL::Release()
+{
+    glDeleteProgram(program);
+    program = 0;
+
+    material = nullptr;
+
+    if (vertex_shader.get())
+    {
+        vertex_shader->Release();
+        vertex_shader.reset();
+    }
+    if (pixel_shader.get())
+    {
+        pixel_shader->Release();
+        pixel_shader.reset();
+    }
 }
 
 }  // namespace Fuego::Graphics

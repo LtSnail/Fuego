@@ -22,6 +22,8 @@ public:
     virtual std::unique_ptr<Surface> CreateSurface(const void* window) override;
     virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) override;
 
+    virtual void Release() override;
+
 protected:
     friend class Device;
     DeviceOpenGL();

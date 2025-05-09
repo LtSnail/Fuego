@@ -46,7 +46,7 @@ ShaderOpenGL::ShaderOpenGL(const char* shaderCode, ShaderType type)
 
 ShaderOpenGL::~ShaderOpenGL()
 {
-    glDeleteShader(_shaderID);
+    Release();
 }
 
 void ShaderOpenGL::BindToShaderObject(ShaderObject& obj)
@@ -112,6 +112,16 @@ bool ShaderOpenGL::SetText2D(const std::string& var, const Texture& texture) con
     {
         return false;
     }
+}
+
+void ShaderOpenGL::Release()
+{
+    glDeleteShader(_shaderID);
+
+    shader_object = 0;
+    _shaderID = 0;
+    _type = None;
+    uniforms.clear();
 }
 
 }  // namespace Fuego::Graphics

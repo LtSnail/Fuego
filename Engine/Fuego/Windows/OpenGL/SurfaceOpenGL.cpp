@@ -12,7 +12,7 @@ SurfaceOpenGL::SurfaceOpenGL(const void* window)
 
 SurfaceOpenGL::~SurfaceOpenGL()
 {
-    ReleaseDC(_window, _hdc);
+    Release();
 }
 
 Surface::Rect SurfaceOpenGL::GetRect() const
@@ -39,6 +39,14 @@ void SurfaceOpenGL::Clear() const
 {
     glClearColor(1.f, 1.f, 1.f, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void SurfaceOpenGL::Release()
+{
+    if (_hdc)
+        ReleaseDC(_window, _hdc);
+    _hdc = nullptr;
+
 }
 
 }  // namespace Fuego::Graphics

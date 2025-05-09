@@ -29,6 +29,8 @@ public:
     virtual bool SetMat4f(const std::string& var, glm::mat4 matrix) const override;
     virtual bool SetText2D(const std::string& var, const Texture& texture) const override;
 
+    virtual void Release() override;
+
 private:
     uint32_t shader_object;
     uint32_t _shaderID;

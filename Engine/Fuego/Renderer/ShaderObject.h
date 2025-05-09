@@ -14,5 +14,7 @@ public:
     virtual Shader* GetVertexShader() = 0;
     virtual void Use() const = 0;
     virtual void BindMaterial(Material* material) = 0;
+
+    virtual void Release() = 0;
 };
 }  // namespace Fuego::Graphics

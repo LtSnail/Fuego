@@ -25,5 +25,7 @@ public:
     virtual bool SetText2D(const std::string& var, const Texture& texture) const = 0;
 
     virtual ~Shader() = default;
+
+    virtual void Release() = 0;
 };
 }  // namespace Fuego::Graphics

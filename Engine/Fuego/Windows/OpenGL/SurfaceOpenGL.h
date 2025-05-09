@@ -16,6 +16,8 @@ public:
 
     virtual void Clear() const override;
 
+    virtual void Release() override;
+
 private:
     HWND _window;  // shouldn't be here
     HDC _hdc;      // WIN32: Handle to Device Context
