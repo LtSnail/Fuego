@@ -16,11 +16,8 @@ Renderer::Renderer()
 {
 }
 
-void Renderer::Init()
+void Renderer::OnInit()
 {
-    if (is_initialized)
-        return;
-
     _camera.reset(new Camera());
     _camera->Activate();
 
@@ -47,7 +44,6 @@ void Renderer::OnShutdown()
     _surface->Release();
     _surface.release();
 
-    is_initialized = true;
     opaque_shader->Release();
     opaque_shader.reset();
 }

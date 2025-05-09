@@ -64,10 +64,6 @@ public:
     void Update(float dlTime) {};
     void PostUpdate(float dlTime) {};
 
-    // Service
-    void Init();
-    void Shutdown() { /* TODO */ };
-
     void Clear();
     void Present();
 
@@ -117,5 +113,10 @@ private:
     ShaderObject* current_shader_obj;
 
     Viewport viewport;
+
+    // Service
+protected:
+    void OnInit();
+    void OnShutdown();
 };
 }  // namespace Fuego::Graphics
