@@ -104,8 +104,6 @@ private:
     std::unique_ptr<CommandQueue> _commandQueue;
     std::unique_ptr<CommandPool> _commandPool;
     std::unique_ptr<Swapchain> _swapchain;
-    std::unique_ptr<Shader> _mainVsShader;
-    std::unique_ptr<Shader> _pixelShader;
     std::unique_ptr<Surface> _surface;
     std::unique_ptr<Camera> _camera;
 

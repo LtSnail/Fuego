@@ -236,9 +236,9 @@ std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(const Surface& surface)
     return std::unique_ptr<Swapchain>(new SwapchainOpenGL(surface));
 }
 
-std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName, Shader::ShaderType type)
+Shader* DeviceOpenGL::CreateShader(std::string_view shaderName, Shader::ShaderType type)
 {
     const std::string shaderCode = ServiceLocator::instance().GetService<Fuego::FS::FileSystem>()->OpenFile(std::string(shaderName) + ".glsl");
-    return std::unique_ptr<Shader>(new ShaderOpenGL(shaderCode.c_str(), type));
+    return new ShaderOpenGL(shaderCode.c_str(), type);
 }
 }  // namespace Fuego::Graphics

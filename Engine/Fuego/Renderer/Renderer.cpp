@@ -29,13 +29,13 @@ void Renderer::OnInit()
     _swapchain = _device->CreateSwapchain(*_surface);
     _commandPool = _device->CreateCommandPool(*_commandQueue);
 
-    _mainVsShader = _device->CreateShader("vs_shader", Shader::ShaderType::Vertex);
-    _pixelShader = _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel);
-
-    opaque_shader.reset(ShaderObject::CreateShaderObject(*_mainVsShader.get(), *_pixelShader.get()));
+    opaque_shader.reset(ShaderObject::CreateShaderObject(_device->CreateShader("vs_shader", Shader::ShaderType::Vertex),
+                                                         _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel)));
     opaque_shader->GetVertexShader()->AddVar("model");
     opaque_shader->GetVertexShader()->AddVar("view");
     opaque_shader->GetVertexShader()->AddVar("projection");
+}
+
 void Renderer::OnShutdown()
 {
     _device->Release();

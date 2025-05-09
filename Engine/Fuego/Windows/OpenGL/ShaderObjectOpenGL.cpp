@@ -5,24 +5,22 @@
 namespace Fuego::Graphics
 {
 
-ShaderObject* ShaderObject::CreateShaderObject(Shader& vs, Shader& px)
+ShaderObject* ShaderObject::CreateShaderObject(Shader* vs, Shader* px)
 {
     return new ShaderObjectOpenGL(vs, px);
 }
 
-ShaderObjectOpenGL::ShaderObjectOpenGL(Shader& vs, Shader& px)
+ShaderObjectOpenGL::ShaderObjectOpenGL(Shader* vs, Shader* px)
     : program(glCreateProgram())
     , vertex_shader(nullptr)
     , pixel_shader(nullptr)
     , material(nullptr)
 {
-    auto vs_gl = dynamic_cast<ShaderOpenGL*>(&vs);
-    auto px_gl = dynamic_cast<ShaderOpenGL*>(&px);
-    vertex_shader = vs_gl;
-    pixel_shader = px_gl;
+    vertex_shader.reset(static_cast<ShaderOpenGL*>(vs));
+    pixel_shader.reset(static_cast<ShaderOpenGL*>(px));
 
-    glAttachShader(program, vs_gl->GetID());
-    glAttachShader(program, px_gl->GetID());
+    glAttachShader(program, vertex_shader->GetID());
+    glAttachShader(program, pixel_shader->GetID());
 
     glLinkProgram(program);
     GLint success;
@@ -33,8 +31,8 @@ ShaderObjectOpenGL::ShaderObjectOpenGL(Shader& vs, Shader& px)
         glGetProgramInfoLog(program, 512, nullptr, infoLog);
         FU_CORE_ERROR("[ShaderObject] program linking error: ", infoLog);
     }
-    vs_gl->BindToShaderObject(*this);
-    px_gl->BindToShaderObject(*this);
+    vertex_shader->BindToShaderObject(*this);
+    pixel_shader->BindToShaderObject(*this);
 
     glUseProgram(0);
 }

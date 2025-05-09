@@ -12,6 +12,7 @@ class Shader
 public:
     enum ShaderType
     {
+        None = 0,
         Vertex = 1,
         Pixel = 2
     };
