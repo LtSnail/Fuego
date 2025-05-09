@@ -32,6 +32,16 @@ FileSystem::FileSystem()
 {
 }
 
+void FileSystem::OnInit()
+{
+    // TODO
+}
+
+void FileSystem::OnShutdown()
+{
+    // TODO
+}
+
 std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base::openmode mode)
 {
     std::string path = GetFullPathToFile(file);
