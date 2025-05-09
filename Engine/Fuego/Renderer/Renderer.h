@@ -55,7 +55,7 @@ public:
     Renderer();
     ~Renderer() = default;
 
-    // IRende;
+    // IRenderer;
     void DrawModel(const Model* model, glm::mat4 model_pos);
     void ChangeViewport(float x, float y, float w, float h);
     std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
