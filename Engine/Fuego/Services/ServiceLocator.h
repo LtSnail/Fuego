@@ -11,7 +11,7 @@ namespace Fuego
 {
 
 #pragma region Templates
-using service_variant = std::variant<std::unique_ptr<Fuego::Graphics::Renderer>, std::unique_ptr<Fuego::FS::FileSystem>>;
+using service_variant = std::variant<std::shared_ptr<Fuego::Graphics::Renderer>, std::shared_ptr<Fuego::FS::FileSystem>>;
 
 #pragma endregion
 
@@ -21,27 +21,29 @@ class ServiceLocator : public singleton<ServiceLocator>
 
 public:
     template <is_service_interface T>
-    std::optional<T*> Register()
+    std::optional<std::shared_ptr<T>> Register()
     {
-        auto ptr = std::make_unique<T>();
-        service_variant variant = std::move(ptr);
+        auto ptr = std::make_shared<T>();
+        service_variant variant = ptr;
         auto [it, inserted] = services.try_emplace(std::type_index(typeid(T)), std::move(variant));
-        if (auto pval = std::get_if<std::unique_ptr<T>>(&it->second))
-        {
-            return pval->get();
-        }
+        if (inserted)
+            return ptr;
+
+        if (auto pval = std::get_if<std::shared_ptr<T>>(&it->second))
+            return *pval;
+
         return std::nullopt;
     };
 
     template <class T>
-    T* GetService()
+    std::shared_ptr<T> GetService()
     {
         auto it = services.find(std::type_index(typeid(T)));
         if (it == services.end())
             return nullptr;
 
-        if (auto ptr = std::get_if<std::unique_ptr<T>>(&it->second))
-            return ptr->get();
+        if (auto ptr = std::get_if<std::shared_ptr<T>>(&it->second))
+            return *ptr;
 
         return nullptr;
     }
