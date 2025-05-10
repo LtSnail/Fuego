@@ -33,7 +33,7 @@ struct VertexData
 };
 #pragma pack(pop)
 
-class FUEGO_API Renderer : public Service<Renderer, IRendererService, IUpdatable>
+class FUEGO_API Renderer : public Service<Renderer>, public IUpdatable
 {
 public:
     struct Viewport
@@ -51,7 +51,7 @@ public:
         SPECULAR = 2
     };
 
-    friend struct Service<Renderer, IRendererService, IUpdatable>;
+    friend struct Service<Renderer>;
     Renderer();
     ~Renderer() = default;
 
@@ -60,7 +60,7 @@ public:
     void ChangeViewport(float x, float y, float w, float h);
     std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
 
-    // IEngineSubsystem
+    // IUpdatable
     void Update(float dlTime) {};
     void PostUpdate(float dlTime) {};
 

@@ -1,5 +1,4 @@
 #pragma once
-#include <glm/ext/matrix_float4x4.hpp>
 
 #pragma region Concepts
 
@@ -21,19 +20,6 @@ class Renderer;
 namespace Fuego
 {
 
-struct IRendererService
-{
-    void DrawModel(const Fuego::Graphics::Model* model, glm::mat4 model_pos);
-    void ChangeViewport(float x, float y, float w, float h);
-    std::unique_ptr<Fuego::Graphics::Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
-};
-
-struct IFileSystemService
-{
-    virtual void FUCreateFile(const std::string& file_name, std::string_view folder) const = 0;
-    virtual void WriteToFile(std::string_view file_name, const char* buffer) = 0;
-};
-
 struct IUpdatable
 {
     void Update(float dlTime);
@@ -47,8 +33,8 @@ struct IInitializable
     void Shutdown();
 };
 
-template <class Derived, class... Interfaces>
-struct Service : public IInitializable, public Interfaces...
+template <class Derived>
+struct Service : public IInitializable
 {
     void Init()
     {

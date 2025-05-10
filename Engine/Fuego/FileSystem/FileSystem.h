@@ -15,10 +15,10 @@ namespace Fuego::FS
 
 class Application;
 
-class FUEGO_API FileSystem : public Service<FileSystem, IFileSystemService>
+class FUEGO_API FileSystem : public Service<FileSystem>
 {
 public:
-    friend struct Service<FileSystem, IFileSystemService>;
+    friend struct Service<FileSystem>;
 
     FileSystem(FileSystem&&) noexcept = default;
     FileSystem& operator=(FileSystem&&) noexcept = default;
@@ -30,7 +30,6 @@ public:
 
     void FUCreateFile(const std::string& file_name, std::string_view folder) const;
     void WriteToFile(std::string_view file_name, const char* buffer);
-
 
     friend class Application;
     FileSystem();
