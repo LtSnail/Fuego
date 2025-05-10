@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class CommandBuffer;
 
@@ -12,4 +12,4 @@ public:
     virtual void Submit(const CommandBuffer& commandBuffer) = 0;
     virtual void Wait() = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

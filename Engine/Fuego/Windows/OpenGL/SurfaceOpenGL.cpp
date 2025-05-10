@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 SurfaceOpenGL::SurfaceOpenGL(const void* window)
 {
@@ -12,7 +12,7 @@ SurfaceOpenGL::SurfaceOpenGL(const void* window)
 
 SurfaceOpenGL::~SurfaceOpenGL()
 {
-    ReleaseDC(_window, _hdc);
+    Release();
 }
 
 Surface::Rect SurfaceOpenGL::GetRect() const
@@ -41,4 +41,12 @@ void SurfaceOpenGL::Clear() const
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-}  // namespace Fuego::Renderer
+void SurfaceOpenGL::Release()
+{
+    if (_hdc)
+        ReleaseDC(_window, _hdc);
+    _hdc = nullptr;
+
+}
+
+}  // namespace Fuego::Graphics

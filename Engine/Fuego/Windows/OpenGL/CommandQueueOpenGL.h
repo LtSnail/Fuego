@@ -2,7 +2,7 @@
 
 #include "Renderer/CommandQueue.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class CommandQueueOpenGL final : public CommandQueue
 {
@@ -16,4 +16,4 @@ protected:
     friend class DeviceOpenGL;
     CommandQueueOpenGL() = default;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

@@ -2,7 +2,7 @@
 
 #include "Renderer/Texture.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class TextureOpenGL final : public Texture
 {
@@ -37,4 +37,4 @@ public:
     TextureViewOpenGL() = default;
     ~TextureViewOpenGL() = default;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

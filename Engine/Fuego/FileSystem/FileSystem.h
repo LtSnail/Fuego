@@ -3,7 +3,9 @@
 #include <filesystem>
 #include <fstream>
 
-namespace Fuego::Renderer
+#include "Services/ServiceInterfaces.hpp"
+
+namespace Fuego::Graphics
 {
 class Model;
 }
@@ -13,10 +15,13 @@ namespace Fuego::FS
 
 class Application;
 
-class FUEGO_API FileSystem
+class FUEGO_API FileSystem : public Service<FileSystem>
 {
 public:
-    FUEGO_NON_COPYABLE_NON_MOVABLE(FileSystem)
+    friend struct Service<FileSystem>;
+
+    FileSystem(FileSystem&&) noexcept = default;
+    FileSystem& operator=(FileSystem&&) noexcept = default;
 
     std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode = std::fstream::ios_base::in);
     bool Load_Image(IN const std::string& file, IN int& bits_per_pixel, OUT unsigned char*& data, OUT int& x, OUT int& y, int image_channels = 3);
@@ -26,10 +31,13 @@ public:
     void FUCreateFile(const std::string& file_name, std::string_view folder) const;
     void WriteToFile(std::string_view file_name, const char* buffer);
 
-
     friend class Application;
     FileSystem();
     ~FileSystem() = default;
     FUEGO_INTERFACE(FileSystem);
+
+private:
+    void OnInit();
+    void OnShutdown();
 };
 }  // namespace Fuego::FS

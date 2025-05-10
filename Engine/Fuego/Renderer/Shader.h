@@ -2,7 +2,7 @@
 
 #include "glm/glm.hpp"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class ShaderObject;
 class Texture;
@@ -12,6 +12,7 @@ class Shader
 public:
     enum ShaderType
     {
+        None = 0,
         Vertex = 1,
         Pixel = 2
     };
@@ -25,5 +26,7 @@ public:
     virtual bool SetText2D(const std::string& var, const Texture& texture) const = 0;
 
     virtual ~Shader() = default;
+
+    virtual void Release() = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

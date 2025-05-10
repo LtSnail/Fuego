@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Surface
 {
@@ -16,5 +16,7 @@ public:
     virtual const void* GetNativeHandle() const = 0;
 
     virtual void Clear() const = 0;
+
+    virtual void Release() = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

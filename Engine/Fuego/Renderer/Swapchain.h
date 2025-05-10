@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Surface;
 
@@ -16,4 +16,4 @@ public:
 
     virtual Surface& GetScreenTexture() = 0;  // TODO: not sure if we should return a surface
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

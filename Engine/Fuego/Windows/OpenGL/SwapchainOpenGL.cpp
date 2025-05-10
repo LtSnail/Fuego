@@ -6,7 +6,7 @@
 #include "glad/gl.h"
 // clang-format on
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 SwapchainOpenGL::SwapchainOpenGL(const Surface& surface)
     : _surface(dynamic_cast<const SurfaceOpenGL&>(surface))
@@ -47,4 +47,4 @@ void SwapchainOpenGL::ValidateWindow()
     BeginPaint((HWND)_surface.GetNativeHandle(), &ps);
     EndPaint((HWND)_surface.GetNativeHandle(), &ps);
 }
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

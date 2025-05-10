@@ -2,7 +2,7 @@
 
 #include "glad/gl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 BufferOpenGL::BufferOpenGL()
@@ -29,4 +29,4 @@ void BufferOpenGL::BindDataImpl(const void* data, size_t size_bytes, size_t offs
     glBufferData(GL_ARRAY_BUFFER, size_bytes, data, GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

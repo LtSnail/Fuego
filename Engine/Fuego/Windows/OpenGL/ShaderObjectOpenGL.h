@@ -4,7 +4,7 @@
 #include "ShaderObject.h"
 #include "ShaderOpenGl.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class ShaderObjectOpenGL : public ShaderObject
 {
@@ -13,11 +13,11 @@ public:
 
     inline virtual Shader* GetPixelShader() override
     {
-        return pixel_shader;
+        return pixel_shader.get();
     }
     inline virtual Shader* GetVertexShader() override
     {
-        return vertex_shader;
+        return vertex_shader.get();
     }
     inline virtual uint32_t GetObjectID()
     {
@@ -27,13 +27,16 @@ public:
     virtual void Use() const override;
     virtual void BindMaterial(Material* material) override;
 
+    virtual void Release() override;
+
 private:
     MaterialOpenGL* material;
     uint32_t program;
-    ShaderOpenGL* vertex_shader;
-    ShaderOpenGL* pixel_shader;
+
+    std::unique_ptr<ShaderOpenGL> vertex_shader;
+    std::unique_ptr<ShaderOpenGL> pixel_shader;
 
     friend class ShaderObject;
-    ShaderObjectOpenGL(Shader& vs, Shader& px);
+    ShaderObjectOpenGL(Shader* vs, Shader* px);
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

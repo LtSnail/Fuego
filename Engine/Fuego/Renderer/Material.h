@@ -2,7 +2,7 @@
 
 #include "glm/common.hpp"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class ShaderObject;
 class Texture;
@@ -23,4 +23,4 @@ public:
 private:
     std::string name;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

@@ -2,9 +2,7 @@
 
 #include <span>
 
-#include "Renderer.h"
-
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 ShaderObject* shader_object;
@@ -13,9 +11,14 @@ uint32_t Renderer::MAX_TEXTURES_COUNT = 0;
 
 Renderer::Renderer()
     : show_wireframe(false)
-    , _camera(std::unique_ptr<Camera>(new Camera()))
+    , _camera(nullptr)
     , current_shader_obj(nullptr)
 {
+}
+
+void Renderer::OnInit()
+{
+    _camera.reset(new Camera());
     _camera->Activate();
 
     _device = Device::CreateDevice();
@@ -26,13 +29,23 @@ Renderer::Renderer()
     _swapchain = _device->CreateSwapchain(*_surface);
     _commandPool = _device->CreateCommandPool(*_commandQueue);
 
-    _mainVsShader = _device->CreateShader("vs_shader", Shader::ShaderType::Vertex);
-    _pixelShader = _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel);
-
-    opaque_shader.reset(ShaderObject::CreateShaderObject(*_mainVsShader.get(), *_pixelShader.get()));
+    opaque_shader.reset(ShaderObject::CreateShaderObject(_device->CreateShader("vs_shader", Shader::ShaderType::Vertex),
+                                                         _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel)));
     opaque_shader->GetVertexShader()->AddVar("model");
     opaque_shader->GetVertexShader()->AddVar("view");
     opaque_shader->GetVertexShader()->AddVar("projection");
+}
+
+void Renderer::OnShutdown()
+{
+    _device->Release();
+    _device.release();
+
+    _surface->Release();
+    _surface.release();
+
+    opaque_shader->Release();
+    opaque_shader.reset();
 }
 
 void Renderer::DrawModel(const Model* model, glm::mat4 model_pos)
@@ -113,7 +126,7 @@ void Renderer::ChangeViewport(float x, float y, float w, float h)
     viewport.x = x;
     viewport.y = y;
     viewport.width = w;
-    viewport.heigth = h;
+    viewport.height = h;
     UpdateViewport();
 }
 
@@ -132,4 +145,4 @@ VertexData::VertexData(glm::vec3 pos, glm::vec3 text_coord, glm::vec3 normal)
 {
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

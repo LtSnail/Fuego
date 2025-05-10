@@ -7,7 +7,7 @@ struct aiScene;
 struct aiMesh;
 struct aiMaterial;
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 struct VertexData;
 class Material;
@@ -53,14 +53,14 @@ private:
     uint16_t mesh_count;
     uint32_t vertex_count;
     uint32_t indices_count;
-    std::vector<Fuego::Renderer::VertexData> vertices;
+    std::vector<Fuego::Graphics::VertexData> vertices;
     std::vector<uint32_t> indices;
 
 public:
     class FUEGO_API Mesh
     {
     public:
-        Mesh(aiMesh* mesh, aiMaterial* material, uint16_t mesh_index, std::vector<Fuego::Renderer::VertexData>& vertices, std::vector<uint32_t>& indices);
+        Mesh(aiMesh* mesh, aiMaterial* material, uint16_t mesh_index, std::vector<Fuego::Graphics::VertexData>& vertices, std::vector<uint32_t>& indices);
         ~Mesh() = default;
 
         inline std::string_view GetTextureName() const
@@ -134,10 +134,10 @@ private:
     std::vector<std::unique_ptr<Model::Mesh>> meshes;
 
 public:
-    const std::vector<std::unique_ptr<Fuego::Renderer::Model::Mesh>>* GetMeshesPtr() const
+    const std::vector<std::unique_ptr<Fuego::Graphics::Model::Mesh>>* GetMeshesPtr() const
     {
         return &meshes;
     }
 };
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

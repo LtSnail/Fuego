@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 enum class TextureFormat
 {
@@ -50,11 +50,11 @@ private:
     std::string name;
     int width;
     int height;
-};  // namespace Fuego::Renderer
+};  // namespace Fuego::Graphics
 
 class TextureView
 {
 public:
     virtual ~TextureView() = default;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

@@ -2,7 +2,7 @@
 
 #include "Renderer/Device.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class DeviceOpenGL final : public Device
 {
@@ -18,9 +18,11 @@ public:
 
     virtual std::unique_ptr<Swapchain> CreateSwapchain(const Surface& surface) override;
 
-    virtual std::unique_ptr<Shader> CreateShader(std::string_view shaderName, Shader::ShaderType type) override;
+    virtual Shader* CreateShader(std::string_view shaderName, Shader::ShaderType type) override;
     virtual std::unique_ptr<Surface> CreateSurface(const void* window) override;
     virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) override;
+
+    virtual void Release() override;
 
 protected:
     friend class Device;
@@ -30,4 +32,4 @@ private:
     HGLRC ctx;
     int max_textures_units;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

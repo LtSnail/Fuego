@@ -20,7 +20,7 @@ void OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum sever
     if (id == 131169 || id == 131185 || id == 131218 || id == 131204)
         return;
 
-    if(severity == GL_DEBUG_SEVERITY_NOTIFICATION) 
+    if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
         return;
 
     FU_CORE_ERROR("---- OpenGL Debug Message ----");
@@ -100,7 +100,7 @@ void OpenGLDebugCallbackFunc(GLenum source, GLenum type, GLuint id, GLenum sever
     FU_CORE_ERROR("Message: {0}, Source: {1}, Type: {2}, ID: {3}, Severity: {4}\n", (const char*)message, source, type, id, severity);
 }
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 DeviceOpenGL::DeviceOpenGL()
@@ -177,14 +177,13 @@ DeviceOpenGL::DeviceOpenGL()
     glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &max_textures_units);
     FU_CORE_INFO("  Max texture units: {0}", max_textures_units);
-    Application::instance().Renderer().MAX_TEXTURES_COUNT = static_cast<uint32_t>(max_textures_units);
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->MAX_TEXTURES_COUNT = static_cast<uint32_t>(max_textures_units);
     glEnable(GL_DEPTH_TEST);
 }
 
 DeviceOpenGL::~DeviceOpenGL()
 {
-    wglMakeCurrent(nullptr, nullptr);
-    wglDeleteContext(ctx);
+    Release();
 }
 
 std::unique_ptr<Device> Device::CreateDevice()
@@ -200,6 +199,16 @@ std::unique_ptr<Surface> DeviceOpenGL::CreateSurface(const void* window)
 std::unique_ptr<Texture> DeviceOpenGL::CreateTexture(unsigned char* buffer, int width, int height)
 {
     return std::unique_ptr<TextureOpenGL>(new TextureOpenGL(buffer, width, height));
+}
+
+void DeviceOpenGL::Release()
+{
+    if (ctx)
+    {
+        wglMakeCurrent(nullptr, nullptr);
+        wglDeleteContext(ctx);
+        ctx = nullptr;
+    }
 }
 
 std::unique_ptr<Buffer> DeviceOpenGL::CreateBuffer(size_t size, uint32_t flags)
@@ -227,9 +236,9 @@ std::unique_ptr<Swapchain> DeviceOpenGL::CreateSwapchain(const Surface& surface)
     return std::unique_ptr<Swapchain>(new SwapchainOpenGL(surface));
 }
 
-std::unique_ptr<Shader> DeviceOpenGL::CreateShader(std::string_view shaderName, Shader::ShaderType type)
+Shader* DeviceOpenGL::CreateShader(std::string_view shaderName, Shader::ShaderType type)
 {
-    const std::string shaderCode = Application::instance().FileSystem().OpenFile(std::string(shaderName) + ".glsl");
-    return std::unique_ptr<Shader>(new ShaderOpenGL(shaderCode.c_str(), type));
+    const std::string shaderCode = ServiceLocator::instance().GetService<Fuego::FS::FileSystem>()->OpenFile(std::string(shaderName) + ".glsl");
+    return new ShaderOpenGL(shaderCode.c_str(), type);
 }
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

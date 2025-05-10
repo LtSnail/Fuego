@@ -3,7 +3,7 @@
 #include "Renderer/Swapchain.h"
 #include "SurfaceOpenGL.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Surface;
 
@@ -28,4 +28,4 @@ protected:
     friend class DeviceOpenGL;
     SwapchainOpenGL(const Surface& surface);
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

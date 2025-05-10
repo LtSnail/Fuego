@@ -28,10 +28,9 @@ class Application::ApplicationImpl
     friend class Application;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
-    std::unique_ptr<Renderer::Renderer> _renderer;
     std::unique_ptr<Fuego::FS::FileSystem> _fs;
-    std::vector<std::unique_ptr<Fuego::Renderer::Model>> _models;
-    std::unordered_map<std::string, std::unique_ptr<Fuego::Renderer::Texture>> _textures;
+    std::vector<std::unique_ptr<Fuego::Graphics::Model>> _models;
+    std::unordered_map<std::string, std::unique_ptr<Fuego::Graphics::Texture>> _textures;
 
     bool initialized = false;
     bool m_Running;
@@ -46,11 +45,6 @@ Application::Application()
 Application::~Application()
 {
     delete d;
-}
-
-Renderer::Renderer& Application::Renderer()
-{
-    return *d->_renderer.get();
 }
 
 void Application::PushLayer(Layer* layer)
@@ -97,7 +91,7 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 }
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    d->_renderer->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
     event.SetHandled();
     return true;
 }
@@ -113,7 +107,7 @@ bool Application::OnEndResizeWindow(WindowEndResizeEvent& event)
 }
 bool Application::OnValidateWindow(WindowValidateEvent& event)
 {
-    d->_renderer->ValidateWindow();
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->ValidateWindow();
     d->m_Window->SetPainted();
     event.SetHandled();
     return true;
@@ -125,7 +119,7 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
     switch (crossplatform_key)
     {
     case Key::D1:
-        d->_renderer->ToggleWireFrame();
+        ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->ToggleWireFrame();
         break;
     case Key::D2:
         d->m_Window->SwitchInteractionMode();
@@ -136,16 +130,17 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 }
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
-    d->_renderer->ShowWireFrame();
+    auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
+    renderer->ShowWireFrame();
     // TODO: As for now we use just one opaque shader, but we must think about different passes
     // using different shaders with blending and probably using pre-passes
-    d->_renderer->SetShaderObject(d->_renderer->opaque_shader.get());
-    d->_renderer->CurrentShaderObject()->Use();
+    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->SetShaderObject(renderer->opaque_shader.get());
+    renderer->CurrentShaderObject()->Use();
     float counter = 1.f;
     for (auto it = d->_models.begin(); it != d->_models.end(); ++it)
     {
-        Fuego::Renderer::Model* model_ptr = it->get();
-        d->_renderer->DrawModel(model_ptr, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, counter)));
+        Fuego::Graphics::Model* model_ptr = it->get();
+        renderer->DrawModel(model_ptr, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, counter)));
         counter += 10.f;
     }
     UNUSED(event);
@@ -155,11 +150,6 @@ bool Application::OnMouseMoveEvent(MouseMovedEvent& event)
 {
     UNUSED(event);
     return true;
-}
-
-Fuego::FS::FileSystem& Application::FileSystem()
-{
-    return *d->_fs.get();
 }
 
 Window& Application::GetWindow()
@@ -172,8 +162,13 @@ void Application::Init()
     d->_fs = std::make_unique<FS::FileSystem>();
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-    d->_renderer.reset(new Renderer::Renderer());
-    d->m_Running = true;
+
+    auto fs = ServiceLocator::instance().Register<Fuego::FS::FileSystem>();
+    fs.value()->Init();
+
+    auto renderer = ServiceLocator::instance().Register<Fuego::Graphics::Renderer>();
+    renderer.value()->Init();
+
     d->_models.reserve(10);
 
     AddTexture("fallback.png");
@@ -181,16 +176,17 @@ void Application::Init()
     LoadModel("WaterCooler/WaterCooler.obj");
 
     d->initialized = true;
+    d->m_Running = true;
 }
 
-Fuego::Renderer::Model* Application::LoadModel(std::string_view path)
+Fuego::Graphics::Model* Application::LoadModel(std::string_view path)
 {
     Assimp::Importer importer{};
     const aiScene* scene = importer.ReadFile(d->_fs->GetFullPathToFile(path.data()), ASSIMP_LOAD_FLAGS);
     if (!scene)
         return nullptr;
-    d->_models.emplace_back(std::make_unique<Fuego::Renderer::Model>(scene));
-    Fuego::Renderer::Model* model = d->_models.back().get();
+    d->_models.emplace_back(std::make_unique<Fuego::Graphics::Model>(scene));
+    Fuego::Graphics::Model* model = d->_models.back().get();
     return model;
 }
 
@@ -209,11 +205,12 @@ bool Application::AddTexture(std::string_view path)
     if (path.data() && path.size() > 0)
         res = d->_fs->Load_Image(path.data(), bits, data, width, height);
     if (res)
-        d->_textures.emplace(std::string(path.data()), std::move(d->_renderer->CreateTexture(data, width, height)));
+        d->_textures.emplace(std::string(path.data()),
+                             std::move(ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->CreateTexture(data, width, height)));
     return res;
 }
 
-const Fuego::Renderer::Texture* Application::GetLoadedTexture(std::string_view name) const
+const Fuego::Graphics::Texture* Application::GetLoadedTexture(std::string_view name) const
 {
     if (name.empty())
         return d->_textures.find("fallback.png")->second.get();
@@ -233,10 +230,11 @@ void Application::Run()
 
     while (d->m_Running)
     {
-        d->_renderer->Clear();
+        auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
+        renderer->Clear();
         d->m_EventQueue->Update();
         d->m_Window->Update();
-        Fuego::Renderer::Camera::GetActiveCamera()->Update();
+        Fuego::Graphics::Camera::GetActiveCamera()->Update();
 
         for (auto layer : d->m_LayerStack)
         {
@@ -249,7 +247,8 @@ void Application::Run()
             OnEvent(*ev);
             d->m_EventQueue->Pop();
         }
-        d->_renderer->Present();
+        renderer->Update(2);
+        renderer->Present();
     }
 }
 

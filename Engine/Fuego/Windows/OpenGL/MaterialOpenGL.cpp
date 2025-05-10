@@ -3,7 +3,7 @@
 #include "ShaderObjectOpenGL.h"
 #include <glad/gl.h>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 Material* Material::CreateMaterial(const Texture* albedo)
@@ -22,4 +22,4 @@ void MaterialOpenGL::Use() const
     glBindTexture(GL_TEXTURE_2D, albedo_texture->GetTextureID());
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

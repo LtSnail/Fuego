@@ -2,7 +2,7 @@
 
 #include <span>
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Buffer
 {
@@ -18,4 +18,4 @@ public:
 protected:
     virtual void BindDataImpl(const void* data, size_t size_bytes, size_t offset) = 0;
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

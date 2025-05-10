@@ -6,7 +6,7 @@
 using vec3 = glm::vec3;
 using mat4 = glm::mat4;
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class Renderer;
 
@@ -55,4 +55,4 @@ private:
     friend class Renderer;
     Camera();
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

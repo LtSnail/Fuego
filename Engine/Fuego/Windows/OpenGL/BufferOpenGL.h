@@ -2,7 +2,7 @@
 
 #include "Renderer/Buffer.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 class BufferOpenGL final : public Buffer
 {
@@ -19,4 +19,4 @@ protected:
     friend class DeviceOpenGL;
     BufferOpenGL();
 };
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics

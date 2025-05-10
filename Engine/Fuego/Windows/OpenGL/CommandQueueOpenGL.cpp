@@ -1,6 +1,6 @@
 #include "CommandQueueOpenGL.h"
 
-namespace Fuego::Renderer
+namespace Fuego::Graphics
 {
 
 void CommandQueueOpenGL::Submit(const CommandBuffer& commandBuffer)
@@ -12,4 +12,4 @@ void CommandQueueOpenGL::Wait()
 {
 }
 
-}  // namespace Fuego::Renderer
+}  // namespace Fuego::Graphics
