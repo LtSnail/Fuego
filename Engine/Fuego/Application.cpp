@@ -165,7 +165,7 @@ void Application::Init()
 
     auto fs = ServiceLocator::instance().Register<Fuego::FS::FileSystem>();
     fs.value()->Init();
-    fs.value()->FUCreateFile("test", "test");
+
     auto renderer = ServiceLocator::instance().Register<Fuego::Graphics::Renderer>();
     renderer.value()->Init();
 
