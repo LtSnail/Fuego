@@ -26,8 +26,9 @@ void ImGuiLayer::OnDetach()
 {
 }
 
-void ImGuiLayer::OnUpdate()
+void ImGuiLayer::OnUpdate(float dtTime)
 {
+    // TODO
 }
 
 void ImGuiLayer::OnEvent(EventVariant& event)

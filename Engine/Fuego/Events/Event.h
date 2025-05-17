@@ -3,6 +3,7 @@
 #include <type_traits>
 
 #include "Core.h"
+#include "Services/ServiceInterfaces.hpp"
 
 #define EVENT_NAME(type) (#type)
 

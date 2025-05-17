@@ -14,7 +14,7 @@ SceneLayer::SceneLayer()
 {
 }
 
-void SceneLayer::OnUpdate()
+void SceneLayer::OnUpdate(float dtTime)
 {
 }
 

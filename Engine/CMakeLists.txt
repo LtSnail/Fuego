@@ -38,7 +38,8 @@ set(PROJECT_HEADERS
     Fuego/Scene.h
     Fuego/Services/ServiceInterfaces.hpp
     Fuego/Services/ServiceLocator.h
-    Fuego/ThreadPool.h)
+    Fuego/ThreadPool.h
+    Fuego/FuTime.h)
 
 set(SOURCES
     Fuego/Application.cpp

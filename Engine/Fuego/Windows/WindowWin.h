@@ -4,7 +4,6 @@
 #include "Input.h"
 #include "Window.h"
 
-
 namespace Fuego
 {
 class SurfaceWindows;
@@ -14,7 +13,9 @@ class WindowWin final : public Window
 public:
     WindowWin(const WindowProps& props, EventQueue& eventQueue);
 
-    virtual void Update() override;
+    virtual void OnUpdate(float dlTime) override;
+    virtual void OnPostUpdate(float dlTime) override;
+    virtual void OnFixedUpdate() override;
 
     inline virtual unsigned int GetWidth() const override
     {
@@ -24,9 +25,6 @@ public:
     {
         return _props.Height;
     }
-
-    virtual void SetVSync(bool enabled) override;
-    virtual bool IsVSync() const override;
 
     virtual const void* GetNativeHandle() const override;
 
@@ -57,6 +55,13 @@ public:
     {
         return _mouseDir;
     }
+
+    inline virtual bool IsActive() const override
+    {
+        return is_in_focus;
+    }
+
+    virtual void SetTitle(std::string title) override;
 
 private:
     float _currentWidth, _currentHeigth;

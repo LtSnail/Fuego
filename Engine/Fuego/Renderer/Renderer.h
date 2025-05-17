@@ -61,8 +61,9 @@ public:
     std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) const;
 
     // IUpdatable
-    void Update(float dlTime) {};
-    void PostUpdate(float dlTime) {};
+    void OnUpdate(float dlTime);
+    void OnPostUpdate(float dlTime);
+    void OnFixedUpdate();
 
     void Clear();
     void Present();
@@ -75,6 +76,8 @@ public:
         return viewport;
     }
 
+    void SetVSync(bool active);
+    bool IsVSync();
 
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
@@ -111,6 +114,8 @@ private:
     ShaderObject* current_shader_obj;
 
     Viewport viewport;
+
+    bool is_vsync;
 
     // Service
 protected:

@@ -9,7 +9,6 @@
 #include "SwapchainOpenGL.h"
 // clang-format off
 #include "glad/wgl.h"
-#include "glad/gl.h"
 // clang-format on
 #include "Renderer.h"
 #include "TextureOpenGL.h"
@@ -199,6 +198,11 @@ std::unique_ptr<Surface> DeviceOpenGL::CreateSurface(const void* window)
 std::unique_ptr<Texture> DeviceOpenGL::CreateTexture(unsigned char* buffer, int width, int height)
 {
     return std::unique_ptr<TextureOpenGL>(new TextureOpenGL(buffer, width, height));
+}
+
+void DeviceOpenGL::SetVSync(bool active) const
+{
+    wglSwapIntervalEXT(active);
 }
 
 void DeviceOpenGL::Release()

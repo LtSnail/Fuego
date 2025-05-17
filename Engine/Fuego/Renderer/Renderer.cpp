@@ -13,6 +13,7 @@ Renderer::Renderer()
     : show_wireframe(false)
     , _camera(nullptr)
     , current_shader_obj(nullptr)
+    , is_vsync(true)
 {
 }
 
@@ -22,6 +23,8 @@ void Renderer::OnInit()
     _camera->Activate();
 
     _device = Device::CreateDevice();
+    _device->SetVSync(is_vsync);
+
     _commandQueue = _device->CreateCommandQueue();
 
     // Temporary: we're creating surface for main Application window
@@ -116,9 +119,35 @@ void Renderer::ValidateWindow()
     _swapchain->ValidateWindow();
 }
 
+void Renderer::SetVSync(bool active)
+{
+    is_vsync = active;
+    _device->SetVSync(is_vsync);
+}
+
+bool Renderer::IsVSync()
+{
+    return is_vsync;
+}
+
 std::unique_ptr<Texture> Renderer::CreateTexture(unsigned char* buffer, int width, int height) const
 {
     return _device->CreateTexture(buffer, width, height);
+}
+
+void Renderer::OnUpdate(float dlTime)
+{
+    // TODO
+}
+
+void Renderer::OnPostUpdate(float dlTime)
+{
+    // TODO
+}
+
+void Renderer::OnFixedUpdate()
+{
+    // TODO
 }
 
 void Renderer::ChangeViewport(float x, float y, float w, float h)

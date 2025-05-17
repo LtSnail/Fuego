@@ -7,7 +7,7 @@ class SceneLayer final : public Fuego::Layer
 public:
     SceneLayer();
 
-    virtual void OnUpdate() override;
+    virtual void OnUpdate(float dtTime) override;
     virtual void OnAttach() override;
     virtual void OnDetach() override;
 

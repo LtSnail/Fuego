@@ -15,7 +15,9 @@ int APIENTRY FuegoMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int c
 
     Fuego::Log::Init();
     Fuego::Application::instance().Init();
+    Fuego::Application::instance().SetVSync(false);
     Fuego::Application::instance().Run();
+
     FreeConsole();
 
     return 0;

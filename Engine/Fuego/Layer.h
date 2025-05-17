@@ -6,7 +6,7 @@
 
 namespace Fuego
 {
-class FUEGO_API Layer
+class FUEGO_API Layer : IUpdatable
 {
     FUEGO_INTERFACE(Layer)
 
@@ -16,7 +16,11 @@ public:
 
     virtual void OnAttach();
     virtual void OnDetach();
-    virtual void OnUpdate();
+
+    virtual void OnUpdate(float dlTime);
+    virtual void OnPostUpdate(float dlTime);
+    virtual void OnFixedUpdate();
+
     virtual void OnEvent(EventVariant& event);
 
     const std::string& GetName() const;

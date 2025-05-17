@@ -43,7 +43,7 @@ struct WindowProps
 
 class Surface;
 
-class Window
+class Window : public IUpdatable
 {
 public:
     enum InteractionMode
@@ -53,13 +53,14 @@ public:
     };
     virtual ~Window() = default;
 
-    virtual void Update() = 0;
+    virtual void OnUpdate(float dlTime) = 0;
+    virtual void OnPostUpdate(float dlTime) = 0;
+    virtual void OnFixedUpdate() = 0;
 
     virtual unsigned int GetWidth() const = 0;
     virtual unsigned int GetHeight() const = 0;
 
-    virtual void SetVSync(bool enabled) = 0;
-    virtual bool IsVSync() const = 0;
+    virtual bool IsActive() const = 0;
 
     virtual const void* GetNativeHandle() const = 0;
 
@@ -72,6 +73,8 @@ public:
 
     virtual InteractionMode GetInteractionMode() const = 0;
     virtual void SwitchInteractionMode() = 0;
+
+    virtual void SetTitle(std::string title) = 0;
 
     static std::unique_ptr<Window> CreateAppWindow(const WindowProps& props, EventQueue& eventQueue);
 };

@@ -21,6 +21,7 @@ set(PROJECT_HEADERS
     OpenGL/SurfaceOpenGL.h
     OpenGl/MaterialOpenGL.h
     OpenGl/ShaderObjectOpenGL.h
+    TimeWin.h
 )
 
 set(PROJECT_SOURCES
@@ -39,6 +40,7 @@ set(PROJECT_SOURCES
     OpenGL/SurfaceOpenGL.cpp
     OpenGL/MaterialOpenGL.cpp
     OpenGL/ShaderObjectOpenGL.cpp
+    TimeWin.cpp
 )
 
 add_subdirectory(${GLAD_PATH} ${GLAD_BUILD_DIR})

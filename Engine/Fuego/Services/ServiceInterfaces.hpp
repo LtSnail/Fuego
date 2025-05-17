@@ -22,9 +22,9 @@ namespace Fuego
 
 struct IUpdatable
 {
-    void Update(float dlTime);
-    void PostUpdate(float dlTime);
-    void FixedUpdate();
+    void OnUpdate(float dlTime);
+    void OnPostUpdate(float dlTime);
+    void OnFixedUpdate();
 };
 
 struct IInitializable

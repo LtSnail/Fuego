@@ -3,6 +3,8 @@
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
+#include "Services/ServiceInterfaces.hpp"
+
 using vec3 = glm::vec3;
 using mat4 = glm::mat4;
 
@@ -10,7 +12,7 @@ namespace Fuego::Graphics
 {
 class Renderer;
 
-class FUEGO_API Camera
+class FUEGO_API Camera : IUpdatable
 {
 public:
     ~Camera();
@@ -32,11 +34,13 @@ public:
 
     void Activate();
 
-    void Update();
+    void OnUpdate(float dlTime);
+    void OnPostUpdate(float dlTime);
+    void OnFixedUpdate();
 
 private:
     float speed;
-    void RotateCamera();
+    void RotateCamera(float dtTime);
     static Camera* active_camera;
     vec3 position;
     mat4 view;

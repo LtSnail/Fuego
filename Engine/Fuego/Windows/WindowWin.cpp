@@ -1,22 +1,18 @@
 ﻿#include "WindowWin.h"
 
-#include <glad/gl.h>
 #include <glad/wgl.h>
 
 #include "InputWin.h"
 #include "KeyCodesWin.h"
 #include "Log.h"
 
-
-typedef HGLRC WINAPI wglCreateContextAttribsARB_type(HDC hdc, HGLRC hShareContext, const int* attribList);
-wglCreateContextAttribsARB_type* wglCreateContextAttribsARB;
-
-typedef BOOL WINAPI wglChoosePixelFormatARB_type(HDC hdc, const int* piAttribIList, const FLOAT* pfAttribFList, UINT nMaxFormats, int* piFormats,
-                                                 UINT* nNumFormats);
-wglChoosePixelFormatARB_type* wglChoosePixelFormatARB;
-
 namespace Fuego
 {
+
+void WindowWin::SetTitle(std::string title)
+{
+    SetWindowText(_hwnd, std::string(_props.Title + " " + title).c_str());
+}
 
 DWORD WINAPI WindowWin::WinThreadMain(LPVOID lpParameter)
 {
@@ -136,8 +132,7 @@ void WindowWin::InitOpenGLExtensions()
         FU_CORE_ERROR("Failed to activate dummy OpenGL rendering context.");
     }
 
-    wglCreateContextAttribsARB = reinterpret_cast<wglCreateContextAttribsARB_type*>(wglGetProcAddress("wglCreateContextAttribsARB"));
-    wglChoosePixelFormatARB = reinterpret_cast<wglChoosePixelFormatARB_type*>(wglGetProcAddress("wglChoosePixelFormatARB"));
+    gladLoaderLoadWGL(dummy_dc);
 
     wglMakeCurrent(dummy_dc, 0);
     wglDeleteContext(dummy_context);
@@ -147,12 +142,16 @@ void WindowWin::InitOpenGLExtensions()
 
 LRESULT WindowWin::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-    is_in_focus = GetForegroundWindow() == hwnd;
-
     switch (msg)
     {
     case WM_ACTIVATE:
+    {
+        if (LOWORD(wparam) != WA_INACTIVE)
+            is_in_focus = true;
+        else
+            is_in_focus = false;
         break;
+    }
     case WM_PAINT:
     {
         if (!isPainted || isResizing || _props.mode == MINIMIZED)
@@ -374,7 +373,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     WaitForSingleObject(_onThreadCreated, INFINITE);
 }
 
-void WindowWin::Update()
+void WindowWin::OnUpdate(float dlTime)
 {
     if (isResizing || _props.mode == MINIMIZED)
     {
@@ -384,14 +383,14 @@ void WindowWin::Update()
     _eventQueue->PushEvent(std::make_shared<EventVariant>(AppRenderEvent()));
 }
 
-void WindowWin::SetVSync(bool enabled)
+void WindowWin::OnPostUpdate(float dlTime)
 {
-    UNUSED(enabled);
+    // TODO
 }
 
-bool WindowWin::IsVSync() const
+void WindowWin::OnFixedUpdate()
 {
-    return true;
+    // TODO
 }
 
 const void* WindowWin::GetNativeHandle() const

@@ -29,8 +29,19 @@ void Layer::OnDetach()
 {
 }
 
-void Layer::OnUpdate()
+void Layer::OnUpdate(float dlTime)
 {
+    // TODO
+}
+
+void Layer::OnPostUpdate(float dlTime)
+{
+    // TODO
+}
+
+void Layer::OnFixedUpdate()
+{
+    // TODO
 }
 
 void Layer::OnEvent(EventVariant& event)

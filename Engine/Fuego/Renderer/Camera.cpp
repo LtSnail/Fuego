@@ -13,7 +13,7 @@ Camera::Camera()
     , up(glm::vec3(0.0f, 1.0f, 0.0f))
     , yaw(0.0f)
     , pitch(0.0f)
-    , mouse_sensitivity(1.0f)
+    , mouse_sensitivity(10.f)
     , camera_forward(0.0f, 0.0f, -1.0f)
     , view(glm::mat4(1.0f))
     , dir(glm::vec3(0.0f, 0.0f, 0.0f))
@@ -47,35 +47,45 @@ Camera* Camera::GetActiveCamera()
     return active_camera;
 }
 
-void Camera::Update()
+void Camera::OnUpdate(float dlTime)
 {
     if (Input::IsKeyPressed(Key::W))
     {
-        position += speed * camera_forward;
+        position += speed * camera_forward * dlTime;
     }
     if (Input::IsKeyPressed(Key::S))
     {
-        position -= speed * camera_forward;
+        position -= speed * camera_forward * dlTime;
     }
     if (Input::IsKeyPressed(Key::A))
     {
-        position -= glm::normalize(glm::cross(camera_forward, up)) * speed;
+        position -= glm::normalize(glm::cross(camera_forward, up)) * speed * dlTime;
     }
     if (Input::IsKeyPressed(Key::D))
     {
-        position += glm::normalize(glm::cross(camera_forward, up)) * speed;
+        position += glm::normalize(glm::cross(camera_forward, up)) * speed * dlTime;
     }
 
-    RotateCamera();
+    RotateCamera(dlTime);
     projection = glm::perspective(glm::radians((float)FOV), 1280.0F / 720.0F, near_clip, far_clip);
     view = glm::lookAt(position, position + camera_forward, up);
 }
 
-void Camera::RotateCamera()
+void Camera::OnPostUpdate(float dlTime)
+{
+    // TODO
+}
+
+void Camera::OnFixedUpdate()
+{
+    // TODO
+}
+
+void Camera::RotateCamera(float dtTime)
 {
     glm::vec2 mouse_dir = Input::GetMouseDir();
-    yaw += mouse_dir.x * mouse_sensitivity;
-    pitch += mouse_dir.y * -1.0f * mouse_sensitivity;
+    yaw += mouse_dir.x * mouse_sensitivity * dtTime;
+    pitch += mouse_dir.y * -1.0f * mouse_sensitivity * dtTime;
     glm::fclamp(pitch, -89.0f, 89.0f);
 
     glm::vec3 direction;

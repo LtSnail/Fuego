@@ -31,6 +31,8 @@ public:
     // Yes, I know, raw pointer, so be carefull here
     virtual Shader* CreateShader(std::string_view shaderName, Shader::ShaderType type) = 0;
 
+    virtual void SetVSync(bool active) const = 0;
+
     virtual void Release() = 0;
 };
 }  // namespace Fuego::Graphics

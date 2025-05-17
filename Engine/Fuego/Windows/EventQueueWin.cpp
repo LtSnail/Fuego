@@ -2,8 +2,19 @@
 
 namespace Fuego
 {
-void EventQueueWin::Update()
+void EventQueueWin::OnUpdate(float dtTime)
 {
+    // TODO
+}
+
+void EventQueueWin::OnPostUpdate(float dlTime)
+{
+    // TODO
+}
+
+void EventQueueWin::OnFixedUpdate()
+{
+    // TODO
 }
 
 std::shared_ptr<EventVariant> EventQueueWin::Front()

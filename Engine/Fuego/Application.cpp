@@ -2,6 +2,7 @@
 
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
+#include "FuTime.h"
 #include "KeyCodes.h"
 #include "LayerStack.h"
 #include "Renderer.h"
@@ -34,6 +35,7 @@ class Application::ApplicationImpl
     std::unique_ptr<Fuego::FS::FileSystem> _fs;
     std::vector<std::unique_ptr<Fuego::Graphics::Model>> _models;
     std::unordered_map<std::string, std::unique_ptr<Fuego::Graphics::Texture>> _textures;
+    std::unique_ptr<Fuego::Time> _time_manager;
 
     bool initialized = false;
     bool m_Running;
@@ -165,6 +167,7 @@ void Application::Init()
     d->_fs = std::make_unique<FS::FileSystem>();
     d->m_EventQueue = EventQueue::CreateEventQueue();
     d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
+    d->_time_manager = Time::CreateTimeManager(0.025f);
 
     auto fs = ServiceLocator::instance().Register<Fuego::FS::FileSystem>();
     fs.value()->Init();
@@ -228,6 +231,18 @@ const Fuego::Graphics::Texture* Application::GetLoadedTexture(std::string_view n
     return nullptr;
 }
 
+void Application::SetVSync(bool active) const
+{
+    auto renderer = ServiceLocator::instance().Register<Fuego::Graphics::Renderer>();
+    renderer.value()->SetVSync(active);
+}
+
+bool Application::IsVSync() const
+{
+    auto renderer = ServiceLocator::instance().Register<Fuego::Graphics::Renderer>();
+    return renderer.value()->IsVSync();
+}
+
 void Application::Run()
 {
     if (!d->initialized)
@@ -238,14 +253,24 @@ void Application::Run()
     while (d->m_Running)
     {
         auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
+
+        d->_time_manager->Tick();
+
+        char buffer[32];
+        sprintf(buffer, "%d", d->_time_manager->FPS());
+        d->m_Window->SetTitle(buffer);
+
+        float dtTime = d->_time_manager->DeltaTime();
+
+
         renderer->Clear();
-        d->m_EventQueue->Update();
-        d->m_Window->Update();
-        Fuego::Graphics::Camera::GetActiveCamera()->Update();
+        d->m_EventQueue->OnUpdate(dtTime);
+        d->m_Window->OnUpdate(dtTime);
+        Fuego::Graphics::Camera::GetActiveCamera()->OnUpdate(dtTime);
 
         for (auto layer : d->m_LayerStack)
         {
-            layer->OnUpdate();
+            layer->OnUpdate(dtTime);
         }
 
         while (!d->m_EventQueue->Empty())
@@ -254,7 +279,8 @@ void Application::Run()
             OnEvent(*ev);
             d->m_EventQueue->Pop();
         }
-        renderer->Update(2);
+
+        renderer->OnUpdate(dtTime);
         renderer->Present();
     }
 }
