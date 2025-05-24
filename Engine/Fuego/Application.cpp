@@ -9,18 +9,9 @@
 #include "Scene.h"
 #include "ThreadPool.h"
 
-
-// TODO Move this crap out if Application
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-
-#include <assimp/Importer.hpp>
-#define ASSIMP_LOAD_FLAGS aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType  //
-
 namespace Fuego
 {
 
-template <>
 Application& singleton<Application>::instance()
 {
     static Application inst;
@@ -32,11 +23,9 @@ class Application::ApplicationImpl
     friend class Application;
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
-    std::unique_ptr<Fuego::FS::FileSystem> _fs;
-    std::vector<std::unique_ptr<Fuego::Graphics::Model>> _models;
-    std::unordered_map<std::string, std::unique_ptr<Fuego::Graphics::Texture>> _textures;
     std::unique_ptr<Fuego::Time> _time_manager;
 
+    RendererType renderer;
     bool initialized = false;
     bool m_Running;
     LayerStack m_LayerStack;
@@ -136,18 +125,23 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
+    auto assets_manager = ServiceLocator::instance().GetService<Fuego::AssetsManager>();
     renderer->ShowWireFrame();
     // TODO: As for now we use just one opaque shader, but we must think about different passes
     // using different shaders with blending and probably using pre-passes
-    ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->SetShaderObject(renderer->opaque_shader.get());
+    renderer->SetShaderObject(renderer->opaque_shader.get());
     renderer->CurrentShaderObject()->Use();
-    float counter = 1.f;
-    for (auto it = d->_models.begin(); it != d->_models.end(); ++it)
-    {
-        Fuego::Graphics::Model* model_ptr = it->get();
-        renderer->DrawModel(model_ptr, glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, counter)));
-        counter += 10.f;
-    }
+
+    auto model_1 = assets_manager->Get<Fuego::Graphics::Model>("Shotgun");
+    auto locked_model_1 = model_1.lock();
+    if (locked_model_1)
+        renderer->DrawModel(locked_model_1.get(), glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.f)));
+
+    auto model_2 = assets_manager->Get<Fuego::Graphics::Model>("WaterCooler");
+    auto locked_model_2 = model_2.lock();
+    if (locked_model_2)
+        renderer->DrawModel(locked_model_2.get(), glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 10.f)));
+
     UNUSED(event);
     return true;
 }
@@ -162,73 +156,37 @@ Window& Application::GetWindow()
     return *d->m_Window;
 }
 
-void Application::Init()
+void Application::Init(ApplicationBootSettings& settings)
 {
-    d->_fs = std::make_unique<FS::FileSystem>();
+    d->renderer = settings.renderer;
     d->m_EventQueue = EventQueue::CreateEventQueue();
-    d->m_Window = Window::CreateAppWindow(WindowProps(), *d->m_EventQueue);
-    d->_time_manager = Time::CreateTimeManager(0.025f);
+    d->m_Window = Window::CreateAppWindow(settings.window_props, *d->m_EventQueue);
+    d->_time_manager = Time::CreateTimeManager(settings.fixed_dt);
 
     auto fs = ServiceLocator::instance().Register<Fuego::FS::FileSystem>();
     fs.value()->Init();
 
     auto renderer = ServiceLocator::instance().Register<Fuego::Graphics::Renderer>();
     renderer.value()->Init();
+    SetVSync(settings.vsync);
 
     auto thread_pool = ServiceLocator::instance().Register<Fuego::ThreadPool>();
     thread_pool.value()->Init();
 
-    d->_models.reserve(10);
+    auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>();
+    auto fallback_img = assets_manager.value()->Load<Fuego::Graphics::Image2D>("fallback.png", Fuego::Graphics::ImageFormat::RGB);
+    renderer.value()->CreateTexture(*fallback_img);
+    std::chrono::steady_clock::time_point timer = std::chrono::steady_clock::now();
+    assets_manager.value()->LoadAsync<Fuego::Graphics::Model>("Shotgun/Shotgun.obj");
+    assets_manager.value()->LoadAsync<Fuego::Graphics::Model>("WaterCooler/WaterCooler.obj");
+    auto now = std::chrono::steady_clock::now();
+    auto res = now - timer;
+    FU_CORE_INFO("time: {0} ms", std::chrono::duration_cast<std::chrono::milliseconds>(res).count());
 
-    AddTexture("fallback.png");
-    LoadModel("Shotgun/Shotgun.obj");
-    LoadModel("WaterCooler/WaterCooler.obj");
+    // assets_manager.value()->Unload<Fuego::Graphics::Model>("WaterCooler/WaterCooler.obj");
 
     d->initialized = true;
     d->m_Running = true;
-}
-
-Fuego::Graphics::Model* Application::LoadModel(std::string_view path)
-{
-    // TODO Move this crap out if Application
-    Assimp::Importer importer{};
-    const aiScene* scene = importer.ReadFile(d->_fs->GetFullPathToFile(path.data()), ASSIMP_LOAD_FLAGS);
-    if (!scene)
-        return nullptr;
-    d->_models.emplace_back(std::make_unique<Fuego::Graphics::Model>(scene));
-    Fuego::Graphics::Model* model = d->_models.back().get();
-    return model;
-}
-
-bool Application::IsTextureLoaded(std::string_view texture) const
-{
-    auto it = d->_textures.find(texture.data());
-    return it != d->_textures.end();
-}
-
-bool Application::AddTexture(std::string_view path)
-{
-    unsigned char* data = nullptr;
-    int width, height, bits;
-    bool res = false;
-
-    if (path.data() && path.size() > 0)
-        res = d->_fs->Load_Image(path.data(), bits, data, width, height);
-    if (res)
-        d->_textures.emplace(std::string(path.data()),
-                             std::move(ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>()->CreateTexture(data, width, height)));
-    return res;
-}
-
-const Fuego::Graphics::Texture* Application::GetLoadedTexture(std::string_view name) const
-{
-    if (name.empty())
-        return d->_textures.find("fallback.png")->second.get();
-
-    auto it = d->_textures.find(name.data());
-    if (it != d->_textures.end() && it->second)
-        return it->second.get();
-    return nullptr;
 }
 
 void Application::SetVSync(bool active) const
@@ -247,7 +205,8 @@ void Application::Run()
 {
     if (!d->initialized)
     {
-        Init();
+        Application::ApplicationBootSettings settings{};
+        Init(settings);
     }
 
     while (d->m_Running)

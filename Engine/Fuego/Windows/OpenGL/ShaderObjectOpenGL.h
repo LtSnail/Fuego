@@ -25,12 +25,12 @@ public:
     }
 
     virtual void Use() const override;
-    virtual void BindMaterial(Material* material) override;
+    virtual void BindMaterial(const Material* material) override;
 
     virtual void Release() override;
 
 private:
-    MaterialOpenGL* material;
+    const MaterialOpenGL* material;
     uint32_t program;
 
     std::unique_ptr<ShaderOpenGL> vertex_shader;

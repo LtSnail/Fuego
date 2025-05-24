@@ -1,7 +1,5 @@
 #include "FileSystem.h"
 
-#include "External/stb_image/stb_image.h"
-
 #if defined(FUEGO_PLATFORM_WIN)
 #include "FileSystemPathsWin.h"
 #endif
@@ -53,18 +51,6 @@ std::string FileSystem::OpenFile(const std::string& file, std::fstream::ios_base
     f.close();
 
     return buffer.str();
-}
-bool FileSystem::Load_Image(IN const std::string& file, IN int& bits_per_pixel, OUT unsigned char*& data, OUT int& x, OUT int& y, int image_channels)
-{
-    std::string path = GetFullPathToFile(file);
-    stbi_set_flip_vertically_on_load(1);
-    data = stbi_load(path.c_str(), &x, &y, &bits_per_pixel, image_channels);
-    if (!data)
-    {
-        FU_CORE_ERROR("Can't load an image: {0} {1}", path, stbi_failure_reason());
-        return false;
-    }
-    return true;
 }
 
 std::string FileSystem::FileSystemImpl::GetExecutablePath()

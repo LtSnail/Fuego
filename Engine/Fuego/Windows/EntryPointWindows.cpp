@@ -14,8 +14,16 @@ int APIENTRY FuegoMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int c
     assert(freopen_s(&stream, "CONOUT$", "w", stderr) == 0);
 
     Fuego::Log::Init();
-    Fuego::Application::instance().Init();
-    Fuego::Application::instance().SetVSync(false);
+
+    Fuego::Application::ApplicationBootSettings settings{};
+    settings.renderer = Fuego::Application::RendererType::OpenGL;
+    settings.vsync = false;
+    settings.fixed_dt = 0.025f;
+    settings.window_props.x = 5;
+    settings.window_props.y = 5;
+    settings.window_props.CanFullscreen = true;
+
+    Fuego::Application::instance().Init(settings);
     Fuego::Application::instance().Run();
 
     FreeConsole();

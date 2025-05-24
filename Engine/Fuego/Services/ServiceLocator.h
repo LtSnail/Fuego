@@ -2,6 +2,7 @@
 #include <typeindex>
 #include <unordered_map>
 
+#include "AssetsManager.h"
 #include "FileSystem/FileSystem.h"
 #include "Renderer.h"
 #include "ServiceInterfaces.hpp"
@@ -12,7 +13,8 @@ namespace Fuego
 {
 
 #pragma region Templates
-using service_variant = std::variant<std::shared_ptr<Fuego::Graphics::Renderer>, std::shared_ptr<Fuego::FS::FileSystem>, std::shared_ptr<Fuego::ThreadPool>>;
+using service_variant = std::variant<std::shared_ptr<Fuego::Graphics::Renderer>, std::shared_ptr<Fuego::FS::FileSystem>, std::shared_ptr<Fuego::ThreadPool>,
+                                     std::shared_ptr<Fuego::AssetsManager>>;
 
 #pragma endregion
 

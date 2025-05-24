@@ -21,6 +21,7 @@ void Fuego::ThreadPool::OnInit()
                     if (!running)
                         return;
                     Task task = GetTask();
+                    ul.unlock();
                     task();
                 }
             });

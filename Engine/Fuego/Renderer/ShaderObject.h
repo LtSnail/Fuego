@@ -13,7 +13,7 @@ public:
     virtual Shader* GetPixelShader() = 0;
     virtual Shader* GetVertexShader() = 0;
     virtual void Use() const = 0;
-    virtual void BindMaterial(Material* material) = 0;
+    virtual void BindMaterial(const Material* material) = 0;
 
     virtual void Release() = 0;
 };

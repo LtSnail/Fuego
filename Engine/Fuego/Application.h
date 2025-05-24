@@ -23,7 +23,6 @@ class Texture;
 }  // namespace Fuego::Graphics
 
 
-
 namespace Fuego
 {
 
@@ -34,7 +33,22 @@ class FUEGO_API Application : public singleton<Application>
     FUEGO_INTERFACE(Application)
 
 public:
-    void Init();
+    enum class RendererType
+    {
+        OpenGL = 0,
+        Vulkan = 1,
+    };
+
+    struct ApplicationBootSettings
+    {
+        RendererType renderer = RendererType::OpenGL;
+        bool vsync = false;
+        WindowProps window_props = WindowProps{};
+        float fixed_dt = 0.025f;
+    };
+
+
+    void Init(ApplicationBootSettings& settings);
     void Run();
 
     void PushLayer(Layer* layer);
@@ -56,16 +70,11 @@ public:
 
     Window& GetWindow();
 
-    bool IsTextureLoaded(std::string_view) const;
-    bool AddTexture(std::string_view);
-    const Fuego::Graphics::Texture* GetLoadedTexture(std::string_view name) const;
-
     void SetVSync(bool active) const;
     bool IsVSync() const;
 
 protected:
     Application();
     virtual ~Application() override;
-    Graphics::Model* LoadModel(std::string_view path);
 };
 }  // namespace Fuego

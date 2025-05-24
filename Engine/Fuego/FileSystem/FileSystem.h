@@ -24,7 +24,6 @@ public:
     FileSystem& operator=(FileSystem&&) noexcept = default;
 
     std::string OpenFile(const std::string& file, std::fstream::ios_base::openmode mode = std::fstream::ios_base::in);
-    bool Load_Image(IN const std::string& file, IN int& bits_per_pixel, OUT unsigned char*& data, OUT int& x, OUT int& y, int image_channels = 3);
     const std::string GetFullPathToFile(std::string_view file_name) const;
     std::string GetFullPathToFolder(std::string_view folder_name) const;
 

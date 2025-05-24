@@ -47,9 +47,9 @@ void ShaderObjectOpenGL::Use() const
     glUseProgram(program);
 }
 
-void ShaderObjectOpenGL::BindMaterial(Material* material)
+void ShaderObjectOpenGL::BindMaterial(const Material* material)
 {
-    this->material = static_cast<MaterialOpenGL*>(material);
+    this->material = static_cast<const MaterialOpenGL*>(material);
     pixel_shader->AddVar("material.albedo_text");
     pixel_shader->SetText2D("material.albedo_text", this->material->GetAlbedoTexture());
 }

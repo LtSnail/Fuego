@@ -24,11 +24,15 @@ public:
     }
 
 private:
+    uint32_t ColorFormat(TextureFormat format);
+    uint32_t PixelFormat(uint16_t channels, bool inverted = false);
+    uint32_t PixelFormat(TextureFormat format, bool inverted = false);
+
     uint16_t texture_unit;
     uint32_t texture_id;
     friend class DeviceOpenGL;
 
-    TextureOpenGL(unsigned char* buffer, int width, int heigth);
+    TextureOpenGL(std::string_view name, TextureFormat format, unsigned char* buffer, int width, int height);
 };
 
 class TextureViewOpenGL

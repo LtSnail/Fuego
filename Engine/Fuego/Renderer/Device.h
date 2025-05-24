@@ -4,6 +4,7 @@
 
 namespace Fuego::Graphics
 {
+enum class TextureFormat;
 class Buffer;
 class CommandQueue;
 class CommandPool;
@@ -26,7 +27,7 @@ public:
     virtual std::unique_ptr<Swapchain> CreateSwapchain(const Surface& surface) = 0;
 
     virtual std::unique_ptr<Surface> CreateSurface(const void* window) = 0;
-    virtual std::unique_ptr<Texture> CreateTexture(unsigned char* buffer, int width, int height) = 0;
+    virtual std::unique_ptr<Texture> CreateTexture(std::string_view name, TextureFormat format, unsigned char* buffer, int width, int height) = 0;
 
     // Yes, I know, raw pointer, so be carefull here
     virtual Shader* CreateShader(std::string_view shaderName, Shader::ShaderType type) = 0;
