@@ -1,152 +1,169 @@
-# Engine
+# === Fuego Engine ===
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/abseil.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/protobuf.cmake)
+# === External Dependencies ===
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/assimp.cmake)
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/abseil.cmake)
+INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/protobuf.cmake)
 
-set_target_properties(ImGui PROPERTIES FOLDER "3rd party")
+# === Protocol Buffers Generation ===
+GETPROTOHEADERFILES(PROTO_OUT ${PROTO_OUTPUT_FOLDER})
+GETPROTOSOURCEFILES(PROTO_OUT ${PROTO_OUTPUT_FOLDER})
 
-# Proto
-getprotoheaderfiles(PROTO_OUT ${PROTO_OUTPUT_FOLDER})
-getprotosourcefiles(PROTO_OUT ${PROTO_OUTPUT_FOLDER})
-
-# Project set up
-set(PROJECT_HEADERS
+# === Source Files ===
+SET(ENGINE_HEADERS
+    # Core Engine
     Fuego/Application.h
     Fuego/Core.h
     Fuego/EntryPoint.h
     Fuego/Log.h
     Fuego/Window.h
     Fuego/EventQueue.h
+    # Event System
     Fuego/Events/Event.h
     Fuego/Events/EventVisitor.h
     Fuego/Events/KeyEvent.h
     Fuego/Events/MouseEvent.h
     Fuego/Events/ApplicationEvent.h
+    # Input System
     Fuego/MouseCodes.h
     Fuego/KeyCodes.h
-    Fuego/Layer.h
     Fuego/Input.h
+    # Layer System
+    Fuego/Layer.h
     Fuego/LayerStack.h
     Fuego/ImGui/ImGuiLayer.h
+    # Renderer
     Fuego/Renderer
+    # File System
     Fuego/FileSystem/FileSystem.h
-    External/stb_image/stb_image.h
-    Fuego.h
-    fupch.h
-    ${SCENE_GENERATED_PROTO_HDRS}
-    Fuego/Scene.h
+    # Service System
     Fuego/Services/ServiceInterfaces.hpp
     Fuego/Services/ServiceLocator.h
+    # Utilities
     Fuego/ThreadPool.h
     Fuego/FuTime.h
-    Fuego/AssetsManager.h)
+    Fuego/AssetsManager.h
+    Fuego/Scene.h
+    # Third Party
+    External/stb_image/stb_image.h
+    # Generated Code
+    ${SCENE_GENERATED_PROTO_HDRS}
+    # Main Headers
+    Fuego.h
+    fupch.h
+)
 
-set(SOURCES
+SET(ENGINE_SOURCES
+    # Core Engine
     Fuego/Application.cpp
     Fuego/Log.cpp
+    # Layer System
     Fuego/Layer.cpp
     Fuego/LayerStack.cpp
     Fuego/ImGui/ImGuiLayer.cpp
+    # File System
     Fuego/FileSystem/FileSystem.cpp
-    External/stb_image/stb_image.cpp
-    ${SCENE_GENERATED_PROTO_SRCS}
-    Fuego/Scene.cpp
+    # Service System
     Fuego/Services/ServiceLocator.cpp
+    # Utilities
     Fuego/ThreadPool.cpp
     Fuego/AssetsManager.cpp
-    Fuego/ApplicationPipeline.hpp)
+    Fuego/Scene.cpp
+    # Third Party
+    External/stb_image/stb_image.cpp
+    # Generated Code
+    ${SCENE_GENERATED_PROTO_SRCS}
+    # Implementation Files
+    Fuego/ApplicationPipeline.hpp
+)
 
-set(RENDERER_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer)
+# === Engine Configuration ===
+SET(ENGINE_PUBLIC_DEFINITIONS FUEGO_ENABLE_ASSERTS FUEGO_BUILD_LIB)
 
-# Common setup
-list(APPEND ENGINE_DEPENDENCIES ImGui)
+# Ensure _ITERATOR_DEBUG_LEVEL is set for all targets
+SET(ENGINE_PRIVATE_DEFINITIONS _ITERATOR_DEBUG_LEVEL=${_ITERATOR_DEBUG_LEVEL})
 
-set(PUBLIC_ENGINE_COMPILE_DEFS FUEGO_ENABLE_ASSERTS FUEGO_BUILD_LIB)
+IF(FUEGO_LIB_TYPE STREQUAL "SHARED")
+  LIST(APPEND ENGINE_PUBLIC_DEFINITIONS FUEGO_DLL_LIB)
+ENDIF()
 
-if(FUEGO_LIB_TYPE STREQUAL "SHARED")
-  list(APPEND PUBLIC_ENGINE_COMPILE_DEFS FUEGO_DLL_LIB)
-endif()
+# === Compiler Options ===
+IF(MSVC)
+  SET(ENGINE_PRIVATE_COMPILE_OPTIONS /W4 /permissive-)
+  SET(ENGINE_PUBLIC_COMPILE_OPTIONS /utf-8)
+ELSE()
+  SET(ENGINE_PRIVATE_COMPILE_OPTIONS -Wall -Wextra -Werror)
+  SET(ENGINE_PUBLIC_COMPILE_OPTIONS "")
+ENDIF()
 
-set(PPIVATE_ENGINE_COMPILE_DEFS)
-set(_ITERATOR_DEBUG_LEVEL 0)
+# === Platform Dependencies ===
+SET(ENGINE_DEPENDENCIES ImGui)
 
-if(MSVC)
-  set(PRIVATE_ENGINE_COMPILE_OPTIONS /W4 /permissive-)
-  set(PUBLIC_ENGINE_COMPILE_OPTIONS /utf-8)
-else()
-  set(PRIVATE_ENGINE_COMPILE_OPTIONS -Wall -Wextra -Werror)
-endif()
-# End of common
+IF(FUEGO_PLATFORM STREQUAL "win")
+  LIST(APPEND ENGINE_DEPENDENCIES WindowsDep)
+  SET(PLATFORM_SUBDIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
+ELSEIF(FUEGO_PLATFORM STREQUAL "macos")
+  LIST(APPEND ENGINE_DEPENDENCIES MacOSDep)
+  SET(PLATFORM_SUBDIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS)
+ENDIF()
 
-if(FU_CONF_DEBUG)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY ${FU_MSVC_RUNTIME_DEBUG})
-elseif(FU_CONF_RELEASE)
-  set(CMAKE_MSVC_RUNTIME_LIBRARY ${FU_MSVC_RUNTIME_RELEASE})
-endif()
-
-if(WIN32)
-  list(APPEND ENGINE_DEPENDENCIES WindowsDep)
-  set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Windows)
-elseif(APPLE)
-  list(APPEND ENGINE_DEPENDENCIES MacOSDep)
-  set(PLATFORM_SUBDIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/MacOS)
-endif()
-# End Project set up
-
-add_subdirectory(${PLATFORM_SUBDIRECTORIES})
-add_subdirectory(${RENDERER_PATH})
-
-set(ENGINE_PUBLIC_INCLUDE_DIRECTORIES
+# === Include Directories ===
+SET(ENGINE_PUBLIC_INCLUDES
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../CoreLib
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/ProtoOut
     ${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer
     ${CMAKE_CURRENT_SOURCE_DIR}/External/glm
     ${CMAKE_CURRENT_SOURCE_DIR}/External/imgui
     ${CMAKE_CURRENT_SOURCE_DIR}/External/spdlog/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/src)
+    ${CMAKE_CURRENT_SOURCE_DIR}/External/protobuf/src
+    ${CMAKE_SOURCE_DIR}/CoreLib
+)
 
-# An interface library to propagate headers to platform implementations
-add_library(FuegoInterface INTERFACE)
-target_include_directories(FuegoInterface
-                           INTERFACE ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES})
-target_precompile_headers(FuegoInterface INTERFACE
-                          ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
-target_compile_features(FuegoInterface
-                        INTERFACE ${PUBLIC_ENGINE_COMPILE_FEATURES})
-target_compile_definitions(FuegoInterface
-                           INTERFACE ${PUBLIC_ENGINE_COMPILE_DEFS})
-target_compile_options(FuegoInterface
-                       INTERFACE ${PUBLIC_ENGINE_COMPILE_OPTIONS})
-# Uncomment the line bellow after CoreLib refactor
-# target_compile_options(FuegoInterface INTERFACE
-# ${PRIVATE_ENGINE_COMPILE_OPTIONS}) An engine library to be used by clients
-add_library(FuegoEngine ${FUEGO_LIB_TYPE} ${SOURCES} ${PROJECT_HEADERS})
+# === FuegoInterface - Shared Configuration ===
+ADD_LIBRARY(FuegoInterface INTERFACE)
 
-add_dependencies(FuegoEngine ProtoGen)
+TARGET_INCLUDE_DIRECTORIES(FuegoInterface INTERFACE ${ENGINE_PUBLIC_INCLUDES})
 
-target_link_libraries(FuegoEngine 
-    PUBLIC ${ENGINE_DEPENDENCIES} protobuf::libprotobuf
-    PRIVATE Renderer CoreLib)
+TARGET_PRECOMPILE_HEADERS(FuegoInterface INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
 
-target_include_directories(
+TARGET_COMPILE_FEATURES(FuegoInterface INTERFACE cxx_std_20)
+
+TARGET_COMPILE_DEFINITIONS(
+  FuegoInterface INTERFACE ${ENGINE_PUBLIC_DEFINITIONS} _ITERATOR_DEBUG_LEVEL=${_ITERATOR_DEBUG_LEVEL}
+)
+
+TARGET_COMPILE_OPTIONS(FuegoInterface INTERFACE ${ENGINE_PUBLIC_COMPILE_OPTIONS} ${ENGINE_PRIVATE_COMPILE_OPTIONS})
+
+# === Subdirectories ===
+ADD_SUBDIRECTORY(${PLATFORM_SUBDIRECTORY})
+ADD_SUBDIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/Fuego/Renderer)
+
+# === FuegoEngine Target ===
+ADD_LIBRARY(FuegoEngine ${FUEGO_LIB_TYPE} ${ENGINE_SOURCES} ${ENGINE_HEADERS})
+
+ADD_DEPENDENCIES(FuegoEngine ProtoGen)
+
+TARGET_LINK_LIBRARIES(
   FuegoEngine
-  PUBLIC ${ENGINE_PUBLIC_INCLUDE_DIRECTORIES}
-  PRIVATE ${Protobuf_INCLUDE_DIRS})
+  PUBLIC FuegoInterface ${ENGINE_DEPENDENCIES} protobuf::libprotobuf CoreLib
+  PRIVATE Renderer
+)
 
-target_precompile_headers(FuegoEngine PUBLIC
-                          ${CMAKE_CURRENT_SOURCE_DIR}/fupch.h)
-target_compile_definitions(
+TARGET_INCLUDE_DIRECTORIES(FuegoEngine PRIVATE ${Protobuf_INCLUDE_DIRS})
+
+TARGET_COMPILE_DEFINITIONS(FuegoEngine PRIVATE ${ENGINE_PRIVATE_DEFINITIONS})
+
+TARGET_COMPILE_FEATURES(FuegoEngine PUBLIC cxx_std_20)
+
+# === IDE Organization ===
+SET_TARGET_PROPERTIES(
   FuegoEngine
-  PUBLIC ${PUBLIC_ENGINE_COMPILE_DEFS}
-  PRIVATE ${PPIVATE_ENGINE_COMPILE_DEFS})
-target_compile_features(
-  FuegoEngine
-  PUBLIC ${PUBLIC_ENGINE_COMPILE_FEATURES}
-  PRIVATE ${PRIVATE_ENGINE_COMPILE_FEATURES})
-target_compile_options(
-  FuegoEngine
-  PUBLIC ${PUBLIC_ENGINE_COMPILE_OPTIONS}
-  PRIVATE ${PRIVATE_ENGINE_COMPILE_OPTIONS})
+  PROPERTIES FOLDER "Engine" DEBUG_POSTFIX "_d"
+)
+
+SET_TARGET_PROPERTIES(
+  ImGui
+  PROPERTIES FOLDER "External"
+)

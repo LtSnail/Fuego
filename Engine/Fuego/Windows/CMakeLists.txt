@@ -1,10 +1,7 @@
-# Windows dependencies
+# === Windows Dependencies ===
 
-set(GLAD_BUILD_DIR ${CMAKE_BINARY_DIR}/Glad)
-file(REAL_PATH ${CMAKE_BINARY_DIR}/../../build/win/output OUTPUT_DIR)
-file(REAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../External/glad GLAD_PATH)
-
-set(PROJECT_HEADERS
+# === Source Files ===
+SET(PROJECT_HEADERS
     EventQueueWin.h
     InputWin.h
     KeyCodesWin.h
@@ -24,7 +21,7 @@ set(PROJECT_HEADERS
     TimeWin.h
 )
 
-set(PROJECT_SOURCES
+SET(PROJECT_SOURCES
     EventQueueWin.cpp
     InputWin.cpp
     WindowWin.cpp
@@ -43,23 +40,44 @@ set(PROJECT_SOURCES
     TimeWin.cpp
 )
 
-add_subdirectory(${GLAD_PATH} ${GLAD_BUILD_DIR})
+# === Output Directory ===
+SET(OUTPUT_DIR ${CMAKE_BINARY_DIR}/output)
+FILE(MAKE_DIRECTORY ${OUTPUT_DIR})
 
-add_library(WindowsDep STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+# === Glad Configuration ===
+SET(GLAD_BUILD_DIR ${CMAKE_BINARY_DIR}/Glad)
+FILE(REAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../External/glad GLAD_PATH)
 
-target_include_directories(WindowsDep PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${GLAD_PATH}/include
+# === Glad Subdirectory ===
+ADD_SUBDIRECTORY(${GLAD_PATH} ${GLAD_BUILD_DIR})
+
+# === WindowsDep Target ===
+ADD_LIBRARY(WindowsDep STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+
+# === Target Configuration ===
+TARGET_COMPILE_FEATURES(WindowsDep PUBLIC cxx_std_20)
+
+TARGET_INCLUDE_DIRECTORIES(WindowsDep PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${GLAD_PATH}/include)
+
+TARGET_LINK_LIBRARIES(
+  WindowsDep
+  PUBLIC Glad
+  PRIVATE FuegoInterface
 )
 
-target_link_libraries(WindowsDep 
-        PUBLIC Glad
-        PRIVATE FuegoInterface
+# === IDE Organization ===
+SET_TARGET_PROPERTIES(
+  WindowsDep
+  PROPERTIES FOLDER "Platform/Windows"
+             ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+             LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+             RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
 )
 
-set_target_properties(Glad PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-        LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-        RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-        FOLDER "3rd party"
+SET_TARGET_PROPERTIES(
+  Glad
+  PROPERTIES FOLDER "External/Glad"
+             ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+             LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+             RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
 )

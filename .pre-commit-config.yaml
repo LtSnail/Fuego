@@ -1,7 +1,7 @@
 fail_fast: false
 repos:
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v19.1.4
+    rev: v20.1.5
     hooks:
       - id: clang-format
         args: [--style=file]
@@ -20,34 +20,34 @@ repos:
       - id: name-tests-test
       - id: requirements-txt-fixer
   - repo: https://github.com/asottile/setup-cfg-fmt
-    rev: v2.7.0
+    rev: v2.8.0
     hooks:
       - id: setup-cfg-fmt
   - repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.14.0
+    rev: v3.15.0
     hooks:
       - id: reorder-python-imports
         exclude: ^(pre_commit/resources/|testing/resources/python3_hooks_repo/)
         args: [--py39-plus, --add-import, "from __future__ import annotations"]
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: v3.1.0
+    rev: v3.2.0
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.0
+    rev: v3.20.0
     hooks:
       - id: pyupgrade
         args: [--py39-plus]
   - repo: https://github.com/hhatto/autopep8
-    rev: v2.3.1
+    rev: v2.3.2
     hooks:
       - id: autopep8
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
+    rev: 7.2.0
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.16.0
     hooks:
       - id: mypy
         additional_dependencies: [types-pyyaml]

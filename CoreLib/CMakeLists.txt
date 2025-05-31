@@ -1,23 +1,40 @@
-# CoreLib
+# === CoreLib - Independent Utility Library ===
 
-set(CMAKE_CXX_STANDARD 20)
+# === Source Files ===
+SET(CORELIB_HEADERS CoreLibConcepts.h Uptr.h Sptr.h singleton.hpp DefaultAllocator.h)
 
-set(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
+SET(CORELIB_SOURCES CoreLib.cpp)
 
-set(CORELIB_HEADERS
-    ${ROOT}/CoreLibConcepts.h ${ROOT}/Uptr.h ${ROOT}/Sptr.h
-    ${ROOT}/singleton.hpp ${ROOT}/DefaultAllocator.h)
+# === Library Target ===
+ADD_LIBRARY(CoreLib STATIC ${CORELIB_SOURCES} ${CORELIB_HEADERS})
 
-set(CORELIB_SOURCES ${ROOT}/CoreLib.cpp)
-set(CORELIB_BULD ${ROOT}/../build/${FUEGO_PLATFORM}/CoreLibTests)
+# === C++ Standard ===
+TARGET_COMPILE_FEATURES(CoreLib PUBLIC cxx_std_${FU_CPP_LANG_VER})
 
-set(OUTPUT_DIR ${CORELIB_BULD}/)
+# === Include Directories ===
+TARGET_INCLUDE_DIRECTORIES(CoreLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_library(CoreLib STATIC ${CORELIB_SOURCES} ${CORELIB_HEADERS})
+# === Compile Options ===
+IF(MSVC)
+  TARGET_COMPILE_OPTIONS(CoreLib PRIVATE /W4 /WX)
+ELSE()
+  TARGET_COMPILE_OPTIONS(CoreLib PRIVATE -Wall -Wextra -Werror)
+ENDIF()
 
-target_link_libraries(CoreLib PUBLIC GTest::gtest FuegoInterface)
+# === Compile Definitions ===
+TARGET_COMPILE_DEFINITIONS(
+  CoreLib PRIVATE CORELIB_VERSION_MAJOR=${CMAKE_PROJECT_VERSION_MAJOR}
+                  CORELIB_VERSION_MINOR=${CMAKE_PROJECT_VERSION_MINOR} CORELIB_BUILD_LIB
+)
 
-target_include_directories(
-  CoreLib PUBLIC ${ROOT}/../External/googletest/googletest/include)
-target_include_directories(CoreLib
-                           PUBLIC ${GOOGLE_TEST_ROOT}/googletest/include)
+# === Testing Support ===
+IF(ENABLE_FUEGO_TEST)
+  TARGET_INCLUDE_DIRECTORIES(CoreLib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../External/googletest/googletest/include)
+  TARGET_LINK_LIBRARIES(CoreLib PRIVATE GTest::gtest)
+ENDIF()
+
+# === IDE Organization ===
+SET_TARGET_PROPERTIES(
+  CoreLib
+  PROPERTIES FOLDER "Core" DEBUG_POSTFIX "_d"
+)

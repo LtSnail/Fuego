@@ -1,0 +1,51 @@
+# How wide to allow formatted cmake files
+line_width = 120
+
+# How many spaces to tab for indent
+tab_size = 2
+
+# If true, separate flow control names from their parentheses with a space
+separate_ctrl_name_with_space = False
+
+# If true, separate function names from parentheses with a space
+separate_fn_name_with_space = False
+
+# If a statement is wrapped to more than one line, than dangle the closing
+# parenthesis on its own line.
+dangle_parens = True
+
+# What character to use for bulleted lists
+bullet_char = '*'
+
+# What character to use as punctuation after numerals in an enumerated list
+enum_char = '.'
+
+# What style line endings to use in the output.
+line_ending = 'unix'
+
+# Format command names consistently as 'lower' or 'upper' case
+command_case = 'upper'
+
+# Format keywords consistently as 'lower' or 'upper' case
+keyword_case = 'upper'
+
+# A list of command names which should always be wrapped
+always_wrap = ['set_target_properties']
+
+# If true, the argument lists which are known to be sortable will be
+# sorted lexicographically
+enable_sort = True
+
+# If true, the parsers may infer whether or not an argument list is
+# sortable (without annotation).
+autosort = False
+
+# By default, if cmake-format cannot successfully fit everything into
+# the desired linewidth it will apply the last, most agressive
+# formatting that it can. If False, cmake-format will print error,
+# exit with non-zero status code, and write-out nothing
+require_valid_layout = True
+
+# A dictionary mapping layout nodes to a list of wrap decisions. See the
+# documentation for more information.
+layout_passes = {}
