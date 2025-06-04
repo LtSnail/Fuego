@@ -63,7 +63,7 @@ Fuego::Graphics::Model::Model(const aiScene* scene)
             else
                 image = assets_manager->LoadAsync<Image2D>(path.C_Str());
 
-            auto texture = renderer->CreateTexture(image);
+            auto texture = renderer->CreateGraphicsResource<Texture>(image);
 
             // TODO think about passing raw pointer or shared ptr to material
             auto material = Material::CreateMaterial(texture.get());
@@ -72,7 +72,7 @@ Fuego::Graphics::Model::Model(const aiScene* scene)
         }
         else
         {
-            auto texture = renderer->CreateTexture(image);
+            auto texture = renderer->CreateGraphicsResource<Texture>(image);
             auto material = Material::CreateMaterial(texture.get());
             materials.emplace_back(std::unique_ptr<Material>(material));
         }

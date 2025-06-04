@@ -33,13 +33,13 @@ public:
     template <class Res>
     std::shared_ptr<Res> Load(std::string_view path)
     {
-        if constexpr (std::is_same<std::remove_cv_t<Res>, std::remove_cv_t<Fuego::Graphics::Model>>::value)
+        if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Model>)
         {
             auto model = load_model(path);
-            FU_CORE_ASSERT(model, "[Assets manager] cannot load model")
+            FU_CORE_ASSERT(model.get(), "[Assets manager] cannot load model")
             return model;
         }
-        else if constexpr (std::is_same<std::remove_cv_t<Res>, std::remove_cv_t<Fuego::Graphics::Image2D>>::value)
+        else if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Image2D>)
         {
             auto img = load_image2d(path);
             FU_CORE_ASSERT(img, "[Assets manager] cannot load image2d");
@@ -60,7 +60,7 @@ public:
     template <class Res>
     std::shared_ptr<Res> LoadAsync(std::string_view path)
     {
-        if constexpr (std::is_same<std::remove_cv_t<Res>, std::remove_cv_t<Fuego::Graphics::Image2D>>::value)
+        if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Image2D>)
         {
             return load_image2d_async(path);
         }

@@ -23,6 +23,45 @@ Renderer::Renderer(GraphicsAPI api, Fuego::Pipeline::Toolchain::renderer& toolch
 {
 }
 
+std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_view path)
+{
+    if (path.empty())
+        return GetLoadedTexture("fallback");
+
+    // Try to find first across loaded textures:
+    std::string name = std::filesystem::path(path.data()).stem().string();
+    auto it = textures.find(name);
+    if (it != textures.end())
+        return it->second;
+
+    std::shared_ptr<Fuego::Graphics::Image2D> image{nullptr};
+    // If not, load Image and then create new texture:
+    auto assets_manager = ServiceLocator::instance().GetService<AssetsManager>();
+    auto existing_img = assets_manager->Get<Fuego::Graphics::Image2D>(name);
+    if (!existing_img.expired())
+        image = existing_img.lock();
+    else
+        image = assets_manager->LoadAsync<Fuego::Graphics::Image2D>(path);
+
+    auto texture = toolchain.load_texture(image, _device.get());
+    auto emplaced_texture = textures.emplace(image->Name(), texture);
+    return emplaced_texture.first->second;
+}
+std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::shared_ptr<Fuego::Graphics::Image2D> img)
+{
+    if (!img)
+        return GetLoadedTexture("fallback");
+
+    std::string name = std::filesystem::path(img->Name()).stem().string();
+    auto it = textures.find(name);
+    if (it != textures.end())
+        return it->second;
+
+    auto texture = toolchain.load_texture(img, _device.get());
+    auto emplaced_texture = textures.emplace(img->Name(), texture);
+    return emplaced_texture.first->second;
+}
+
 void Renderer::OnInit()
 {
     _camera.reset(new Camera());
@@ -55,22 +94,6 @@ void Renderer::OnShutdown()
 
     opaque_shader->Release();
     opaque_shader.reset();
-}
-
-std::shared_ptr<Texture> Renderer::CreateTexture(std::shared_ptr<Image2D> img)
-{
-    if (img == nullptr)
-        return GetLoadedTexture("fallback");
-
-    std::string name = std::filesystem::path(img->Name().data()).stem().string();
-
-    auto it = textures.find(name);
-    if (it != textures.end())
-        return it->second;
-
-    auto texture = toolchain.load_texture(img, _device.get());
-    auto emplaced_texture = textures.emplace(std::move(name), texture);
-    return emplaced_texture.first->second;
 }
 
 std::shared_ptr<Texture> Renderer::GetLoadedTexture(std::string_view path) const

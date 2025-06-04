@@ -30,7 +30,7 @@ public:
     virtual std::shared_ptr<Texture> CreateTexture(std::string_view name, TextureFormat format, unsigned char* buffer, int width, int height) const = 0;
     virtual std::shared_ptr<Texture> CreateTexture(std::string_view name) const = 0;
 
-    // Yes, I know, raw pointer, so be carefull here
+    // Yes, I know, raw pointer, so be careful here
     virtual Shader* CreateShader(std::string_view shaderName, Shader::ShaderType type) = 0;
 
     virtual void SetVSync(bool active) const = 0;

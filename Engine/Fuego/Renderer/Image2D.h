@@ -6,8 +6,8 @@ namespace Fuego::Graphics
 class Image2D
 {
 public:
-    Image2D(std::string name, unsigned char* data, int w, int h, int bpp, uint16_t channels);
-    Image2D(std::string name);
+    Image2D(std::string_view name, std::string_view ext, unsigned char* data, int w, int h, int bpp, uint16_t channels);
+    Image2D(std::string_view name, std::string_view ext);
     ~Image2D();
 
     struct Image2DPostCreateion
@@ -43,6 +43,10 @@ public:
     {
         return name;
     }
+    inline std::string_view Ext() const
+    {
+        return ext;
+    }
 
     void PostCreate(Image2DPostCreateion& settings);
     inline bool IsValid() const
@@ -58,5 +62,6 @@ private:
     unsigned char* data;
     std::string name;
     bool is_created;
+    std::string ext;
 };
 }  // namespace Fuego::Graphics

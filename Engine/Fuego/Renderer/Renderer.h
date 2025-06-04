@@ -22,6 +22,13 @@
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
 
+#pragma region concepts
+template <class Resource>
+concept is_graphic_resource = requires(Resource t) {
+    std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Texture> || std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Shader>;
+};
+#pragma endregion
+
 namespace Fuego::Graphics
 {
 
@@ -39,7 +46,6 @@ public:
     Renderer(Renderer&&) noexcept = default;
     Renderer& operator=(Renderer&&) noexcept = default;
 
-    std::shared_ptr<Texture> CreateTexture(std::shared_ptr<Image2D> img);
     std::shared_ptr<Texture> GetLoadedTexture(std::string_view path) const;
 
     // IRenderer;
@@ -78,6 +84,28 @@ public:
 
     std::unique_ptr<ShaderObject> opaque_shader;
 
+    template <is_graphic_resource Resource, typename... Args>
+    std::shared_ptr<Resource> CreateGraphicsResource(Args&&... args)
+    {
+        constexpr uint32_t args_amount = sizeof...(Args);
+        if constexpr (std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Texture>)
+        {
+            static_assert(args_amount == 1);
+
+            using FirstArg = std::tuple_element_t<0, std::tuple<Args...>>;
+            if constexpr ((std::is_same_v<std::remove_cv_t<std::remove_reference_t<FirstArg>>, std::shared_ptr<Fuego::Graphics::Image2D>>) ||
+                          (std::is_same_v<FirstArg, std::string_view>) || (std::is_same_v<FirstArg, std::string>) ||
+                          (std::is_convertible_v<FirstArg, const char*>))
+            {
+                return load_texture(std::forward<Args>(args)...);
+            }
+        }
+
+        else if constexpr (std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Shader>)
+            return _device->CreateShader(std::forward<Args>(args)...);
+        return std::shared_ptr<Resource>{nullptr};
+    }
+
 private:
     bool show_wireframe;
 
@@ -99,6 +127,9 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
     GraphicsAPI renderer;
     Fuego::Pipeline::Toolchain::renderer toolchain;
+
+    std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::string_view path);
+    std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::shared_ptr<Fuego::Graphics::Image2D> img);
     // Service
 protected:
     void OnInit();

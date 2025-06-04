@@ -108,6 +108,7 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
     event.SetHandled();
     return true;
 }
+
 bool Application::OnRenderEvent(AppRenderEvent& event)
 {
     auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
@@ -161,9 +162,8 @@ void Application::Init(ApplicationBootSettings& settings)
 
     auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>(toolchain._assets_manager);
 
-    auto fallback_img = assets_manager.value()->Load<Fuego::Graphics::Image2D>("fallback.png");
-
-    renderer.value()->CreateTexture(fallback_img);
+    auto resource =
+        renderer.value()->CreateGraphicsResource<Fuego::Graphics::Texture>(assets_manager.value()->LoadAsync<Fuego::Graphics::Image2D>("fallback.png"));
 
     assets_manager.value()->Load<Fuego::Graphics::Model>("Sponza/Sponza.glb");
     // assets_manager.value()->Load<Fuego::Graphics::Model>("WaterCooler/WaterCooler.obj");
