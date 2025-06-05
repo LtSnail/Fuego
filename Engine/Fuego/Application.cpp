@@ -162,10 +162,9 @@ void Application::Init(ApplicationBootSettings& settings)
 
     auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>(toolchain._assets_manager);
 
-    auto resource =
-        renderer.value()->CreateGraphicsResource<Fuego::Graphics::Texture>(assets_manager.value()->LoadAsync<Fuego::Graphics::Image2D>("fallback.png"));
+    auto resource = renderer.value()->CreateGraphicsResource<Fuego::Graphics::Texture>("fallback.png");
 
-    assets_manager.value()->Load<Fuego::Graphics::Model>("Sponza/Sponza.glb");
+    assets_manager.value()->LoadAsync<Fuego::Graphics::Model>("Sponza/Sponza.glb");
     // assets_manager.value()->Load<Fuego::Graphics::Model>("WaterCooler/WaterCooler.obj");
 
     initialized = true;
@@ -223,7 +222,6 @@ void Application::Run()
             m_EventQueue->Pop();
         }
 
-        assets_manager->Tick();
         renderer->OnUpdate(dtTime);
         renderer->Present();
     }

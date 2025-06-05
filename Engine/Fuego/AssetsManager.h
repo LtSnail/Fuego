@@ -16,6 +16,47 @@ enum ImageFormat;
 namespace Fuego
 {
 
+enum ResourceLoadingStatus
+{
+    NONE,
+    TO_BE_LOADED,
+    LOADING,
+    CORRUPTED,
+    SUCCESSFULLY_LOADED
+};
+
+template <typename T>
+class ResourceHandle
+{
+public:
+    ResourceHandle(std::shared_ptr<T> resource, ResourceLoadingStatus st)
+        : obj(resource)
+        , status(st) {};
+    ResourceHandle(ResourceLoadingStatus st)
+        : status(st)
+    {
+        obj = std::shared_ptr<T>{nullptr};
+    }
+
+    ~ResourceHandle() = default;
+
+    ResourceLoadingStatus Status()
+    {
+        return status;
+    }
+    void SetStatus(ResourceLoadingStatus st)
+    {
+        status = st;
+    }
+    std::shared_ptr<T> Resource()
+    {
+        return obj;
+    }
+
+private:
+    ResourceLoadingStatus status{NONE};
+    std::shared_ptr<T> obj;
+};
 
 class AssetsManager : public Service<AssetsManager>
 {
@@ -24,11 +65,6 @@ public:
 
     AssetsManager(Fuego::Pipeline::Toolchain::assets_manager& toolchain);
     ~AssetsManager();
-
-    void Tick()
-    {
-        int a = 5;
-    }
 
     template <class Res>
     std::shared_ptr<Res> Load(std::string_view path)
@@ -64,6 +100,11 @@ public:
         {
             return load_image2d_async(path);
         }
+        else if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Model>)
+        {
+            load_model_async(path);
+        }
+        return std::shared_ptr<Res>{};
     }
 
     template <class Res>
@@ -140,10 +181,13 @@ public:
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Model>> models;
+    std::unordered_map<std::string, Fuego::ResourceHandle<Fuego::Graphics::Model>> resources_to_load;
+
     std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Image2D>> images2d;
 
     std::shared_ptr<Fuego::Graphics::Model> load_model(std::string_view path);
-    void load_model_async(std::string_view path);
+    const ResourceHandle<Fuego::Graphics::Model>& load_model_async(std::string_view path);
+
     std::shared_ptr<Fuego::Graphics::Image2D> load_image2d(std::string_view path);
     std::shared_ptr<Fuego::Graphics::Image2D> load_image2d_async(std::string_view path);
 
