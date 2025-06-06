@@ -15,78 +15,17 @@ Fuego::Graphics::Model::Model(const aiScene* scene)
     , vertex_count(0)
     , indices_count(0)
 {
-    auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
-    auto assets_manager = ServiceLocator::instance().GetService<Fuego::AssetsManager>();
-    meshes.reserve(scene->mNumMeshes);
-    materials.reserve(scene->mNumMaterials);
-
-    int texture_index = MAXINT;
-    std::map<uint32_t, const Texture*> loaded_textures;
-    for (size_t i = 0; i < scene->mNumMaterials; i++)
-    {
-        aiString path;
-        std::shared_ptr<Image2D> image{};
-        if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
-        {
-            if (path.C_Str()[0] == '*')
-            {
-                texture_index = atoi(path.C_Str() + 1);
-                auto it = loaded_textures.find(texture_index);
-                if (it != loaded_textures.end())
-                {
-                    auto material = Material::CreateMaterial(it->second);
-                    materials.emplace_back(std::unique_ptr<Material>(material));
-                    continue;
-                }
-
-                aiTexture* embeded_texture = scene->mTextures[texture_index];
-
-                uint32_t channels = 0;
-                if (embeded_texture->CheckFormat("jpg"))
-                    channels = 3;
-                else if (embeded_texture->CheckFormat("png"))
-                    channels = 4;
-
-                if (embeded_texture->mHeight == 0)
-                {
-                    std::string name = embeded_texture->mFilename.C_Str();
-                    if (embeded_texture->mFilename.length == 0)
-                        name = std::string(GetName()) + "_" + "Embeded_txt_" + std::to_string(texture_index);
-                    image = assets_manager->LoadImage2DFromMemoryAsync(name, reinterpret_cast<unsigned char*>(embeded_texture->pcData), embeded_texture->mWidth,
-                                                                       channels);
-                }
-                else
-                    image =
-                        assets_manager->LoadImage2DFromRawData(embeded_texture->mFilename.C_Str(), reinterpret_cast<unsigned char*>(embeded_texture->pcData), 4,
-                                                               8, embeded_texture->mWidth, embeded_texture->mHeight);
-            }
-            else
-                image = assets_manager->LoadAsync<Image2D>(path.C_Str());
-
-            auto texture = renderer->CreateGraphicsResource<Texture>(image);
-
-            // TODO think about passing raw pointer or shared ptr to material
-            auto material = Material::CreateMaterial(texture.get());
-            materials.emplace_back(std::unique_ptr<Material>(material));
-            loaded_textures.emplace(texture_index, texture.get());
-        }
-        else
-        {
-            auto texture = renderer->CreateGraphicsResource<Texture>(image);
-            auto material = Material::CreateMaterial(texture.get());
-            materials.emplace_back(std::unique_ptr<Material>(material));
-        }
-    }
-
-    for (size_t i = 0; i < scene->mNumMeshes; i++)
-    {
-        meshes.emplace_back(
-            std::make_unique<Fuego::Graphics::Model::Mesh>(scene->mMeshes[i], materials[scene->mMeshes[i]->mMaterialIndex].get(), i, vertices, indices));
-        Fuego::Graphics::Model::Mesh* mesh = meshes.back().get();
-        vertex_count += mesh->GetVertexCount();
-        indices_count += mesh->GetIndicesCount();
-    }
+    process_model(scene);
 }
+
+Fuego::Graphics::Model::Model(std::string_view model_name)
+    : name(model_name)
+    , mesh_count(0)
+    , vertex_count(0)
+    , indices_count(0)
+{
+}
+
 
 Fuego::Graphics::Model::Model(Model&& other) noexcept
     : name(std::move(other.name))
@@ -163,4 +102,94 @@ Fuego::Graphics::Model::Mesh::Mesh(aiMesh* mesh, const Material* material, uint3
     }
     vertex_end = vertices.size() - 1;
     index_end = indices.size() - 1;
+}
+
+void Fuego::Graphics::Model::PostLoad(const aiScene* scene)
+{
+    process_model(scene);
+}
+
+void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
+{
+    mesh_count = scene->mNumMeshes;
+
+    auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
+    auto assets_manager = ServiceLocator::instance().GetService<Fuego::AssetsManager>();
+    meshes.reserve(scene->mNumMeshes);
+    materials.reserve(scene->mNumMaterials);
+
+    int texture_index = MAXINT;
+    std::map<uint32_t, const Texture*> loaded_textures;
+    for (size_t i = 0; i < scene->mNumMaterials; i++)
+    {
+        aiString path;
+        std::shared_ptr<Image2D> image{};
+        if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
+        {
+            if (path.C_Str()[0] == '*')
+            {
+                texture_index = atoi(path.C_Str() + 1);
+                auto it = loaded_textures.find(texture_index);
+                if (it != loaded_textures.end())
+                {
+                    auto material = Material::CreateMaterial(it->second);
+                    materials.emplace_back(std::unique_ptr<Material>(material));
+                    continue;
+                }
+
+                aiTexture* embeded_texture = scene->mTextures[texture_index];
+
+                uint32_t channels = 0;
+                if (embeded_texture->CheckFormat("jpg"))
+                    channels = 3;
+                else if (embeded_texture->CheckFormat("png"))
+                    channels = 4;
+
+                if (embeded_texture->mHeight == 0)
+                {
+                    std::string name = embeded_texture->mFilename.C_Str();
+                    if (embeded_texture->mFilename.length == 0)
+                        name = std::string(GetName()) + "_" + "Embeded_txt_" + std::to_string(texture_index);
+                    if (async)
+                        image = assets_manager->LoadImage2DFromMemoryAsync(name, reinterpret_cast<unsigned char*>(embeded_texture->pcData), embeded_texture->mWidth,
+                                                                       channels);
+                    else
+                        image = assets_manager->LoadImage2DFromMemory(name, reinterpret_cast<unsigned char*>(embeded_texture->pcData), embeded_texture->mWidth,
+                                                                      channels);
+                }
+                else
+                    image =
+                        assets_manager->LoadImage2DFromRawData(embeded_texture->mFilename.C_Str(), reinterpret_cast<unsigned char*>(embeded_texture->pcData), 4,
+                                                               8, embeded_texture->mWidth, embeded_texture->mHeight);
+            }
+            else 
+                if (async)
+                image = assets_manager->Load<Image2D>(path.C_Str());
+            //else
+                // TODO: image = assets_manager->LoadAsync<Image2D>(path.C_Str());
+
+            auto texture = renderer->CreateGraphicsResource<Texture>(image);
+
+            // TODO think about passing raw pointer or shared ptr to material
+            auto material = Material::CreateMaterial(texture.get());
+            materials.emplace_back(std::unique_ptr<Material>(material));
+            loaded_textures.emplace(texture_index, texture.get());
+        }
+        else
+        {
+            auto texture = renderer->CreateGraphicsResource<Texture>(image);
+            auto material = Material::CreateMaterial(texture.get());
+            materials.emplace_back(std::unique_ptr<Material>(material));
+        }
+    }
+
+    for (size_t i = 0; i < scene->mNumMeshes; i++)
+    {
+        meshes.emplace_back(
+            std::make_unique<Fuego::Graphics::Model::Mesh>(scene->mMeshes[i], materials[scene->mMeshes[i]->mMaterialIndex].get(), i, vertices, indices));
+        Fuego::Graphics::Model::Mesh* mesh = meshes.back().get();
+        vertex_count += mesh->GetVertexCount();
+        indices_count += mesh->GetIndicesCount();
+    }
+    int a = 5;
 }

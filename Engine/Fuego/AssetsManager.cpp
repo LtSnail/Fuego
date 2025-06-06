@@ -59,32 +59,26 @@ std::shared_ptr<Fuego::Graphics::Model> Fuego::AssetsManager::load_model(std::st
     FU_CORE_INFO("[AssetsManager] Model[{0}] was added: name: {1}, ", models.size(), model->GetName());
     return model;
 }
-const Fuego::ResourceHandle<Fuego::Graphics::Model>& Fuego::AssetsManager::load_model_async(std::string_view path)
+std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> Fuego::AssetsManager::load_model_async(std::string_view path)
 {
     if (path.empty())
-        return Fuego::ResourceHandle<Fuego::Graphics::Model>(CORRUPTED);
+        return std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>>{nullptr};
 
     std::string file_name = std::filesystem::path(path).stem().string();
     auto it = models.find(file_name);
     if (it != models.end())
-        return Fuego::ResourceHandle<Fuego::Graphics::Model>(CORRUPTED);
+        return std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>>{nullptr};
 
-    std::shared_ptr<Fuego::Graphics::Model> raw_model{};
-    {
-        std::lock_guard<std::mutex> lock(models_async_operations);
-        raw_model = models.emplace(file_name, std::make_shared<Fuego::Graphics::Model>(file_name)).first->second;
-        ++models_count;
-    }
-    auto handle = resources_to_load.emplace(file_name, ResourceHandle<Fuego::Graphics::Model>(raw_model, TO_BE_LOADED)).first->second;
+    auto handle = std::make_shared<Fuego::ResourceHandle<Fuego::Graphics::Model>>(std::make_shared<Fuego::Graphics::Model>(file_name), TO_BE_LOADED, NONE);
 
     auto thread_pool = ServiceLocator::instance().GetService<ThreadPool>();
 
     thread_pool->Submit(
-        [this](std::string_view path, ResourceHandle<Fuego::Graphics::Model>& handle)
+        [this](std::string_view path, std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> handle)
         {
             {
                 std::lock_guard<std::mutex> lock(std::mutex());
-                handle.SetStatus(LOADING);
+                handle->SetStatus(LOADING);
             }
 
             auto fs = ServiceLocator::instance().GetService<Fuego::FS::FileSystem>();
@@ -94,7 +88,8 @@ const Fuego::ResourceHandle<Fuego::Graphics::Model>& Fuego::AssetsManager::load_
             if (!res)
             {
                 std::lock_guard<std::mutex> lock(std::mutex());
-                handle.SetStatus(CORRUPTED);
+                handle->SetStatus(CORRUPTED);
+                handle->SetFailureReason(WRONG_PATH);
                 return;
             }
 
@@ -103,10 +98,17 @@ const Fuego::ResourceHandle<Fuego::Graphics::Model>& Fuego::AssetsManager::load_
             if (!scene)
             {
                 std::lock_guard<std::mutex> lock(std::mutex());
-                handle.SetStatus(CORRUPTED);
+                handle->SetStatus(CORRUPTED);
+                handle->SetFailureReason(NO_DATA);
                 return;
             }
-            // Model postload:
+
+            {
+                std::lock_guard<std::mutex> lock(std::mutex());
+                handle->Resource()->PostLoad(scene);
+                handle->SetStatus(SUCCESS);
+                models.emplace(handle->Resource()->GetName(), handle->Resource());
+            }
         },
         path, handle);
 

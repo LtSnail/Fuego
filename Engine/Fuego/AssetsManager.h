@@ -15,6 +15,12 @@ enum ImageFormat;
 
 namespace Fuego
 {
+enum ResourceLoadingFailureReason
+{
+    NONE,
+    WRONG_PATH,
+    NO_DATA
+};
 
 enum ResourceLoadingStatus
 {
@@ -22,19 +28,22 @@ enum ResourceLoadingStatus
     TO_BE_LOADED,
     LOADING,
     CORRUPTED,
-    SUCCESSFULLY_LOADED
+    SUCCESS
 };
 
 template <typename T>
 class ResourceHandle
 {
 public:
-    ResourceHandle(std::shared_ptr<T> resource, ResourceLoadingStatus st)
+    ResourceHandle(std::shared_ptr<T> resource, ResourceLoadingStatus st, ResourceLoadingFailureReason failure)
         : obj(resource)
-        , status(st) {};
-    ResourceHandle(ResourceLoadingStatus st)
+        , status(st)
+        , failure(failure) {};
+    ResourceHandle(ResourceLoadingStatus st, ResourceLoadingFailureReason failure)
         : status(st)
+        , failure(failure)
     {
+        status = CORRUPTED;
         obj = std::shared_ptr<T>{nullptr};
     }
 
@@ -44,9 +53,17 @@ public:
     {
         return status;
     }
+    ResourceLoadingFailureReason FailureReason()
+    {
+        return failure;
+    }
     void SetStatus(ResourceLoadingStatus st)
     {
         status = st;
+    }
+    void SetFailureReason(ResourceLoadingFailureReason reason)
+    {
+        failure = reason;
     }
     std::shared_ptr<T> Resource()
     {
@@ -55,12 +72,14 @@ public:
 
 private:
     ResourceLoadingStatus status{NONE};
+    ResourceLoadingFailureReason failure{NONE};
     std::shared_ptr<T> obj;
 };
 
 class AssetsManager : public Service<AssetsManager>
 {
 public:
+    friend class Application;
     friend class Service<AssetsManager>;
 
     AssetsManager(Fuego::Pipeline::Toolchain::assets_manager& toolchain);
@@ -94,7 +113,7 @@ public:
                                                                      uint32_t width, uint32_t height);
 
     template <class Res>
-    std::shared_ptr<Res> LoadAsync(std::string_view path)
+    std::shared_ptr<Fuego::ResourceHandle<Res>> LoadAsync(std::string_view path)
     {
         if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Image2D>)
         {
@@ -102,9 +121,9 @@ public:
         }
         else if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Model>)
         {
-            load_model_async(path);
+            return load_model_async(path);
         }
-        return std::shared_ptr<Res>{};
+        return std::shared_ptr<Fuego::ResourceHandle<Res>>{};
     }
 
     template <class Res>
@@ -181,12 +200,11 @@ public:
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Model>> models;
-    std::unordered_map<std::string, Fuego::ResourceHandle<Fuego::Graphics::Model>> resources_to_load;
 
     std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Image2D>> images2d;
 
     std::shared_ptr<Fuego::Graphics::Model> load_model(std::string_view path);
-    const ResourceHandle<Fuego::Graphics::Model>& load_model_async(std::string_view path);
+    std::shared_ptr<ResourceHandle<Fuego::Graphics::Model>> load_model_async(std::string_view path);
 
     std::shared_ptr<Fuego::Graphics::Image2D> load_image2d(std::string_view path);
     std::shared_ptr<Fuego::Graphics::Image2D> load_image2d_async(std::string_view path);

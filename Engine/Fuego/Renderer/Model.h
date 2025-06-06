@@ -124,6 +124,8 @@ public:
         return &meshes;
     }
 
+    void PostLoad(const aiScene* scene);
+
 private:
     std::string name;
     uint32_t mesh_count;
@@ -133,6 +135,8 @@ private:
     std::vector<uint32_t> indices;
     std::vector<std::unique_ptr<Material>> materials;
     std::vector<std::unique_ptr<Model::Mesh>> meshes;
+
+    void process_model(const aiScene* scene, bool async = true);
 };
 
 }  // namespace Fuego::Graphics
