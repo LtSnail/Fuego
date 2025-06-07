@@ -86,10 +86,8 @@ public:
     };
 
     Model(const aiScene* scene);
-    Model(std::string_view model_name)
-    {
-        int a = 5;
-    }
+    Model(std::string_view model_name);
+
     ~Model() = default;
 
     Model(Model&& other) noexcept;

@@ -123,7 +123,7 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
     for (size_t i = 0; i < scene->mNumMaterials; i++)
     {
         aiString path;
-        std::shared_ptr<Image2D> image{};
+        std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> image{};
         if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
         {
             if (path.C_Str()[0] == '*')
@@ -151,8 +151,8 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
                     if (embeded_texture->mFilename.length == 0)
                         name = std::string(GetName()) + "_" + "Embeded_txt_" + std::to_string(texture_index);
                     if (async)
-                        image = assets_manager->LoadImage2DFromMemoryAsync(name, reinterpret_cast<unsigned char*>(embeded_texture->pcData), embeded_texture->mWidth,
-                                                                       channels);
+                        image = assets_manager->LoadImage2DFromMemoryAsync(name, reinterpret_cast<unsigned char*>(embeded_texture->pcData),
+                                                                           embeded_texture->mWidth, channels);
                     else
                         image = assets_manager->LoadImage2DFromMemory(name, reinterpret_cast<unsigned char*>(embeded_texture->pcData), embeded_texture->mWidth,
                                                                       channels);
@@ -162,13 +162,11 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
                         assets_manager->LoadImage2DFromRawData(embeded_texture->mFilename.C_Str(), reinterpret_cast<unsigned char*>(embeded_texture->pcData), 4,
                                                                8, embeded_texture->mWidth, embeded_texture->mHeight);
             }
-            else 
-                if (async)
-                image = assets_manager->Load<Image2D>(path.C_Str());
-            //else
-                // TODO: image = assets_manager->LoadAsync<Image2D>(path.C_Str());
 
-            auto texture = renderer->CreateGraphicsResource<Texture>(image);
+            else
+                image = assets_manager->LoadAsync<Image2D>(path.C_Str());
+
+            auto texture = renderer->CreateGraphicsResource<Texture>(image->Resource());
 
             // TODO think about passing raw pointer or shared ptr to material
             auto material = Material::CreateMaterial(texture.get());
@@ -177,8 +175,15 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
         }
         else
         {
-            auto texture = renderer->CreateGraphicsResource<Texture>(image);
-            auto material = Material::CreateMaterial(texture.get());
+            aiColor4D diffuseColor{};
+            if (scene->mMaterials[i]->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor) == AI_SUCCESS)
+            {
+                // TODO we need Color class and creation of solid textures from colors
+            }
+            auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
+            // auto texture = renderer->CreateGraphicsResource<Texture>();
+            // TODO change fallback texture to solidtexture
+            auto material = Material::CreateMaterial(renderer->GetLoadedTexture("fallback").get());
             materials.emplace_back(std::unique_ptr<Material>(material));
         }
     }

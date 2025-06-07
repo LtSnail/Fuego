@@ -15,14 +15,14 @@ enum ImageFormat;
 
 namespace Fuego
 {
-enum ResourceLoadingFailureReason
+enum class ResourceLoadingFailureReason
 {
     NONE,
     WRONG_PATH,
     NO_DATA
 };
 
-enum ResourceLoadingStatus
+enum class ResourceLoadingStatus
 {
     NONE,
     TO_BE_LOADED,
@@ -43,7 +43,7 @@ public:
         : status(st)
         , failure(failure)
     {
-        status = CORRUPTED;
+        status = ResourceLoadingStatus::CORRUPTED;
         obj = std::shared_ptr<T>{nullptr};
     }
 
@@ -71,8 +71,8 @@ public:
     }
 
 private:
-    ResourceLoadingStatus status{NONE};
-    ResourceLoadingFailureReason failure{NONE};
+    ResourceLoadingStatus status{ResourceLoadingStatus::NONE};
+    ResourceLoadingFailureReason failure{ResourceLoadingFailureReason::NONE};
     std::shared_ptr<T> obj;
 };
 
@@ -85,44 +85,33 @@ public:
     AssetsManager(Fuego::Pipeline::Toolchain::assets_manager& toolchain);
     ~AssetsManager();
 
-    template <class Res>
-    std::shared_ptr<Res> Load(std::string_view path)
-    {
-        if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Model>)
-        {
-            auto model = load_model(path);
-            FU_CORE_ASSERT(model.get(), "[Assets manager] cannot load model")
-            return model;
-        }
-        else if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Image2D>)
-        {
-            auto img = load_image2d(path);
-            FU_CORE_ASSERT(img, "[Assets manager] cannot load image2d");
-            return img;
-        }
-        else
-        {
-            FU_CORE_ASSERT(nullptr, "[Assets manager] wront graphics resource type")
-        }
-    }
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> LoadImage2DFromMemory(std::string_view name, unsigned char* data, uint32_t size_b,
+                                                                                           uint16_t channels);
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> LoadImage2DFromMemoryAsync(std::string_view name, unsigned char* data, uint32_t size_b,
+                                                                                                uint16_t channels);
 
-    std::shared_ptr<Fuego::Graphics::Image2D> LoadImage2DFromMemory(std::string_view name, unsigned char* data, uint32_t size_b, uint16_t channels);
-    std::shared_ptr<Fuego::Graphics::Image2D> LoadImage2DFromMemoryAsync(std::string_view name, unsigned char* data, uint32_t size_b, uint16_t channels);
-
-    std::shared_ptr<Fuego::Graphics::Image2D> LoadImage2DFromRawData(std::string_view name, unsigned char* data, uint32_t channels, uint16_t bpp,
-                                                                     uint32_t width, uint32_t height);
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> LoadImage2DFromRawData(std::string_view name, unsigned char* data, uint32_t channels,
+                                                                                            uint16_t bpp, uint32_t width, uint32_t height);
 
     template <class Res>
-    std::shared_ptr<Fuego::ResourceHandle<Res>> LoadAsync(std::string_view path)
+    std::shared_ptr<Fuego::ResourceHandle<Res>> LoadAsync(std::string_view path, bool async = true)
     {
+        std::shared_ptr<Fuego::ResourceHandle<Res>> result{nullptr};
         if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Image2D>)
         {
-            return load_image2d_async(path);
+            if (async)
+                return load_image2d_async(path);
+            else
+                return load_image2d(path);
         }
         else if constexpr (std::is_same_v<std::remove_cv_t<Res>, Fuego::Graphics::Model>)
         {
-            return load_model_async(path);
+            if (async)
+                return load_model_async(path);
+            else
+                return load_model(path);
         }
+        FU_CORE_ASSERT(false, "");
         return std::shared_ptr<Fuego::ResourceHandle<Res>>{};
     }
 
@@ -200,14 +189,17 @@ public:
 
 private:
     std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Model>> models;
+    // TODO: What to do with corrupted models?
+    std::unordered_map<std::string, std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>>> models_to_load_async;
 
     std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Image2D>> images2d;
+    std::unordered_map<std::string, std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>>> images2d_to_load_async;
 
-    std::shared_ptr<Fuego::Graphics::Model> load_model(std::string_view path);
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> load_model(std::string_view path);
     std::shared_ptr<ResourceHandle<Fuego::Graphics::Model>> load_model_async(std::string_view path);
 
-    std::shared_ptr<Fuego::Graphics::Image2D> load_image2d(std::string_view path);
-    std::shared_ptr<Fuego::Graphics::Image2D> load_image2d_async(std::string_view path);
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> load_image2d(std::string_view path);
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> load_image2d_async(std::string_view path);
 
     std::atomic<uint32_t> models_count;
     std::atomic<uint32_t> images2d_count;
