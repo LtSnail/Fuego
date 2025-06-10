@@ -1,6 +1,5 @@
 #include "TimeMacOS.h"
 
-#include "Application.h"
 
 std::unique_ptr<Fuego::Time> Fuego::Time::CreateTimeManager(float fixed_time)
 {

@@ -5,7 +5,7 @@
 
 namespace Fuego
 {
-class InputMacOS : public Input, public singleton<InputMacOS>
+class InputMacOS final : public Input, public singleton<InputMacOS>
 {
     friend class singleton<InputMacOS>;
 
