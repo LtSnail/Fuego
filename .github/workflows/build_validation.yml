@@ -18,6 +18,21 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      shell: pwsh
+      run: |
+        pip install pre-commit
+        choco install llvm -y
+
+    - name: Run pre-commit
+      shell: bash
+      run: pre-commit run --color=always --show-diff-on-failure --all-files
+
     - name: Set reusable strings for Windows
       shell: bash
       run: |
@@ -34,6 +49,10 @@ jobs:
     - name: Build
       shell: bash
       run: cmake --build ${{ env.build-output-dir }} --config ${{ matrix.build_type }}
+
+    - name: Run clang-tidy
+      shell: bash
+      run: run-clang-tidy -p ${{ env.build-output-dir }} -quiet -warnings-as-errors=*
 
     - name: Test
       shell: bash
