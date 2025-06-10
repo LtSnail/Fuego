@@ -7,6 +7,7 @@ SET(PROJECT_HEADERS
     KeyCodesMacOS.h
     WindowMacOS.h
     FileSystemPathsMacOS.h
+    TimeMacOS.h
     Metal/DeviceMetal.h
     Metal/BufferMetal.h
     Metal/CommandQueueMetal.h
@@ -23,6 +24,7 @@ SET(PROJECT_SOURCES
     EventQueueMacOS.mm
     WindowMacOS.mm
     EntryPointMacOS.mm
+    TimeMacOS.cpp
     Metal/MetalImplementation.cpp
     Metal/DeviceMetal.mm
     Metal/BufferMetal.mm

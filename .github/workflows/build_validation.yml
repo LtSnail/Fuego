@@ -39,3 +39,27 @@ jobs:
       shell: bash
       working-directory: ${{ env.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
+
+  build-macos:
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Debug, Release]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set reusable strings for macOS
+      run: echo "build-output-dir=${{ github.workspace }}/build/macos" >> $GITHUB_ENV
+
+    - name: Run CMake configuration script for macOS
+      run: bash ${{ github.workspace }}/Scripts/generate_xcode_project.sh
+
+    - name: Build
+      run: cmake --build ${{ env.build-output-dir }} --config ${{ matrix.build_type }}
+
+    - name: Test
+      working-directory: ${{ env.build-output-dir }}
+      run: ctest --build-config ${{ matrix.build_type }}

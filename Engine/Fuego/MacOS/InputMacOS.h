@@ -18,6 +18,6 @@ protected:
     virtual float GetMouseYImpl() const override;
     virtual glm::vec2 GetMouseDirImpl() const override;
 
-    friend class WindowWin;
+    friend class WindowMacOS;
 };
 }  // namespace Fuego
