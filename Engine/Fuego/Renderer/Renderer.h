@@ -21,6 +21,7 @@
 #include "VertexLayout.h"
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
+#include "tbb/concurrent_unordered_map.h"
 
 #pragma region concepts
 template <class Resource>
@@ -124,7 +125,7 @@ private:
 
     bool is_vsync;
 
-    std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
+    tbb::concurrent_unordered_map<std::string, std::shared_ptr<Texture>> textures;
     GraphicsAPI renderer;
     Fuego::Pipeline::Toolchain::renderer toolchain;
 

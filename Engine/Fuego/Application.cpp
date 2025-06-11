@@ -22,15 +22,9 @@ Application& singleton<Application>::instance()
     return inst;
 }
 
-Application::Application()
-    : initialized(false)
-    , m_Running(false)
-{
-}
+Application::Application() : initialized(false), m_Running(false) {}
 
-Application::~Application()
-{
-}
+Application::~Application() {}
 
 void Application::PushLayer(Layer* layer)
 {
@@ -44,7 +38,7 @@ void Application::PushOverlay(Layer* overlay)
 
 void Application::OnEvent(EventVariant& event)
 {  // clang-format off
-    auto ApplicationEventVisitor = EventVisitor{[this](WindowResizeEvent&   ev) { OnWindowResize(ev); }, 
+    auto ApplicationEventVisitor = EventVisitor{[this](WindowResizeEvent&   ev) { OnWindowResize(ev); },
                                                 [this](WindowStartResizeEvent&   ev) { OnStartResizeWindow(ev); },
                                                 [this](WindowEndResizeEvent&    ev) {OnEndResizeWindow(ev); },
                                                 [this](WindowValidateEvent&    ev) {OnValidateWindow(ev); },
@@ -76,7 +70,8 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 }
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    ServiceLocator::instance().GetService<Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
+    ServiceLocator::instance().GetService<Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(),
+                                                                      event.GetHeight());
     event.SetHandled();
     return true;
 }
@@ -103,12 +98,12 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 
     switch (crossplatform_key)
     {
-    case Key::D1:
-        ServiceLocator::instance().GetService<Renderer>()->ToggleWireFrame();
-        break;
-    case Key::D2:
-        m_Window->SwitchInteractionMode();
-        break;
+        case Key::D1:
+            ServiceLocator::instance().GetService<Renderer>()->ToggleWireFrame();
+            break;
+        case Key::D2:
+            m_Window->SwitchInteractionMode();
+            break;
     }
     event.SetHandled();
     return true;
@@ -156,7 +151,7 @@ void Application::Init(ApplicationBootSettings& settings)
     Fuego::Pipeline::Toolchain toolchain{};
     toolchain._renderer.load_texture = Fuego::Pipeline::PostLoadPipeline::load_texture;
     toolchain._renderer.update = Fuego::Pipeline::PostLoadPipeline::update;
-    Fuego::Pipeline::PostLoadPipeline::images_ptr = &Fuego::Pipeline::Toolchain::renderer::images;
+    Fuego::Pipeline::PostLoadPipeline::pairs_ptr = &Fuego::Pipeline::Toolchain::renderer::pairs;
 
     auto renderer = ServiceLocator::instance().Register<Renderer>(settings.renderer, toolchain._renderer);
     renderer.value()->Init();
@@ -167,7 +162,8 @@ void Application::Init(ApplicationBootSettings& settings)
 
     auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>(toolchain._assets_manager);
 
-    auto resource = renderer.value()->CreateGraphicsResource<Texture>(assets_manager.value()->LoadAsync<Image2D>("fallback.png"));
+    auto resource = renderer.value()->CreateGraphicsResource<Texture>(
+        assets_manager.value()->Load<Image2D>("fallback.png")->Resource());
 
     assets_manager.value()->Load<Model>("Sponza/Sponza.glb");
     // assets_manager.value()->Load<Model>("WaterCooler/WaterCooler.obj");
@@ -209,7 +205,6 @@ void Application::Run()
 
         float dtTime = _time_manager->DeltaTime();
 
-
         renderer->Clear();
         m_EventQueue->OnUpdate(dtTime);
         m_Window->OnUpdate(dtTime);
@@ -226,8 +221,6 @@ void Application::Run()
             OnEvent(*ev);
             m_EventQueue->Pop();
         }
-
-        assets_manager->Tick();
         renderer->OnUpdate(dtTime);
         renderer->Present();
     }

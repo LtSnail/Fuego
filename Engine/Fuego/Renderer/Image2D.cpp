@@ -1,5 +1,7 @@
 #include "Image2D.h"
 
+#include "Services/ServiceLocator.h"
+
 Fuego::Graphics::Image2D::Image2D(std::string_view name, std::string_view ext, unsigned char* data, int w, int h, int bpp, uint16_t channels)
     : name(name)
     , ext(ext)
@@ -23,9 +25,10 @@ Fuego::Graphics::Image2D::Image2D(std::string_view name, std::string_view ext)
 {
     is_created = false;
 }
+
 Fuego::Graphics::Image2D::~Image2D()
 {
-    delete data;
+    ServiceLocator::instance().GetService<Fuego::AssetsManager>()->FreeImage2D(data);
 }
 
 void Fuego::Graphics::Image2D::PostCreate(Image2DPostCreateion& settings)
