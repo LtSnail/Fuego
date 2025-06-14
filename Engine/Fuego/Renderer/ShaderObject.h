@@ -3,10 +3,11 @@
 namespace Fuego::Graphics
 {
 class Shader;
+class Material;
 
 class ShaderObject
 {
-public:
+   public:
     virtual ~ShaderObject() = default;
 
     static ShaderObject* CreateShaderObject(Shader* vs, Shader* px);

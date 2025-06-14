@@ -26,7 +26,7 @@ class FUEGO_API Application : public singleton<Application>
 {
     friend class singleton<Application>;
 
-public:
+   public:
     struct ApplicationBootSettings
     {
         Fuego::Graphics::GraphicsAPI renderer = Fuego::Graphics::GraphicsAPI::OpenGL;
@@ -55,13 +55,14 @@ public:
 
     // Input events
     bool OnMouseMoveEvent(MouseMovedEvent& event);
+    bool OnMouseWheelScrollEvent(MouseScrolledEvent& event);
 
     Window& GetWindow();
 
     void SetVSync(bool active) const;
     bool IsVSync() const;
 
-protected:
+   protected:
     std::unique_ptr<Window> m_Window;
     std::unique_ptr<EventQueue> m_EventQueue;
     std::unique_ptr<Time> _time_manager;

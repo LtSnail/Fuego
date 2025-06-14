@@ -19,3 +19,6 @@
 [submodule "Engine/External/assimp"]
 	path = Engine/External/assimp
 	url = https://github.com/assimp/assimp
+[submodule "Engine/External/tbb"]
+	path = Engine/External/tbb
+	url = https://github.com/uxlfoundation/oneTBB.git

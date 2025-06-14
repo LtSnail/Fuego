@@ -1,19 +1,19 @@
 # Renderer dependencies
 
 # Assimp
-FILE(REAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../External/assimp ASSIMP_PATH)
-SET(ASSIMP_BUILD_TESTS OFF)
-SET(ASSIMP_COVERALLS OFF)
-SET(ASSIMP_BUILD_ZLIB ON)
-SET(ASSIMP_HUNTER_ENABLED OFF)
+file(REAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../External/assimp ASSIMP_PATH)
+set(ASSIMP_BUILD_TESTS OFF)
+set(ASSIMP_COVERALLS OFF)
+set(ASSIMP_BUILD_ZLIB ON)
+set(ASSIMP_HUNTER_ENABLED OFF)
 # End of Assimp
 
-SET(PUBLIC_INCLUDE_DIRECTORIES ${ASSIMP_PATH}/include)
-SET(PRIVATE_INCLUDE_DIRECTORIES)
-SET(PUBLIC_LINK_LIBRARIES)
-SET(PRIVATE_LINK_LIBRARIES FuegoInterface assimp::assimp)
+set(PUBLIC_INCLUDE_DIRECTORIES ${ASSIMP_PATH}/include)
+set(PRIVATE_INCLUDE_DIRECTORIES)
+set(PUBLIC_LINK_LIBRARIES)
+set(PRIVATE_LINK_LIBRARIES FuegoInterface assimp::assimp)
 
-SET(PROJECT_HEADERS
+set(PROJECT_HEADERS
     Buffer.h
     CommandBuffer.h
     CommandPool.h
@@ -33,48 +33,47 @@ SET(PROJECT_HEADERS
     VertexLayout.h
     Graphics.hpp
     Image2D.h
-)
+    Color.h)
 
-SET(PROJECT_SOURCES Renderer.cpp Model.cpp Camera.cpp VertexLayout.cpp Image2D.cpp)
+set(PROJECT_SOURCES Renderer.cpp Model.cpp Camera.cpp VertexLayout.cpp Image2D.cpp Color.cpp)
 
-IF(FUEGO_PLATFORM_WIN)
-  LIST(APPEND PRIVATE_LINK_LIBRARIES WindowsDep)
-  LIST(APPEND PUBLIC_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../Windows)
+if (FUEGO_PLATFORM_WIN)
+    list(append PRIVATE_LINK_LIBRARIES WindowsDep)
+    list(append PUBLIC_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}
+         ${CMAKE_CURRENT_SOURCE_DIR}/../Windows)
 
-ELSEIF(FUEGO_PLATFORM_MACOS)
-  LIST(APPEND PRIVATE_LINK_LIBRARIES MacOSDep)
-  LIST(APPEND PUBLIC_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../MacOS)
-ENDIF()
+elseif (FUEGO_PLATFORM_MACOS)
+    list(append PRIVATE_LINK_LIBRARIES MacOSDep)
+    list(append PUBLIC_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}
+         ${CMAKE_CURRENT_SOURCE_DIR}/../MacOS)
+endif ()
 
-ADD_SUBDIRECTORY(${ASSIMP_PATH} ${ASSIMP_PATH})
+add_subdirectory(${ASSIMP_PATH} ${ASSIMP_PATH})
 
-ADD_LIBRARY(Renderer STATIC ${PROJECT_HEADERS} ${PROJECT_SOURCES})
+add_library(Renderer static ${PROJECT_HEADERS} ${PROJECT_SOURCES})
 
-SET_TARGET_PROPERTIES(
-  Renderer
-  PROPERTIES FOLDER "Engine/Renderer"
-             ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-             LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-             RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR}
-)
+set_target_properties(
+    Renderer
+    properties FOLDER "Engine/Renderer"
+               ARCHIVE_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+               LIBRARY_OUTPUT_DIRECTORY ${OUTPUT_DIR}
+               RUNTIME_OUTPUT_DIRECTORY ${OUTPUT_DIR})
 
-TARGET_LINK_LIBRARIES(
-  Renderer
-  PRIVATE ${PRIVATE_LINK_LIBRARIES}
-  PUBLIC ${PUBLIC_LINK_LIBRARIES}
-)
+target_link_libraries(
+    Renderer
+    private ${PRIVATE_LINK_LIBRARIES}
+    public ${PUBLIC_LINK_LIBRARIES})
 
-TARGET_INCLUDE_DIRECTORIES(
-  Renderer
-  PRIVATE ${PRIVATE_INCLUDE_DIRECTORIES}
-  PUBLIC ${PUBLIC_INCLUDE_DIRECTORIES}
-)
+target_include_directories(
+    Renderer
+    private ${PRIVATE_INCLUDE_DIRECTORIES}
+    public ${PUBLIC_INCLUDE_DIRECTORIES})
 
 # Set properties only on existing targets
-IF(TARGET assimp)
-  SET_TARGET_PROPERTIES(assimp PROPERTIES FOLDER "External/Assimp")
-ENDIF()
+if (target assimp)
+    set_target_properties(assimp properties FOLDER "External/Assimp")
+endif ()
 
-IF(TARGET zlibstatic)
-  SET_TARGET_PROPERTIES(zlibstatic PROPERTIES FOLDER "External/Assimp")
-ENDIF()
+if (target zlibstatic)
+    set_target_properties(zlibstatic properties FOLDER "External/Assimp")
+endif ()

@@ -3,6 +3,7 @@
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 
+#include "../../Renderer/Graphics.hpp"
 #include "BufferOpenGL.h"
 #include "Renderer.h"
 #include "ShaderObjectOpenGL.h"
@@ -13,12 +14,7 @@
 namespace Fuego::Graphics
 {
 CommandBufferOpenGL::CommandBufferOpenGL()
-    : _mainVsShader(-1)
-    , _pixelShader(-1)
-    , _isLinked(false)
-    , _isDataAllocated(false)
-    , _texture(0)
-    , _isFree(true)
+    : _mainVsShader(-1), _pixelShader(-1), _isLinked(false), _isDataAllocated(false), _texture(0), _isFree(true)
 {
     glGenBuffers(1, &_ebo);
     glGenVertexArrays(1, &_vao);
@@ -59,18 +55,19 @@ void CommandBufferOpenGL::BindRenderTarget(const Surface& texture)
     // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer, VertexLayout layout)
+void CommandBufferOpenGL::BindVertexBuffer(std::unique_ptr<Buffer> vertexBuffer, VertexLayout layout)
 {
-    glBindVertexArray(_vao);
+    buffer = std::move(vertexBuffer);
+    auto buff = static_cast<const BufferOpenGL*>(buffer.get());
 
-    const BufferOpenGL& buff = dynamic_cast<const BufferOpenGL&>(vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buff.GetBufferID());
+    glBindVertexArray(_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, buff->GetBufferID());
 
     VertexLayout::LayoutIterator* it;
     for (it = layout.GetIteratorBegin(); it && !it->IsDone(); it = layout.GetNextIterator())
     {
-        glVertexAttribPointer((GLuint)it->GetIndex(), (GLint)it->GetComponentsAmount(), it->GetAPIDatatype(), GL_FALSE, (GLsizei)layout.GetLayoutSize(),
-                              (void*)it->GetOffset());
+        glVertexAttribPointer((GLuint)it->GetIndex(), (GLint)it->GetComponentsAmount(), it->GetAPIDatatype(), GL_FALSE,
+                              (GLsizei)layout.GetLayoutSize(), (void*)it->GetOffset());
         if (it->GetIsEnabled())
             glEnableVertexAttribArray(it->GetIndex());
     }
@@ -78,13 +75,18 @@ void CommandBufferOpenGL::BindVertexBuffer(const Buffer& vertexBuffer, VertexLay
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void CommandBufferOpenGL::BindIndexBuffer(const uint32_t indices[], uint32_t size_bytes)
+void CommandBufferOpenGL::UpdateSubData(const void* data, size_t size_bytes, size_t offset)
+{
+    buffer->UpdateSubData(data, size_bytes, offset);
+}
+
+void CommandBufferOpenGL::BindIndexBuffer(RenderStage stage, const uint32_t indices[], uint32_t size_bytes)
 {
     glBindVertexArray(_vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
     if (!_isDataAllocated)
     {
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_bytes, indices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size_bytes, indices, ConvertUsage(stage));
         _isDataAllocated = true;
     }
     else
@@ -160,23 +162,22 @@ void CommandBufferOpenGL::SetLabel(ObjectLabel id, uint32_t name, const char* me
     GLenum identifier = GL_BUFFER;
     switch (id)
     {
-    case Fuego::Graphics::CommandBuffer::LABEL_BUFFER:
-        identifier = GL_BUFFER;
-        break;
-    case Fuego::Graphics::CommandBuffer::LABEL_SHADER:
-        identifier = GL_SHADER;
-        break;
-    case Fuego::Graphics::CommandBuffer::LABEL_TEXTURE:
-        identifier = GL_TEXTURE;
-        break;
+        case Fuego::Graphics::CommandBuffer::LABEL_BUFFER:
+            identifier = GL_BUFFER;
+            break;
+        case Fuego::Graphics::CommandBuffer::LABEL_SHADER:
+            identifier = GL_SHADER;
+            break;
+        case Fuego::Graphics::CommandBuffer::LABEL_TEXTURE:
+            identifier = GL_TEXTURE;
+            break;
     }
     glObjectLabel(identifier, name, length, message);
 }
 
-void CommandBufferOpenGL::BindShaderObject(const ShaderObject& obj)
+void CommandBufferOpenGL::BindShaderObject(std::shared_ptr<Fuego::Graphics::ShaderObject> shader)
 {
-    const ShaderObjectOpenGL& obj_gl = static_cast<const ShaderObjectOpenGL&>(obj);
-    obj_gl.Use();
+    shader_object = shader;
 }
 
 void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSet, int setIndex)
@@ -184,6 +185,17 @@ void CommandBufferOpenGL::BindDescriptorSet(const DescriptorBuffer& descriptorSe
     UNUSED(descriptorSet);
     UNUSED(setIndex);
     FU_CORE_INFO("[OpenGL unused function: BindDescriptorSet]");
+}
+
+int CommandBufferOpenGL::ConvertUsage(RenderStage& stage) const
+{
+    switch (stage)
+    {
+        case STATIC_GEOMETRY:
+            return GL_STATIC_DRAW;
+        case DYNAMIC_DRAW:
+            return GL_DYNAMIC_DRAW;
+    }
 }
 
 }  // namespace Fuego::Graphics

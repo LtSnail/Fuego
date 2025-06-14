@@ -6,16 +6,19 @@ namespace Fuego::Graphics
 {
 class Buffer
 {
-public:
+   public:
     virtual ~Buffer() = default;
 
-    template <typename T>
-    void BindData(std::span<const T> data, size_t offset = 0)
+    void UpdateSubData(const void* data, size_t size_bytes, size_t offset = 0)
     {
-        BindDataImpl(data.data(), data.size_bytes(), offset);
+        UpdateSubDataImpl(data, size_bytes, offset);
     }
 
-protected:
-    virtual void BindDataImpl(const void* data, size_t size_bytes, size_t offset) = 0;
+   protected:
+    virtual void UpdateSubDataImpl(const void* data, size_t size_bytes, size_t offset) = 0;
+
+    Buffer(size_t size_bytes) : end_idx(size_bytes), last_buffered_idx(0) {};
+    uint32_t end_idx;
+    uint32_t last_buffered_idx;
 };
 }  // namespace Fuego::Graphics
