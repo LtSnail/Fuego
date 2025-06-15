@@ -11,7 +11,7 @@ repos:
     - id: cmake-format
     - id: cmake-lint
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: ec458dc1db98861800bd35c16a7d97e8cdb61484
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -20,21 +20,21 @@ repos:
       - id: name-tests-test
       - id: requirements-txt-fixer
   - repo: https://github.com/asottile/setup-cfg-fmt
-    rev: 728abba325d4e3aba23fdc5b9843b235ea4ed48b
+    rev: v2.8.0
     hooks:
       - id: setup-cfg-fmt
   - repo: https://github.com/asottile/reorder-python-imports
-    rev: f3ba609d0673c196f3fa25c16ccdefeda8766335
+    rev: v3.15.0
     hooks:
       - id: reorder-python-imports
         exclude: ^(pre_commit/resources/|testing/resources/python3_hooks_repo/)
         args: [--py39-plus, --add-import, "from __future__ import annotations"]
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: 76444a7f657ef942ee0b0cd192bf8642a419332d
+    rev: v3.2.0
     hooks:
       - id: add-trailing-comma
   - repo: https://github.com/asottile/pyupgrade
-    rev: 1a0b8a1996416e51e374431887b12aae3f8d3e80
+    rev: v3.20.0
     hooks:
       - id: pyupgrade
         args: [--py39-plus]
@@ -43,7 +43,7 @@ repos:
     hooks:
       - id: autopep8
   - repo: https://github.com/PyCQA/flake8
-    rev: 23e4005c5501999c29e1e3774de7ed18d1e4e22d
+    rev: 7.2.0
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/mirrors-mypy

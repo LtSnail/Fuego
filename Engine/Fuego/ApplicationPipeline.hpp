@@ -12,7 +12,7 @@ struct TexturePostCreation;
 
 namespace Fuego::Pipeline
 {
-using img_text_queue = std::deque<std::pair<std::shared_ptr<Fuego::Graphics::Image2D>, std::shared_ptr<Fuego::Graphics::Texture>>>;
+using img_text_pair = std::pair<std::shared_ptr<Fuego::Graphics::Image2D>, std::shared_ptr<Fuego::Graphics::Texture>>;
 
 struct Toolchain
 {
@@ -21,7 +21,7 @@ struct Toolchain
         std::shared_ptr<Fuego::Graphics::Texture> (*load_texture)(std::shared_ptr<Fuego::Graphics::Image2D> img,
                                                                   const Fuego::Graphics::Device* device){nullptr};
         void (*update)(){nullptr};
-        static img_text_queue images;
+        static std::list<img_text_pair> pairs;
     };
     struct assets_manager
     {
@@ -36,25 +36,33 @@ struct PostLoadPipeline
 {
     static std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::shared_ptr<Fuego::Graphics::Image2D> img, const Fuego::Graphics::Device* device)
     {
-        return images_ptr->emplace_back(std::make_pair(img, device->CreateTexture(img->Name()))).second;
+        std::mutex mx;
+        std::lock_guard<std::mutex> lock(mx);
+        return pairs_ptr->emplace_back(std::make_pair(img, device->CreateTexture(img->Name()))).second;
     }
+
     static void update()
     {
-        if (images_ptr->empty())
+        std::mutex mx;
+        std::lock_guard<std::mutex> lock(mx);
+
+        if (pairs_ptr->empty())
             return;
 
-        img_text_queue valid_items;
-        for (const auto [img, texture] : *images_ptr)
+        for (auto it = pairs_ptr->begin(); it != pairs_ptr->end();)
         {
-            if (!img->IsValid())
+            if (it->first->IsValid())
             {
-                valid_items.push_back({img, texture});
-                continue;
+                it->second->PostCreate(it->first);
+                it = pairs_ptr->erase(it);
             }
-            texture->PostCreate(img);
+            else
+            {
+                ++it;
+            }
         }
-        images_ptr->swap(valid_items);
     }
-    static img_text_queue* images_ptr;
+
+    static std::list<img_text_pair>* pairs_ptr;
 };
 }  // namespace Fuego::Pipeline

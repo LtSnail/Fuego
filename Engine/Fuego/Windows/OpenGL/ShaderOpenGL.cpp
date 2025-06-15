@@ -103,8 +103,7 @@ bool ShaderOpenGL::SetText2D(const std::string& var, const Texture& texture) con
     if (auto it = uniforms.find(var); it != uniforms.end())
     {
         glUniform1i(it->second, text_gl.GetTextureUnit());
-        glActiveTexture(GL_TEXTURE0 + text_gl.GetTextureUnit());
-        glBindTexture(GL_TEXTURE_2D, text_gl.GetTextureID());
+        glBindTextureUnit(text_gl.GetTextureUnit(), text_gl.GetTextureID());
 
         return true;
     }

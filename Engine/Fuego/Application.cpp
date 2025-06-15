@@ -14,6 +14,7 @@ using Texture = Fuego::Graphics::Texture;
 using Image2D = Fuego::Graphics::Image2D;
 using Model = Fuego::Graphics::Model;
 using Renderer = Fuego::Graphics::Renderer;
+using Color = Fuego::Graphics::Color;
 
 template <>
 Application& singleton<Application>::instance()
@@ -22,15 +23,9 @@ Application& singleton<Application>::instance()
     return inst;
 }
 
-Application::Application()
-    : initialized(false)
-    , m_Running(false)
-{
-}
+Application::Application() : initialized(false), m_Running(false) {}
 
-Application::~Application()
-{
-}
+Application::~Application() {}
 
 void Application::PushLayer(Layer* layer)
 {
@@ -44,13 +39,14 @@ void Application::PushOverlay(Layer* overlay)
 
 void Application::OnEvent(EventVariant& event)
 {  // clang-format off
-    auto ApplicationEventVisitor = EventVisitor{[this](WindowResizeEvent&   ev) { OnWindowResize(ev); }, 
+    auto ApplicationEventVisitor = EventVisitor{[this](WindowResizeEvent&   ev) { OnWindowResize(ev); },
                                                 [this](WindowStartResizeEvent&   ev) { OnStartResizeWindow(ev); },
                                                 [this](WindowEndResizeEvent&    ev) {OnEndResizeWindow(ev); },
                                                 [this](WindowValidateEvent&    ev) {OnValidateWindow(ev); },
                                                 [this](WindowCloseEvent&    ev) {OnWindowClose(ev); },
                                                 [this](AppRenderEvent&    ev) {OnRenderEvent(ev); },
                                                 [this](KeyPressedEvent&    ev) {OnKeyPressEvent(ev); },
+                                                [this](MouseScrolledEvent&    ev) {OnMouseWheelScrollEvent(ev); },
                                                 [](auto&) {}
         };
     // clang-format on
@@ -76,7 +72,8 @@ bool Application::OnWindowClose(WindowCloseEvent& event)
 }
 bool Application::OnWindowResize(WindowResizeEvent& event)
 {
-    ServiceLocator::instance().GetService<Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(), event.GetHeight());
+    ServiceLocator::instance().GetService<Renderer>()->ChangeViewport(event.GetX(), event.GetY(), event.GetWidth(),
+                                                                      event.GetHeight());
     event.SetHandled();
     return true;
 }
@@ -103,12 +100,12 @@ bool Application::OnKeyPressEvent(KeyPressedEvent& event)
 
     switch (crossplatform_key)
     {
-    case Key::D1:
-        ServiceLocator::instance().GetService<Renderer>()->ToggleWireFrame();
-        break;
-    case Key::D2:
-        m_Window->SwitchInteractionMode();
-        break;
+        case Key::D1:
+            ServiceLocator::instance().GetService<Renderer>()->ToggleWireFrame();
+            break;
+        case Key::D2:
+            m_Window->SwitchInteractionMode();
+            break;
     }
     event.SetHandled();
     return true;
@@ -121,14 +118,24 @@ bool Application::OnRenderEvent(AppRenderEvent& event)
     renderer->ShowWireFrame();
     // TODO: As for now we use just one opaque shader, but we must think about different passes
     // using different shaders with blending and probably using pre-passes
-    renderer->SetShaderObject(renderer->opaque_shader.get());
-    renderer->CurrentShaderObject()->Use();
+
+    auto model_1 = assets_manager->Get<Model>("WaterCooler");
+    auto locked_model_1 = model_1.lock();
+    if (locked_model_1)
+    {
+        renderer->DrawModel(Fuego::Graphics::RenderStage::STATIC_GEOMETRY, locked_model_1.get(),
+                            glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 10.f)));
+    }
 
     auto model_3 = assets_manager->Get<Model>("Sponza");
-    // auto model_3 = assets_manager->Get<Model>("WaterCooler");
     auto locked_model_3 = model_3.lock();
     if (locked_model_3)
-        renderer->DrawModel(locked_model_3.get(), glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 10.f)));
+    {
+        renderer->DrawModel(Fuego::Graphics::RenderStage::STATIC_GEOMETRY, locked_model_3.get(),
+                            glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 10.f)));
+    }
+    auto red_texture = renderer->CreateGraphicsResource<Texture>("red texture", Fuego::Graphics::TextureFormat::R8,
+                                                                 Color(128), 128, 128);
 
     UNUSED(event);
     return true;
@@ -137,6 +144,12 @@ bool Application::OnMouseMoveEvent(MouseMovedEvent& event)
 {
     UNUSED(event);
     return true;
+}
+
+bool Application::OnMouseWheelScrollEvent(MouseScrolledEvent& event)
+{
+    m_Window->SetMouseWheelScrollData(event.GetXOffset(), event.GetYOffset());
+    return false;
 }
 
 Window& Application::GetWindow()
@@ -156,7 +169,7 @@ void Application::Init(ApplicationBootSettings& settings)
     Fuego::Pipeline::Toolchain toolchain{};
     toolchain._renderer.load_texture = Fuego::Pipeline::PostLoadPipeline::load_texture;
     toolchain._renderer.update = Fuego::Pipeline::PostLoadPipeline::update;
-    Fuego::Pipeline::PostLoadPipeline::images_ptr = &Fuego::Pipeline::Toolchain::renderer::images;
+    Fuego::Pipeline::PostLoadPipeline::pairs_ptr = &Fuego::Pipeline::Toolchain::renderer::pairs;
 
     auto renderer = ServiceLocator::instance().Register<Renderer>(settings.renderer, toolchain._renderer);
     renderer.value()->Init();
@@ -167,10 +180,11 @@ void Application::Init(ApplicationBootSettings& settings)
 
     auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>(toolchain._assets_manager);
 
-    auto resource = renderer.value()->CreateGraphicsResource<Texture>(assets_manager.value()->LoadAsync<Image2D>("fallback.png"));
+    auto resource = renderer.value()->CreateGraphicsResource<Texture>(
+        assets_manager.value()->Load<Image2D>("fallback.png")->Resource());
 
     assets_manager.value()->Load<Model>("Sponza/Sponza.glb");
-    // assets_manager.value()->Load<Model>("WaterCooler/WaterCooler.obj");
+    assets_manager.value()->Load<Model>("WaterCooler/WaterCooler.obj");
 
     initialized = true;
     m_Running = true;
@@ -209,9 +223,17 @@ void Application::Run()
 
         float dtTime = _time_manager->DeltaTime();
 
-
         renderer->Clear();
+
         m_EventQueue->OnUpdate(dtTime);
+        // TODO Do we need this lookup here or we need t move it to m_EventQueue->OnUpdate?
+        while (!m_EventQueue->Empty())
+        {
+            auto ev = m_EventQueue->Front();
+            OnEvent(*ev);
+            m_EventQueue->Pop();
+        }
+
         m_Window->OnUpdate(dtTime);
         Fuego::Graphics::Camera::GetActiveCamera()->OnUpdate(dtTime);
 
@@ -220,16 +242,9 @@ void Application::Run()
             layer->OnUpdate(dtTime);
         }
 
-        while (!m_EventQueue->Empty())
-        {
-            auto ev = m_EventQueue->Front();
-            OnEvent(*ev);
-            m_EventQueue->Pop();
-        }
-
-        assets_manager->Tick();
         renderer->OnUpdate(dtTime);
         renderer->Present();
+        m_Window->SetMouseWheelScrollData(0.f, 0.f);
     }
 }
 
