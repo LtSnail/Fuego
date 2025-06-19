@@ -15,10 +15,9 @@ using Image2D = Fuego::Graphics::Image2D;
 
 #define ASSIMP_LOAD_FLAGS aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
 
-Fuego::AssetsManager::AssetsManager(Fuego::Pipeline::Toolchain::assets_manager& toolchain)
+Fuego::AssetsManager::AssetsManager()
     : models_count(0)
     , images2d_count(0)
-    , toolchain(toolchain)
 {
     models.reserve(10);
     images2d.reserve(10);

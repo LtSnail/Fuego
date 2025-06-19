@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <type_traits>
 
-#include "ApplicationPipeline.hpp"
 #include "Renderer/Color.h"
 #include "Services/ServiceInterfaces.hpp"
 #include "tbb/concurrent_unordered_map.h"
@@ -89,7 +88,7 @@ public:
     friend class Application;
     friend class Service<AssetsManager>;
 
-    AssetsManager(Fuego::Pipeline::Toolchain::assets_manager& toolchain);
+    AssetsManager();
     ~AssetsManager();
 
     std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> LoadImage2DFromMemory(std::string_view name, unsigned char* data, uint32_t size_b,
@@ -208,8 +207,6 @@ private:
     std::atomic<uint32_t> images2d_count;
 
     uint16_t ImageChannels(std::string_view image2d_ext);
-
-    Fuego::Pipeline::Toolchain::assets_manager toolchain;
 
     template <typename Map>
     bool is_already_loaded(const Map& map, const std::string& key, std::shared_ptr<ResourceHandle<typename Map::mapped_type::element_type>>& handle_out)

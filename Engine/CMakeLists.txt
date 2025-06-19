@@ -76,7 +76,6 @@ SET(ENGINE_SOURCES
     # Generated Code
     ${SCENE_GENERATED_PROTO_SRCS}
     # Implementation Files
-    Fuego/ApplicationPipeline.hpp
 )
 
 # === Engine Configuration ===

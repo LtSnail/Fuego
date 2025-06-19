@@ -34,9 +34,18 @@ SET(PROJECT_HEADERS
     Graphics.hpp
     Image2D.h
     Color.h
+    Toolchain.h
 )
 
-SET(PROJECT_SOURCES Renderer.cpp Model.cpp Camera.cpp VertexLayout.cpp Image2D.cpp Color.cpp)
+SET(PROJECT_SOURCES
+    Renderer.cpp
+    Model.cpp
+    Camera.cpp
+    VertexLayout.cpp
+    Image2D.cpp
+    Color.cpp
+    Toolchain.cpp
+)
 
 IF(FUEGO_PLATFORM_WIN)
   LIST(APPEND PRIVATE_LINK_LIBRARIES "WindowsDep")

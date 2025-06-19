@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Application.h"
-#include "ApplicationPipeline.hpp"
 #include "Buffer.h"
 #include "Camera.h"
 #include "CommandBuffer.h"
@@ -18,6 +17,7 @@
 #include "Surface.h"
 #include "Swapchain.h"
 #include "Texture.h"
+#include "Toolchain.h"
 #include "VertexLayout.h"
 #include "glm/ext.hpp"
 #include "glm/glm.hpp"
@@ -39,7 +39,7 @@ class FUEGO_API Renderer : public Service<Renderer>, public IUpdatable
 public:
     friend struct Service<Renderer>;
 
-    Renderer(GraphicsAPI api, Fuego::Pipeline::Toolchain::renderer& toolchain);
+    Renderer(GraphicsAPI api, std::unique_ptr<Fuego::IRendererToolchain> tool);
     ~Renderer() = default;
 
     Renderer(const Renderer&) = delete;
@@ -123,7 +123,8 @@ private:
 
     tbb::concurrent_unordered_map<std::string, std::shared_ptr<Texture>> textures;
     GraphicsAPI renderer;
-    Fuego::Pipeline::Toolchain::renderer toolchain;
+
+    std::unique_ptr<Fuego::IRendererToolchain> toolchain;
 
     std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::string_view path);
 

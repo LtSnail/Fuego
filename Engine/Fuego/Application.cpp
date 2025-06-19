@@ -1,12 +1,12 @@
 #include "Application.h"
 
-#include "ApplicationPipeline.hpp"
 #include "Events/EventVisitor.h"
 #include "FileSystem/FileSystem.h"
 #include "KeyCodes.h"
 #include "Renderer.h"
 #include "Scene.h"
 #include "ThreadPool.h"
+#include "Toolchain.h"
 
 namespace Fuego
 {
@@ -167,19 +167,14 @@ void Application::Init(ApplicationBootSettings& settings)
     auto fs = ServiceLocator::instance().Register<Fuego::FS::FileSystem>();
     fs.value()->Init();
 
-    Fuego::Pipeline::Toolchain toolchain{};
-    toolchain._renderer.load_texture = Fuego::Pipeline::PostLoadPipeline::load_texture;
-    toolchain._renderer.update = Fuego::Pipeline::PostLoadPipeline::update;
-    Fuego::Pipeline::PostLoadPipeline::pairs_ptr = &Fuego::Pipeline::Toolchain::renderer::pairs;
-
-    auto renderer = ServiceLocator::instance().Register<Renderer>(settings.renderer, toolchain._renderer);
+    auto renderer = ServiceLocator::instance().Register<Renderer>(Fuego::Graphics::GraphicsAPI::OpenGL, std::make_unique<PostLoadToolchain>());
     renderer.value()->Init();
     renderer.value()->SetVSync(settings.vsync);
 
     auto thread_pool = ServiceLocator::instance().Register<Fuego::ThreadPool>();
     thread_pool.value()->Init();
 
-    auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>(toolchain._assets_manager);
+    auto assets_manager = ServiceLocator::instance().Register<Fuego::AssetsManager>();
 
     auto resource = renderer.value()->CreateGraphicsResource<Texture>(assets_manager.value()->Load<Image2D>("fallback.png")->Resource());
 
