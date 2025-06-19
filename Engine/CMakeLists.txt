@@ -1,7 +1,6 @@
 # === Fuego Engine ===
 
 # === External Dependencies ===
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/assimp.cmake)
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/ImGui.cmake)
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/abseil.cmake)
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/protobuf.cmake)

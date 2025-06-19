@@ -5,7 +5,6 @@ This project includes several third-party libraries. Their source code and licen
 | Library | Path | License |
 | --- | --- | --- |
 | abseil | `Engine/External/abseil` | Apache-2.0 |
-| assimp | `Engine/External/assimp` | BSD-3-Clause |
 | glad | `Engine/External/glad` | MIT + Apache-2.0 + Public Domain (Khronos) |
 | glm | `Engine/External/glm` | Happy Bunny / MIT |
 | imgui | `Engine/External/imgui` | MIT |

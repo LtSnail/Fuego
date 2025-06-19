@@ -1,9 +1,9 @@
 #include "AssetsManager.h"
 
-#include <assimp/postprocess.h>
-#include <assimp/scene.h>
-
-#include <assimp/Importer.hpp>
+#if !defined(CGLTF_IMPLEMENTATION)
+#define CGLTF_IMPLEMENTATION
+#include "External/cgltf/cgltf.h"
+#endif
 
 #include "External/stb_image/stb_image.h"
 #include "FileSystem/FileSystem.h"
@@ -12,8 +12,6 @@
 using Model = Fuego::Graphics::Model;
 using Texture = Fuego::Graphics::Texture;
 using Image2D = Fuego::Graphics::Image2D;
-
-#define ASSIMP_LOAD_FLAGS aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType
 
 Fuego::AssetsManager::AssetsManager()
     : models_count(0)
@@ -57,20 +55,23 @@ std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> Fuego::AssetsMana
         return handle;
     }
 
-    Assimp::Importer importer{};
-    const aiScene* scene = importer.ReadFile(res.value(), ASSIMP_LOAD_FLAGS);
-    if (!scene)
+    cgltf_options options = {};
+    cgltf_data* data = NULL;
+    cgltf_result result = cgltf_parse_file(&options, res->c_str(), &data);
+    if (result != cgltf_result_success)
     {
         handle->SetCorrupted(NO_DATA);
         return handle;
     }
-
+    result = cgltf_load_buffers(&options, data, res->c_str());
     std::shared_ptr<Model> model;
     models.emplace(std::move(file_name), handle->Resource());
     ++models_count;
     handle->SetSuccess();
 
     FU_CORE_INFO("[AssetsManager] Model[{0}] was added: name: {1}, ", models.size(), model->GetName());
+    cgltf_free(data);
+
     return handle;
 }
 std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> Fuego::AssetsManager::load_model_async(std::string_view path)
@@ -107,15 +108,16 @@ std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> Fuego::AssetsMana
                 return;
             }
 
-            Assimp::Importer importer{};
-            const aiScene* scene = importer.ReadFile(res.value(), ASSIMP_LOAD_FLAGS);
-            if (!scene)
+            cgltf_options options = {};
+            cgltf_data* data = NULL;
+            cgltf_result result = cgltf_parse_file(&options, res->c_str(), &data);
+            if (result != cgltf_result_success)
             {
                 handle->SetCorrupted(NO_DATA);
                 return;
             }
-
-            handle->Resource()->PostLoad(scene);
+            result = cgltf_load_buffers(&options, data, res->c_str());
+            handle->Resource()->PostLoad(data);
             auto model = models.emplace(handle->Resource()->GetName(), handle->Resource()).first->second;
             FU_CORE_INFO("[AssetsManager] Model[{0}] was added: name: {1}, ", models.size(), model->GetName());
             ++models_count;
@@ -128,6 +130,7 @@ std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>> Fuego::AssetsMana
                 std::lock_guard<std::mutex> lock(mtx);
                 models_to_load_async.unsafe_erase(it);
             }
+            cgltf_free(data);
         },
         path, handle);
 
