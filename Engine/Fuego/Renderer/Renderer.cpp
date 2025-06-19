@@ -42,8 +42,7 @@ std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_vie
     }
 
     auto texture = toolchain->LoadTexture(image, _device.get());
-    auto emplaced_texture = textures.emplace(image->Name(), texture);
-    return emplaced_texture.first->second;
+    return textures.emplace(image->Name(), texture).first->second;
 }
 
 std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_view name, Color color, int width, int height)
@@ -63,13 +62,10 @@ std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_vie
     if (!existing_img.expired())
         image = existing_img.lock();
     else
-    {
         image = assets_manager->LoadImage2DFromColor(name, color, width, height)->Resource();
-    }
 
     auto texture = toolchain->LoadTexture(image, _device.get());
-    auto emplaced_texture = textures.emplace(image->Name(), texture);
-    return emplaced_texture.first->second;
+    return textures.emplace(image->Name(), texture).first->second;
 }
 
 std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::shared_ptr<Fuego::Graphics::Image2D> img)
@@ -83,8 +79,7 @@ std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::shared_ptr
         return it->second;
 
     auto texture = toolchain->LoadTexture(img, _device.get());
-    auto emplaced_texture = textures.emplace(img->Name(), texture);
-    return emplaced_texture.first->second;
+    return textures.emplace(img->Name(), texture).first->second;
 }
 
 void Renderer::OnInit()
