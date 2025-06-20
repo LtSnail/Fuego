@@ -37,8 +37,12 @@ std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_vie
     if (!existing_img.expired())
         image = existing_img.lock();
     else
-    {  // TODO rewrite this method because we use handles ? maybe
+    {
         image = assets_manager->Load<Fuego::Graphics::Image2D>(path)->Resource();
+        if (!image.get())
+        {
+            return GetLoadedTexture("fallback");
+        }
     }
 
     auto texture = toolchain->LoadTexture(image, _device.get());

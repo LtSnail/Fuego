@@ -258,7 +258,7 @@ std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> Fuego::AssetsMa
         return handle;
 
     int w, h, bpp = 0;
-    stbi_set_flip_vertically_on_load(1);
+    stbi_set_flip_vertically_on_load(0);
     unsigned char* img_data = stbi_load_from_memory(data, size_b, &w, &h, &bpp, channels);
 
     if (!img_data)
@@ -301,7 +301,7 @@ std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> Fuego::AssetsMa
             }
 
             int w, h, bpp = 0;
-            stbi_set_flip_vertically_on_load(1);
+            stbi_set_flip_vertically_on_load(0);
             unsigned char* img_data = stbi_load_from_memory(data, size_b, &w, &h, &bpp, channels);
 
             if (!img_data)

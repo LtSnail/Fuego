@@ -7,6 +7,7 @@ struct aiScene;
 struct aiMesh;
 struct aiMaterial;
 struct cgltf_data;
+struct cgltf_mesh;
 
 namespace Fuego::Graphics
 {
@@ -19,7 +20,8 @@ public:
     class FUEGO_API Mesh
     {
     public:
-        Mesh(/*aiMesh* mesh, const Material* material, uint32_t mesh_index, std::vector<Fuego::Graphics::VertexData>& vertices, std::vector<uint32_t>& indices*/);
+        Mesh(cgltf_mesh* mesh, const Material* material, uint32_t mesh_index, std::vector<Fuego::Graphics::VertexData>& vertices,
+             std::vector<uint32_t>& indices);
         ~Mesh() = default;
 
         inline uint32_t GetVertexCount() const
