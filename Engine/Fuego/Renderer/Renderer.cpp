@@ -49,6 +49,33 @@ std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_vie
     auto emplaced_texture = textures.emplace(image->Name(), texture);
     return emplaced_texture.first->second;
 }
+
+std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::string_view name, Color color, int width, int height)
+{
+    if (name.empty())
+        return GetLoadedTexture("fallback");
+
+    // Try to find first across loaded textures:
+    auto it = textures.find(name.data());
+    if (it != textures.end())
+        return it->second;
+
+    // Create image
+    std::shared_ptr<Fuego::Graphics::Image2D> image{nullptr};
+    auto assets_manager = ServiceLocator::instance().GetService<AssetsManager>();
+    auto existing_img = assets_manager->Get<Fuego::Graphics::Image2D>(name);
+    if (!existing_img.expired())
+        image = existing_img.lock();
+    else
+    {
+        image = assets_manager->LoadImage2DFromColor(name, color, width, height)->Resource();
+    }
+
+    auto texture = toolchain.load_texture(image, _device.get());
+    auto emplaced_texture = textures.emplace(image->Name(), texture);
+    return emplaced_texture.first->second;
+}
+
 std::shared_ptr<Fuego::Graphics::Texture> Renderer::load_texture(std::shared_ptr<Fuego::Graphics::Image2D> img)
 {
     if (!img)
@@ -79,11 +106,18 @@ void Renderer::OnInit()
     _swapchain = _device->CreateSwapchain(*_surface);
     _commandPool = _device->CreateCommandPool(*_commandQueue);
 
-    opaque_shader.reset(ShaderObject::CreateShaderObject(_device->CreateShader("vs_shader", Shader::ShaderType::Vertex),
-                                                         _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel)));
-    opaque_shader->GetVertexShader()->AddVar("model");
-    opaque_shader->GetVertexShader()->AddVar("view");
-    opaque_shader->GetVertexShader()->AddVar("projection");
+    std::shared_ptr<ShaderObject> static_geometry_shader(ShaderObject::CreateShaderObject(_device->CreateShader("vs_shader", Shader::ShaderType::Vertex),
+                                                                                          _device->CreateShader("ps_triangle", Shader::ShaderType::Pixel)));
+
+    static_geometry_cmd = _device->CreateCommandBuffer();
+    static_geometry_cmd->BindShaderObject(static_geometry_shader);
+
+    VertexLayout layout{};
+    layout.AddAttribute(VertexLayout::VertexAttribute(0, 3, VertexLayout::DataType::FLOAT, true));
+    layout.AddAttribute(VertexLayout::VertexAttribute(1, 2, VertexLayout::DataType::FLOAT, true));
+    layout.AddAttribute(VertexLayout::VertexAttribute(2, 3, VertexLayout::DataType::FLOAT, true));
+    static_geometry_cmd->BindVertexBuffer(_device->CreateBuffer(Fuego::Graphics::Buffer::BufferType::Vertex, STATIC_GEOMETRY, 100 * 1024 * 1024), layout);
+    static_geometry_cmd->BindIndexBuffer(_device->CreateBuffer(Fuego::Graphics::Buffer::BufferType::Index, STATIC_GEOMETRY, 100 * 1024 * 1024));
 }
 
 void Renderer::OnShutdown()
@@ -93,9 +127,6 @@ void Renderer::OnShutdown()
 
     _surface->Release();
     _surface.release();
-
-    opaque_shader->Release();
-    opaque_shader.reset();
 }
 
 std::shared_ptr<Texture> Renderer::GetLoadedTexture(std::string_view path) const
@@ -112,39 +143,33 @@ std::shared_ptr<Texture> Renderer::GetLoadedTexture(std::string_view path) const
         return textures.find("fallback")->second;
 }
 
-void Renderer::DrawModel(const Model* model, glm::mat4 model_pos)
+void Renderer::DrawModel(RenderStage stage, const Model* model, glm::mat4 model_pos)
 {
-    std::unique_ptr<CommandBuffer> command_buffer = _device->CreateCommandBuffer();
-    CommandBuffer* cmd = command_buffer.get();
-    cmd->PushDebugGroup(0, model->GetName().data());
-    cmd->BeginRecording();
-    cmd->BindRenderTarget(_swapchain->GetScreenTexture());
-
-    VertexLayout layout{};
-    layout.AddAttribute(VertexLayout::VertexAttribute(0, 3, VertexLayout::DataType::FLOAT, true));
-    layout.AddAttribute(VertexLayout::VertexAttribute(1, 2, VertexLayout::DataType::FLOAT, true));
-    layout.AddAttribute(VertexLayout::VertexAttribute(2, 3, VertexLayout::DataType::FLOAT, true));
-
-    current_shader_obj->GetVertexShader()->SetMat4f("model", model_pos);
-    current_shader_obj->GetVertexShader()->SetMat4f("view", _camera->GetView());
-    current_shader_obj->GetVertexShader()->SetMat4f("projection", _camera->GetProjection());
-
-    std::unique_ptr<Buffer> buffer = _device->CreateBuffer(0, 0);
-    buffer->BindData<VertexData>(std::span(model->GetVerticesData(), model->GetVertexCount()));
-
-    cmd->BindIndexBuffer(model->GetIndicesData(), model->GetIndicesCount() * sizeof(uint32_t));
-    cmd->BindVertexBuffer(*buffer, layout);
-
-    const auto* meshes = model->GetMeshesPtr();
-
-    for (const auto& mesh : *meshes)
+    switch (stage)
     {
-        cmd->PushDebugGroup(0, mesh->Name().data());
-        current_shader_obj->BindMaterial(mesh->GetMaterial());
-        cmd->IndexedDraw(mesh->GetIndicesCount(), (const void*)(mesh->GetIndexStart() * sizeof(uint32_t)));
-        cmd->EndRecording();
-        cmd->Submit();
-        cmd->PopDebugGroup();
+    case STATIC_GEOMETRY:
+    {
+        auto it = static_geometry_models.find(model->GetName().data());
+        if (it != static_geometry_models.end())
+        {
+            it->second.pos = model_pos;
+            return;
+        }
+
+        DrawInfo draw{model, model_pos};
+
+        draw.vertex_global_offset_bytes =
+            static_geometry_cmd->UpdateBufferSubData<VertexData>(Buffer::Vertex, std::span(model->GetVerticesData(), model->GetVertexCount()));
+
+        draw.index_global_offset_bytes =
+            static_geometry_cmd->UpdateBufferSubData<uint32_t>(Buffer::Index, std::span(model->GetIndicesData(), model->GetIndicesCount()));
+
+        static_geometry_models.emplace(model->GetName().data(), draw);
+        static_geometry_models_vector.emplace_back(draw);
+        break;
+    }
+    case DYNAMIC_DRAW:
+        break;
     }
 }
 
@@ -196,6 +221,41 @@ bool Renderer::IsVSync()
 void Renderer::OnUpdate(float dlTime)
 {
     toolchain.update();
+
+    // Main Pass
+    static_geometry_cmd->PushDebugGroup(0, "[PASS] -> Main Pass");
+    static_geometry_cmd->PushDebugGroup(0, "[STAGE] -> Static geometry stage");
+    static_geometry_cmd->BeginRecording();
+    static_geometry_cmd->BindRenderTarget(_swapchain->GetScreenTexture());
+
+    static_geometry_cmd->ShaderObject()->Use();
+
+    for (const auto& draw_info : static_geometry_models_vector)
+    {
+        static_geometry_cmd->PushDebugGroup(0, draw_info.model->GetName().data());
+        static_geometry_cmd->ShaderObject()->Set("model", draw_info.pos);
+        static_geometry_cmd->ShaderObject()->Set("view", _camera->GetView());
+        static_geometry_cmd->ShaderObject()->Set("projection", _camera->GetProjection());
+
+        const auto* meshes = draw_info.model->GetMeshesPtr();
+
+        uint32_t index_inner_offset_bytes = 0;
+        for (const auto& mesh : *meshes)
+        {
+            static_geometry_cmd->PushDebugGroup(0, mesh->Name().data());
+            static_geometry_cmd->ShaderObject()->BindMaterial(mesh->GetMaterial());
+            static_geometry_cmd->IndexedDraw(mesh->GetIndicesCount(), draw_info.index_global_offset_bytes + index_inner_offset_bytes,
+                                             draw_info.vertex_global_offset_bytes / sizeof(VertexData));
+
+            index_inner_offset_bytes += mesh->GetIndicesCount() * sizeof(uint32_t);
+            static_geometry_cmd->PopDebugGroup();
+        }
+        static_geometry_cmd->PopDebugGroup();
+        static_geometry_cmd->EndRecording();
+        static_geometry_cmd->Submit();
+    }
+    static_geometry_cmd->PopDebugGroup();
+    static_geometry_cmd->PopDebugGroup();
 }
 
 void Renderer::OnPostUpdate(float dlTime)

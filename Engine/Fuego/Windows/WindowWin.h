@@ -11,6 +11,8 @@ class SurfaceWindows;
 class WindowWin final : public Window
 {
 public:
+    friend class Application;
+
     WindowWin(const WindowProps& props, EventQueue& eventQueue);
 
     virtual void OnUpdate(float dlTime) override;
@@ -33,6 +35,7 @@ public:
     Input::KeyState GetKeyState(KeyCode keyCode) const;
     Input::MouseState GetMouseState(MouseCode mouseCode) const;
     void GetMousePos(float& xPos, float& yPos) const;
+    std::pair<float, float> GetMouseWheelScrollData() const;
     virtual inline bool HasMouseMoved(float x, float y) const override
     {
         return !(_cursorPos.x == x && _cursorPos.y == y);
@@ -85,19 +88,21 @@ private:
 
     bool is_first_launch, isResizing, isPainted, is_in_focus;
 
-    friend class Application;
     virtual inline void SetPainted() override
     {
         isPainted = true;
     }
 
     virtual void SetMousePos(float x, float y) override;
+    virtual void SetMouseWheelScrollData(float x, float y) override;
 
     glm::vec2 _mouseDir;
     Input::MouseInfo _lastMouse;
     Input::KeyState pressed_keys[256];
     glm::vec2 _cursorPos;
     glm::vec2 _prevCursorPos;
+
+    std::pair<float, float> mouse_wheel_data;
 
     InteractionMode interaction_mode;
 

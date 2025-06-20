@@ -13,6 +13,7 @@ protected:
     virtual bool IsKeyPressedImpl(KeyCode keyCode) const override;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) override;
+    virtual bool IsMouseWheelScrolledImpl(std::pair<float, float>& pair) const override;
     virtual std::pair<float, float> GetMousePositionImpl() const override;
     virtual float GetMouseXImpl() const override;
     virtual float GetMouseYImpl() const override;

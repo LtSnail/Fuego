@@ -38,4 +38,10 @@ enum TextureType
     SPECULAR = 2
 };
 
+enum RenderStage
+{
+    STATIC_GEOMETRY,
+    DYNAMIC_DRAW
+};
+
 }  // namespace Fuego::Graphics

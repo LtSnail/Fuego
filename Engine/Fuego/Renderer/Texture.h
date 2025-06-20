@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Color.h"
 #include "Image2D.h"
 
 namespace Fuego::Graphics
@@ -9,10 +10,11 @@ enum class TextureFormat
 {
     R8,       // Single-channel 8-bit
     RG8,      // Two-channel 8-bit
-    RGBA8,    // Four-channel 8-bit
     RGB8,     // Three-channel 8-bit
+    RGBA8,    // Four-channel 8-bit
     R16F,     // Single-channel 16-bit floating point
     RG16F,    // Two-channel 16-bit floating point
+    RGB16F,   // Three-channel 16-bit floating point
     RGBA16F,  // Four-channel 16-bit floating point
     R32F,     // Single-channel 32-bit floating point
     RGBA32F,  // Four-channel 32-bit floating point
@@ -43,19 +45,27 @@ public:
 
     static TextureFormat GetTextureFormat(uint16_t channels, uint16_t bpp)
     {
-        if (channels == 3)
+        switch (channels)
         {
+        case 1:
+            if (bpp <= 8)
+                return TextureFormat::R8;
+            break;
+
+        case 2:
+            if (bpp <= 8)
+                return TextureFormat::RG8;
+            break;
+
+        case 3:
             if (bpp <= 8)
                 return TextureFormat::RGB8;
-            else if (bpp == 16)
-                return TextureFormat::RGBA16F;
-        }
-        else if (channels == 4)
-        {
+            break;
+
+        case 4:
             if (bpp <= 8)
                 return TextureFormat::RGBA8;
-            else if (bpp == 16)
-                return TextureFormat::RGBA16F;
+            break;
         }
     }
 
@@ -79,13 +89,14 @@ protected:
         , format(format)
         , width(width)
         , height(height)
-    {
-    }
+        , is_created(false) {};
+
     Texture(std::string_view name)
         : name(name)
         , format(TextureFormat::NONE)
         , width(0)
         , height(0)
+        , is_created(false)
     {
     }
 
@@ -94,6 +105,34 @@ protected:
     int width;
     int height;
     TextureFormat format;
+
+    uint32_t calculate_mipmap_level(uint32_t width, uint32_t height) const
+    {
+        return 1 + static_cast<uint32_t>(std::floor(std::log2(std::max(width, height))));
+    }
+    uint32_t get_channels(TextureFormat format) const
+    {
+        switch (format)
+        {
+        case Fuego::Graphics::TextureFormat::R8:
+        case Fuego::Graphics::TextureFormat::R16F:
+        case Fuego::Graphics::TextureFormat::R32F:
+            return 1;
+
+        case Fuego::Graphics::TextureFormat::RG8:
+        case Fuego::Graphics::TextureFormat::RG16F:
+            return 2;
+
+        case Fuego::Graphics::TextureFormat::RGB8:
+        case Fuego::Graphics::TextureFormat::RGB16F:
+            return 3;
+
+        case Fuego::Graphics::TextureFormat::RGBA8:
+        case Fuego::Graphics::TextureFormat::RGBA16F:
+        case Fuego::Graphics::TextureFormat::RGBA32F:
+            return 4;
+        }
+    }
 };  // namespace Fuego::Graphics
 
 class TextureView

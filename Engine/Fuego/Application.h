@@ -55,6 +55,7 @@ public:
 
     // Input events
     bool OnMouseMoveEvent(MouseMovedEvent& event);
+    bool OnMouseWheelScrollEvent(MouseScrolledEvent& event);
 
     Window& GetWindow();
 

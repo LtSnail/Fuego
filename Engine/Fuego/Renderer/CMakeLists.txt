@@ -1,12 +1,11 @@
 # Renderer dependencies
 
-# Assimp
+# cmake-lint: disable=E1126
 FILE(REAL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../External/assimp" ASSIMP_PATH)
 SET(ASSIMP_BUILD_TESTS OFF)
 SET(ASSIMP_COVERALLS OFF)
 SET(ASSIMP_BUILD_ZLIB ON)
 SET(ASSIMP_HUNTER_ENABLED OFF)
-# End of Assimp
 
 SET(PUBLIC_INCLUDE_DIRECTORIES "${ASSIMP_PATH}/include")
 SET(PRIVATE_INCLUDE_DIRECTORIES "")
@@ -33,9 +32,10 @@ SET(PROJECT_HEADERS
     VertexLayout.h
     Graphics.hpp
     Image2D.h
+    Color.h
 )
 
-SET(PROJECT_SOURCES Renderer.cpp Model.cpp Camera.cpp VertexLayout.cpp Image2D.cpp)
+SET(PROJECT_SOURCES Renderer.cpp Model.cpp Camera.cpp VertexLayout.cpp Image2D.cpp Color.cpp)
 
 IF(FUEGO_PLATFORM_WIN)
   LIST(APPEND PRIVATE_LINK_LIBRARIES "WindowsDep")

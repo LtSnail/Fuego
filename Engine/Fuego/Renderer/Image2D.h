@@ -3,6 +3,8 @@
 
 namespace Fuego::Graphics
 {
+class Color;
+
 class Image2D
 {
 public:

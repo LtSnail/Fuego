@@ -28,6 +28,7 @@ template <class Resource>
 concept is_graphic_resource = requires(Resource t) {
     std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Texture> || std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Shader>;
 };
+
 #pragma endregion
 
 namespace Fuego::Graphics
@@ -50,7 +51,7 @@ public:
     std::shared_ptr<Texture> GetLoadedTexture(std::string_view path) const;
 
     // IRenderer;
-    void DrawModel(const Model* model, glm::mat4 model_pos);
+    void DrawModel(RenderStage stage, const Model* model, glm::mat4 model_pos);
     void ChangeViewport(float x, float y, float w, float h);
 
     // IUpdatable
@@ -74,29 +75,23 @@ public:
 
     static uint32_t MAX_TEXTURES_COUNT;
 
-    inline const ShaderObject* CurrentShaderObject() const
-    {
-        return current_shader_obj;
-    }
-    inline void SetShaderObject(ShaderObject* obj)
-    {
-        current_shader_obj = obj;
-    }
-
-    std::unique_ptr<ShaderObject> opaque_shader;
-
     template <is_graphic_resource Resource, typename... Args>
     std::shared_ptr<Resource> CreateGraphicsResource(Args&&... args)
     {
         constexpr uint32_t args_amount = sizeof...(Args);
         if constexpr (std::is_same_v<std::remove_cv_t<Resource>, Fuego::Graphics::Texture>)
         {
-            static_assert(args_amount == 1);
-
-            using FirstArg = std::tuple_element_t<0, std::tuple<Args...>>;
-            if constexpr ((std::is_same_v<std::remove_cv_t<std::remove_reference_t<FirstArg>>, std::shared_ptr<Fuego::Graphics::Image2D>>) ||
-                          (std::is_same_v<FirstArg, std::string_view>) || (std::is_same_v<FirstArg, std::string>) ||
-                          (std::is_convertible_v<FirstArg, const char*>))
+            if constexpr (args_amount == 1)
+            {
+                using FirstArg = std::tuple_element_t<0, std::tuple<Args...>>;
+                if constexpr ((std::is_same_v<std::remove_cv_t<std::remove_reference_t<FirstArg>>, std::shared_ptr<Fuego::Graphics::Image2D>>) ||
+                              (std::is_same_v<FirstArg, std::string_view>) || (std::is_same_v<FirstArg, std::string>) ||
+                              (std::is_convertible_v<FirstArg, const char*>))
+                {
+                    return load_texture(std::forward<Args>(args)...);
+                }
+            }
+            else if constexpr (args_amount == 4)
             {
                 return load_texture(std::forward<Args>(args)...);
             }
@@ -118,6 +113,8 @@ private:
     std::unique_ptr<Surface> _surface;
     std::unique_ptr<Camera> _camera;
 
+    std::unique_ptr<CommandBuffer> static_geometry_cmd;
+
     ShaderObject* current_shader_obj;
 
     Viewport viewport;
@@ -129,7 +126,22 @@ private:
     Fuego::Pipeline::Toolchain::renderer toolchain;
 
     std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::string_view path);
+
+    std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::string_view name, Color color, int width, int height);
+
     std::shared_ptr<Fuego::Graphics::Texture> load_texture(std::shared_ptr<Fuego::Graphics::Image2D> img);
+
+    struct DrawInfo
+    {
+        const Model* model;
+        glm::mat4 pos;
+        uint32_t index_global_offset_bytes;
+        uint32_t vertex_global_offset_bytes;
+    };
+
+    std::unordered_map<std::string, DrawInfo> static_geometry_models;
+    std::vector<DrawInfo> static_geometry_models_vector;
+
     // Service
 protected:
     void OnInit();

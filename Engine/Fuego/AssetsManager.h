@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include "ApplicationPipeline.hpp"
+#include "Renderer/Color.h"
 #include "Services/ServiceInterfaces.hpp"
 #include "tbb/concurrent_unordered_map.h"
 
@@ -16,16 +17,14 @@ enum ImageFormat;
 
 namespace Fuego
 {
-enum class ResourceLoadingFailureReason
+enum Failure
 {
-    NONE,
     WRONG_PATH,
     NO_DATA
 };
 
-enum class ResourceLoadingStatus
+enum LoadingSts
 {
-    NONE,
     TO_BE_LOADED,
     LOADING,
     CORRUPTED,
@@ -36,35 +35,42 @@ template <typename T>
 class ResourceHandle
 {
 public:
-    ResourceHandle(std::shared_ptr<T> resource, ResourceLoadingStatus st, ResourceLoadingFailureReason failure)
+    ResourceHandle(std::shared_ptr<T> resource, LoadingSts status, std::optional<Failure> failure = std::nullopt)
         : obj(resource)
-        , status(st)
+        , status(status)
         , failure(failure) {};
-    ResourceHandle(ResourceLoadingStatus st, ResourceLoadingFailureReason failure)
-        : status(st)
-        , failure(failure)
-    {
-        status = ResourceLoadingStatus::CORRUPTED;
-        obj = std::shared_ptr<T>{nullptr};
-    }
+
+    ResourceHandle(std::shared_ptr<T> resource)
+        : obj(resource)
+        , status(status) {};
 
     ~ResourceHandle() = default;
 
-    ResourceLoadingStatus Status()
+    LoadingSts Status()
     {
         return status;
     }
-    ResourceLoadingFailureReason FailureReason()
+    std::optional<Failure> FailureReason()
     {
         return failure;
     }
-    void SetStatus(ResourceLoadingStatus st)
+    void SetCorrupted(Failure failure)
+    {
+        status = CORRUPTED;
+        failure = failure;
+    }
+    void SetSuccess()
+    {
+        status = SUCCESS;
+        failure = std::nullopt;
+    }
+    void SetStatus(LoadingSts st)
     {
         status = st;
     }
-    void SetFailureReason(ResourceLoadingFailureReason reason)
+    void SetFailure(Failure fail)
     {
-        failure = reason;
+        failure = fail;
     }
     std::shared_ptr<T> Resource()
     {
@@ -72,9 +78,9 @@ public:
     }
 
 private:
-    ResourceLoadingStatus status{ResourceLoadingStatus::NONE};
-    ResourceLoadingFailureReason failure{ResourceLoadingFailureReason::NONE};
     std::shared_ptr<T> obj;
+    LoadingSts status{TO_BE_LOADED};
+    std::optional<Failure> failure;
 };
 
 class AssetsManager : public Service<AssetsManager>
@@ -93,6 +99,9 @@ public:
 
     std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> LoadImage2DFromRawData(std::string_view name, unsigned char* data, uint32_t channels,
                                                                                             uint16_t bpp, uint32_t width, uint32_t height);
+
+    std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> LoadImage2DFromColor(std::string_view name, Fuego::Graphics::Color color, uint32_t width,
+                                                                                          uint32_t height);
 
     template <class Res>
     std::shared_ptr<Fuego::ResourceHandle<Res>> Load(std::string_view path, bool async = true)
@@ -182,7 +191,7 @@ public:
 
 private:
     tbb::concurrent_unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Model>> models;
-    // std::unordered_map<std::string, std::shared_ptr<Fuego::Graphics::Model>> models;
+
     //  TODO: What to do with corrupted models?
     tbb::concurrent_unordered_map<std::string, std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Model>>> models_to_load_async;
 
@@ -198,12 +207,22 @@ private:
     std::atomic<uint32_t> models_count;
     std::atomic<uint32_t> images2d_count;
 
-    // std::mutex models_async_operations;
-    // std::mutex images2d_async_operations;
-
     uint16_t ImageChannels(std::string_view image2d_ext);
 
     Fuego::Pipeline::Toolchain::assets_manager toolchain;
+
+    template <typename Map>
+    bool is_already_loaded(const Map& map, const std::string& key, std::shared_ptr<ResourceHandle<typename Map::mapped_type::element_type>>& handle_out)
+    {
+        auto it = map.find(key);
+        if (it != map.end())
+        {
+            handle_out = std::make_shared<ResourceHandle<typename Map::mapped_type::element_type>>(it->second);
+            handle_out->SetSuccess();
+            return true;
+        }
+        return false;
+    }
 };
 
 }  // namespace Fuego

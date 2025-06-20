@@ -36,6 +36,11 @@ public:
         return platform_instance().IsKeyPressedImpl(keyCode);
     }
 
+    static inline bool IsMouseWheelScrolled(std::pair<float, float>& data)
+    {
+        return platform_instance().IsMouseWheelScrolledImpl(data);
+    }
+
     static inline bool IsMouseButtonPressed(MouseCode mouseCode)
     {
         return platform_instance().IsMouseButtonPressedImpl(mouseCode);
@@ -71,6 +76,7 @@ protected:
     [[nodiscard]] virtual bool IsKeyPressedImpl(KeyCode keyCode) const = 0;
 
     virtual bool IsMouseButtonPressedImpl(MouseCode mouseCode) = 0;
+    [[nodiscard]] virtual bool IsMouseWheelScrolledImpl(std::pair<float, float>& pair) const = 0;
     [[nodiscard]] virtual std::pair<float, float> GetMousePositionImpl() const = 0;
     [[nodiscard]] virtual float GetMouseXImpl() const = 0;
     [[nodiscard]] virtual float GetMouseYImpl() const = 0;

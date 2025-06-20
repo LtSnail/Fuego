@@ -4,57 +4,6 @@
 
 namespace Fuego::Graphics
 {
-TextureOpenGL::TextureOpenGL(std::string_view name, TextureFormat format, unsigned char* buffer, int width, int height)
-    : Texture(name, format, width, height)
-    , texture_unit(0)
-    , texture_id(0)
-{
-    FU_CORE_ASSERT(buffer, "Texture buffer is empty");
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glGenTextures(1, &texture_id);
-    FU_CORE_ASSERT(!texture_id == 0, "Texture didn't create");
-
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-    glTexImage2D(GL_TEXTURE_2D, 0, ColorFormat(format), width, height, 0, PixelFormat(format), GL_UNSIGNED_BYTE, buffer);
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Configuration of minification/Magnification
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    is_created = true;
-}
-
-void TextureOpenGL::PostCreate(std::shared_ptr<Fuego::Graphics::Image2D> img)
-{
-    const auto& image = *img.get();
-    FU_CORE_ASSERT(image.Data()[0] != '\n' || image.Data()[0] != ' ' || image.IsValid(), "[TextureOpenGL->PostCreate] broken image2d data");
-    Texture::PostCreate(img);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glGenTextures(1, &texture_id);
-    FU_CORE_ASSERT(!texture_id == 0, "Texture didn't create");
-
-    glBindTexture(GL_TEXTURE_2D, texture_id);
-    glTexImage2D(GL_TEXTURE_2D, 0, ColorFormat(format), width, height, 0, PixelFormat(format), GL_UNSIGNED_BYTE, image.Data());
-
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    // Configuration of minification/Magnification
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    is_created = true;
-}
 
 TextureOpenGL::TextureOpenGL(std::string_view name)
     : Texture(name)
@@ -64,37 +13,87 @@ TextureOpenGL::TextureOpenGL(std::string_view name)
     is_created = false;
 }
 
+TextureOpenGL::TextureOpenGL(std::string_view name, TextureFormat format, unsigned char* buffer, int width, int height)
+    : Texture(name, format, width, height)
+    , texture_unit(0)
+    , texture_id(0)
+{
+    FU_CORE_ASSERT(buffer, "Texture buffer is empty");
+
+    glCreateTextures(GL_TEXTURE_2D, 1, &texture_id);
+    FU_CORE_ASSERT(!texture_id == 0, "Texture didn't create");
+
+    uint32_t mipmap_levels = calculate_mipmap_level(width, height);
+    glTextureStorage2D(texture_id, mipmap_levels, ColorFormat(format), width, height);
+    glTextureSubImage2D(texture_id, 0, 0, 0, width, height, PixelFormat(format), GL_UNSIGNED_BYTE, buffer);
+
+    glGenerateTextureMipmap(texture_id);
+
+    glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // Set texture name for debug output instead of common material uniform name
+    glObjectLabel(GL_TEXTURE, texture_id, -1, this->name.c_str());
+
+    is_created = true;
+}
+
+void TextureOpenGL::PostCreate(std::shared_ptr<Fuego::Graphics::Image2D> img)
+{
+    const auto& image = *img.get();
+    FU_CORE_ASSERT(image.Data()[0] != '\n' && image.Data()[0] != ' ' && image.IsValid(), "[TextureOpenGL->PostCreate] broken image2d data");
+
+    Texture::PostCreate(img);
+
+    glCreateTextures(GL_TEXTURE_2D, 1, &texture_id);
+    FU_CORE_ASSERT(!texture_id == 0, "Texture didn't create");
+
+    uint32_t mipmap_levels = calculate_mipmap_level(width, height);
+    glTextureStorage2D(texture_id, mipmap_levels, ColorFormat(format), width, height);
+    glTextureSubImage2D(texture_id, 0, 0, 0, width, height, PixelFormat(format), GL_UNSIGNED_BYTE, image.Data());
+
+    glGenerateTextureMipmap(texture_id);
+
+    // Configuration of minification/Magnification
+    glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // Set texture name for debug output instead of common material uniform name
+    glObjectLabel(GL_TEXTURE, texture_id, -1, this->name.c_str());
+
+    is_created = true;
+}
+
 uint32_t TextureOpenGL::ColorFormat(TextureFormat format)
 {
     switch (format)
     {
     case Fuego::Graphics::TextureFormat::R8:
         return GL_R8;
-        break;
     case Fuego::Graphics::TextureFormat::RG8:
         return GL_RG8;
-        break;
-    case Fuego::Graphics::TextureFormat::RGBA8:
-        return GL_RGBA8;
-        break;
     case Fuego::Graphics::TextureFormat::RGB8:
         return GL_RGB8;
-        break;
+    case Fuego::Graphics::TextureFormat::RGBA8:
+        return GL_RGBA8;
+
     case Fuego::Graphics::TextureFormat::R16F:
         return GL_R16F;
-        break;
     case Fuego::Graphics::TextureFormat::RG16F:
         return GL_RG16F;
-        break;
+    case Fuego::Graphics::TextureFormat::RGB16F:
+        return GL_RGB16F;
     case Fuego::Graphics::TextureFormat::RGBA16F:
         return GL_RGBA16F;
-        break;
+
     case Fuego::Graphics::TextureFormat::R32F:
         return GL_R32F;
-        break;
     case Fuego::Graphics::TextureFormat::RGBA32F:
         return GL_RGBA32F;
-        break;
     }
 }
 
@@ -151,16 +150,15 @@ TextureOpenGL::~TextureOpenGL()
 
 void TextureOpenGL::Bind() const
 {
-    glBindTexture(GL_TEXTURE_2D, texture_id);
 }
 
 void TextureOpenGL::UnBind() const
 {
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 TextureFormat TextureOpenGL::GetTextureFormat() const
 {
     return TextureFormat::R16F;
 }
+
 }  // namespace Fuego::Graphics

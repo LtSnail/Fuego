@@ -1,13 +1,12 @@
 #include "ShaderOpenGL.h"
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include "ShaderObjectOpenGL.h"
 #include "TextureOpenGL.h"
 #include "glad/gl.h"
 
 namespace Fuego::Graphics
 {
+
 GLint GetShaderType(Shader::ShaderType type)
 {
     switch (type)
@@ -55,65 +54,6 @@ void ShaderOpenGL::BindToShaderObject(ShaderObject& obj)
     shader_object = obj_gl.GetObjectID();
 }
 
-bool ShaderOpenGL::AddVar(const std::string& uniform)
-{
-    GLint location = glGetUniformLocation(shader_object, uniform.c_str());
-    if (location != -1)
-    {
-        uniforms[uniform] = location;
-        return true;
-    }
-    else
-    {
-        FU_CORE_ERROR("[Shader] Uniform {} not found in shader", uniform.c_str());
-        return false;
-    }
-}
-
-bool ShaderOpenGL::SetVec3f(const std::string& var, glm::vec3 vector) const
-{
-    if (auto it = uniforms.find(var); it != uniforms.end())
-    {
-        glUniform3f(it->second, vector.x, vector.y, vector.z);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool ShaderOpenGL::SetMat4f(const std::string& var, glm::mat4 matrix) const
-{
-    if (auto it = uniforms.find(var); it != uniforms.end())
-    {
-        glUniformMatrix4fv(it->second, 1, GL_FALSE, glm::value_ptr(matrix));
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool ShaderOpenGL::SetText2D(const std::string& var, const Texture& texture) const
-{
-    const TextureOpenGL& text_gl = dynamic_cast<const TextureOpenGL&>(texture);
-    if (auto it = uniforms.find(var); it != uniforms.end())
-    {
-        glUniform1i(it->second, text_gl.GetTextureUnit());
-        glActiveTexture(GL_TEXTURE0 + text_gl.GetTextureUnit());
-        glBindTexture(GL_TEXTURE_2D, text_gl.GetTextureID());
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 void ShaderOpenGL::Release()
 {
     glDeleteShader(_shaderID);
@@ -121,7 +61,6 @@ void ShaderOpenGL::Release()
     shader_object = 0;
     _shaderID = 0;
     _type = None;
-    uniforms.clear();
 }
 
 }  // namespace Fuego::Graphics

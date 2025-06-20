@@ -121,8 +121,10 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
     std::map<uint32_t, const Texture*> loaded_textures;
     for (size_t i = 0; i < scene->mNumMaterials; i++)
     {
+        uint32_t solid_texture_idx = 0;
         aiString path;
-        std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> image{};
+        std::shared_ptr<Fuego::ResourceHandle<Fuego::Graphics::Image2D>> image{nullptr};
+        std::shared_ptr<Fuego::Graphics::Texture> texture{nullptr};
         if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &path) == AI_SUCCESS)
         {
             if (path.C_Str()[0] == '*')
@@ -165,7 +167,7 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
             else
                 image = assets_manager->Load<Image2D>(path.C_Str(), async);
 
-            auto texture = renderer->CreateGraphicsResource<Texture>(image->Resource()->Name());
+            texture = renderer->CreateGraphicsResource<Texture>(image->Resource()->Name());
 
             // TODO think about passing raw pointer or shared ptr to material
             auto material = Material::CreateMaterial(texture.get());
@@ -177,10 +179,12 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
             aiColor4D diffuseColor{};
             if (scene->mMaterials[i]->Get(AI_MATKEY_COLOR_DIFFUSE, diffuseColor) == AI_SUCCESS)
             {
-                // TODO we need Color class and creation of solid textures from colors
+                std::string name = std::string(scene->mRootNode->mName.C_Str()) + "_Solid_Texture_" + std::to_string(solid_texture_idx);
+
+                texture = renderer->CreateGraphicsResource<Texture>(name, Color(diffuseColor.r, diffuseColor.g, diffuseColor.b, diffuseColor.a), 128, 128);
+                ++solid_texture_idx;
             }
             auto renderer = ServiceLocator::instance().GetService<Fuego::Graphics::Renderer>();
-            // auto texture = renderer->CreateGraphicsResource<Texture>();
             // TODO change fallback texture to solidtexture
             auto material = Material::CreateMaterial(renderer->GetLoadedTexture("fallback").get());
             materials.emplace_back(std::unique_ptr<Material>(material));
@@ -195,5 +199,4 @@ void Fuego::Graphics::Model::process_model(const aiScene* scene, bool async)
         vertex_count += mesh->GetVertexCount();
         indices_count += mesh->GetIndicesCount();
     }
-    int a = 5;
 }

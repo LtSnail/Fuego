@@ -361,6 +361,7 @@ WindowWin::WindowWin(const WindowProps& props, EventQueue& eventQueue)
     , interaction_mode(InteractionMode::GAMING)
     , is_first_launch(true)
     , is_in_focus(true)
+    , mouse_wheel_data(std::make_pair(0.f, 0.f))
 {
     POINT cursorPos;
     ::GetCursorPos(&cursorPos);
@@ -407,6 +408,11 @@ Input::MouseState WindowWin::GetMouseState(MouseCode mouseCode) const
     return _lastMouse.mouseCode == mouseCode ? _lastMouse.state : Input::MouseState::MOUSE_NONE;
 }
 
+std::pair<float, float> WindowWin::GetMouseWheelScrollData() const
+{
+    return mouse_wheel_data;
+}
+
 void WindowWin::GetMousePos(OUT float& xPos, OUT float& yPos) const
 {
     xPos = _cursorPos.x;
@@ -423,6 +429,12 @@ void WindowWin::SetMousePos(float x, float y)
     _prevCursorPos = _cursorPos;
     _cursorPos.x = x;
     _cursorPos.y = y;
+}
+
+void WindowWin::SetMouseWheelScrollData(float x, float y)
+{
+    mouse_wheel_data.first = x;
+    mouse_wheel_data.second = y;
 }
 
 void WindowWin::SetWindowMode(WPARAM mode)

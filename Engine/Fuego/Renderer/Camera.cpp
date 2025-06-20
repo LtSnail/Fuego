@@ -2,13 +2,15 @@
 
 #include "Input.h"
 
+#define MOUSE_WHEEL_SCROLL_SPEED 5.f
+
 namespace Fuego::Graphics
 {
 
 Camera* Camera::active_camera = nullptr;
 
 Camera::Camera()
-    : speed(0.1)
+    : speed(50.1)
     , position(0.0f)
     , up(glm::vec3(0.0f, 1.0f, 0.0f))
     , yaw(0.0f)
@@ -20,7 +22,7 @@ Camera::Camera()
     , projection(glm::mat4(1.0f))
     , FOV(60)
     , near_clip(0.1f)
-    , far_clip(1000.0f)
+    , far_clip(3000.0f)
 
 {
 }
@@ -64,6 +66,19 @@ void Camera::OnUpdate(float dlTime)
     if (Input::IsKeyPressed(Key::D))
     {
         position += glm::normalize(glm::cross(camera_forward, up)) * speed * dlTime;
+    }
+
+    std::pair<float, float> mouse_wheel_scroll;
+    if (Input::IsMouseWheelScrolled(mouse_wheel_scroll))
+    {
+        if (mouse_wheel_scroll.first != 0.f)
+        {
+            if (mouse_wheel_scroll.first > 0.f)
+                speed += MOUSE_WHEEL_SCROLL_SPEED;
+            else
+                speed -= MOUSE_WHEEL_SCROLL_SPEED;
+            speed = std::clamp(speed, 1.f, 300.f);
+        }
     }
 
     RotateCamera(dlTime);

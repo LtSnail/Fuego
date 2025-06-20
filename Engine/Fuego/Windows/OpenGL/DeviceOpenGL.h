@@ -11,7 +11,7 @@ public:
 
     virtual ~DeviceOpenGL() override;
 
-    virtual std::unique_ptr<Buffer> CreateBuffer(size_t size, uint32_t flags) override;
+    virtual std::unique_ptr<Buffer> CreateBuffer(Buffer::BufferType type, RenderStage stage, size_t size) override;
     virtual std::unique_ptr<CommandQueue> CreateCommandQueue() override;
     virtual std::unique_ptr<CommandPool> CreateCommandPool(const CommandQueue& queue) override;
     virtual std::unique_ptr<CommandBuffer> CreateCommandBuffer() override;
@@ -20,7 +20,9 @@ public:
 
     virtual Shader* CreateShader(std::string_view shaderName, Shader::ShaderType type) override;
     virtual std::unique_ptr<Surface> CreateSurface(const void* window) override;
+
     virtual std::shared_ptr<Texture> CreateTexture(std::string_view name, TextureFormat format, unsigned char* buffer, int width, int height) const override;
+
     virtual std::shared_ptr<Texture> CreateTexture(std::string_view name) const override;
 
     virtual void SetVSync(bool active) const override;
